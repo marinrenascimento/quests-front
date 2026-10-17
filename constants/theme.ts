@@ -27,6 +27,57 @@ export const Colors = {
   },
 };
 
+/**
+ * Paleta do Quests, extraída do mockup das telas de login/cadastro.
+ * As telas de autenticação usam sempre esta paleta (o mockup só tem versão clara).
+ */
+export const Palette = {
+  white: '#FFFFFF',
+  /** Verde escuro dos títulos */
+  title: '#0D4535',
+  /** Verde escuro dos botões (início e fim do degradê do PrimaryButton) */
+  primaryGradient: ['#1A5546', '#0F4235'] as const,
+  primaryShadow: '#0B3127',
+  /** Texto e borda do SecondaryButton */
+  secondaryText: '#154235',
+  secondaryBorder: '#3E5F57',
+  /** Textos escuros: labels do login e "Lembrar de mim" */
+  text: '#111111',
+  /** Labels do cadastro (verde quase preto) */
+  labelGreen: '#0F3329',
+  /** Campo 'filled' (login) */
+  inputFill: '#F1F1F3',
+  /** Borda verde-clara do campo 'outlined' (cadastro) */
+  inputBorder: '#C3D4CF',
+  placeholder: '#B9B9BC',
+  /** Link "Esqueceu sua senha?" */
+  link: '#DD8A3E',
+  /** Checkbox */
+  checkbox: '#FFBC00',
+  checkmark: '#1A1A1A',
+  error: '#D32F2F',
+  /** Fundo verde-sálvia do TopBar */
+  sage: '#A4C8AD',
+  /** Verde escuro do TopBar: abas inativas, divisores, pílula e silhueta do avatar */
+  forest: '#123A32',
+};
+
+/**
+ * Famílias carregadas em app/_layout.tsx (@expo-google-fonts).
+ * Mockups: títulos e campos em Poppins; labels, botões e link em Inter; TopBar em Roboto.
+ */
+export const FontFamily = {
+  title: 'Poppins_800ExtraBold',
+  input: 'Poppins_400Regular',
+  label: 'Inter_700Bold',
+  button: 'Inter_700Bold',
+  buttonSecondary: 'Inter_600SemiBold',
+  link: 'Inter_500Medium',
+  topBarTab: 'Roboto_700Bold',
+  topBarCoins: 'Roboto_500Medium',
+  topBarName: 'Roboto_400Regular',
+};
+
 export const Fonts = Platform.select({
   ios: {
     /** iOS `UIFontDescriptorSystemDesignDefault` */

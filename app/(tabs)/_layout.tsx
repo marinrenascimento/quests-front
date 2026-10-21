@@ -26,6 +26,26 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="rank"
+        options={{
+          title: 'Rank',
+        }}
+      />
+      <Tabs.Screen
+        name="help"
+        options={{
+          title: 'Help',
+          // Ao sair da aba, a pilha volta para a Help (Estudos não fica aberta por baixo)
+          popToTopOnBlur: true,
+        }}
+      />
+      <Tabs.Screen
+        name="relatorios"
+        options={{
+          title: 'Relatórios',
+        }}
+      />
+      <Tabs.Screen
         name="explore"
         options={{
           title: 'Explore',

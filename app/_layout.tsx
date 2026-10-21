@@ -1,9 +1,11 @@
+import { Inter_400Regular } from '@expo-google-fonts/inter/400Regular';
 import { Inter_500Medium } from '@expo-google-fonts/inter/500Medium';
 import { Inter_600SemiBold } from '@expo-google-fonts/inter/600SemiBold';
 import { Inter_700Bold } from '@expo-google-fonts/inter/700Bold';
 import { LilitaOne_400Regular } from '@expo-google-fonts/lilita-one/400Regular';
 import { Poppins_400Regular } from '@expo-google-fonts/poppins/400Regular';
 import { Poppins_800ExtraBold } from '@expo-google-fonts/poppins/800ExtraBold';
+import { PressStart2P_400Regular } from '@expo-google-fonts/press-start-2p/400Regular';
 import { Roboto_400Regular } from '@expo-google-fonts/roboto/400Regular';
 import { Roboto_500Medium } from '@expo-google-fonts/roboto/500Medium';
 import { Roboto_700Bold } from '@expo-google-fonts/roboto/700Bold';
@@ -24,10 +26,12 @@ export default function RootLayout() {
   const [fontsLoaded, fontError] = useFonts({
     Poppins_400Regular,
     Poppins_800ExtraBold,
+    Inter_400Regular,
     Inter_500Medium,
     Inter_600SemiBold,
     Inter_700Bold,
     LilitaOne_400Regular,
+    PressStart2P_400Regular,
     Roboto_400Regular,
     Roboto_500Medium,
     Roboto_700Bold,

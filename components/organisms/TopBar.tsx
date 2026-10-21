@@ -7,7 +7,8 @@ import { TopBarTabKey, TopBarTabs } from '@/components/molecules/TopBarTabs';
 import { Palette } from '@/constants/theme';
 
 type Props = {
-  activeTab: TopBarTabKey;
+  /** Aba em destaque (branca). Sem valor, nenhuma fica em destaque (ex.: Relatórios). */
+  activeTab?: TopBarTabKey;
   // TODO: navegar com o Expo Router. Quem usar o TopBar decide a rota em onTabPress
   // (Rank e Help ainda não têm telas).
   onTabPress: (tab: TopBarTabKey) => void;

@@ -7,7 +7,8 @@ import { VerticalDivider } from '@/components/atoms/VerticalDivider';
 export type TopBarTabKey = 'home' | 'rank' | 'help';
 
 type Props = {
-  activeTab: TopBarTabKey;
+  /** Sem valor, nenhuma aba fica em destaque */
+  activeTab?: TopBarTabKey;
   onTabPress: (tab: TopBarTabKey) => void;
 };
 

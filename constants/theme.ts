@@ -84,12 +84,25 @@ export const Palette = {
   menuTextShadow: 'rgba(0, 0, 0, 0.35)',
   /** Sombra suave abaixo dos botões do menu */
   menuButtonShadow: 'rgba(0, 0, 0, 0.35)',
+  /**
+   * Rank: o fundo é o mesmo cinza da Home (homeBackground); linhas da lista e coluna do 1º
+   * lugar em `forest`; colunas laterais do pódio e círculos dos avatares em `sage`.
+   * O cartão do usuário é um sálvia um pouco mais claro (#B4D0BA no mockup).
+   */
+  rankCard: '#B4D0BA',
+  /**
+   * Help/Estudos: botões em `forest`, cartões em `rankCard` e textos em `forest`.
+   * Sombra leve abaixo dos botões e cartões.
+   */
+  cardShadow: 'rgba(0, 0, 0, 0.18)',
 };
 
 /**
  * Famílias carregadas em app/_layout.tsx (@expo-google-fonts).
  * Mockups: títulos e campos em Poppins; labels, botões e link em Inter; TopBar em Roboto;
  * botões do menu da Home em Lilita One (fonte pesada estilo jogo, parecida com o logo).
+ * Nomes e pontuações do Rank em Press Start 2P (fonte pixel larga e monoespaçada).
+ * Help/Estudos: títulos em Press Start 2P e textos corridos em Inter (a sem serifa do login).
  */
 export const FontFamily = {
   title: 'Poppins_800ExtraBold',
@@ -103,6 +116,11 @@ export const FontFamily = {
   topBarName: 'Roboto_400Regular',
   homeCaption: 'Poppins_800ExtraBold',
   menuButton: 'LilitaOne_400Regular',
+  pixel: 'PressStart2P_400Regular',
+  body: 'Inter_400Regular',
+  buttonCompact: 'Inter_600SemiBold',
+  /** Valores grandes dos cartões de resumo dos Relatórios ("15.0H", "78%") */
+  statValue: 'Inter_700Bold',
 };
 
 export const Fonts = Platform.select({

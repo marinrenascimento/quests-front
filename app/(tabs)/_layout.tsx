@@ -15,6 +15,8 @@ export default function TabLayout() {
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
         headerShown: false,
         tabBarButton: HapticTab,
+        // O mockup não tem barra de abas inferior: a navegação é pelo TopBar
+        tabBarStyle: { display: 'none' },
       }}>
       <Tabs.Screen
         name="index"

@@ -58,13 +58,38 @@ export const Palette = {
   error: '#D32F2F',
   /** Fundo verde-sálvia do TopBar */
   sage: '#A4C8AD',
-  /** Verde escuro do TopBar: abas inativas, divisores, pílula e silhueta do avatar */
+  /** Verde escuro do TopBar: abas inativas, divisores, pílula e silhueta do avatar.
+   * Também nos slots e no título "ACESSOS RECENTES" da Home (#0F3730 no mockup). */
   forest: '#123A32',
+  /** Cinza claro do fundo da Home */
+  homeBackground: '#EEEDE9',
+  /**
+   * Esmaecimento do cenário inferior da Home: do cinza opaco (topo) ao mesmo cinza
+   * com alfa 0 (base). rgba em vez de 'transparent' para não puxar para o cinza no iOS.
+   */
+  homeBackgroundFade: [
+    '#EEEDE9',
+    '#EEEDE9',
+    'rgba(238, 237, 233, 0.55)',
+    'rgba(238, 237, 233, 0)',
+  ] as const,
+  /** Fundos dos botões do menu da Home */
+  menuBlue: '#1673C7',
+  menuGreen: '#218045',
+  menuPurple: '#7347AC',
+  menuRed: '#9F2E2E',
+  /** Texto amarelo dos botões do menu, com contorno escuro */
+  menuText: '#FCE02A',
+  menuTextOutline: '#0B0A05',
+  menuTextShadow: 'rgba(0, 0, 0, 0.35)',
+  /** Sombra suave abaixo dos botões do menu */
+  menuButtonShadow: 'rgba(0, 0, 0, 0.35)',
 };
 
 /**
  * Famílias carregadas em app/_layout.tsx (@expo-google-fonts).
- * Mockups: títulos e campos em Poppins; labels, botões e link em Inter; TopBar em Roboto.
+ * Mockups: títulos e campos em Poppins; labels, botões e link em Inter; TopBar em Roboto;
+ * botões do menu da Home em Lilita One (fonte pesada estilo jogo, parecida com o logo).
  */
 export const FontFamily = {
   title: 'Poppins_800ExtraBold',
@@ -76,6 +101,8 @@ export const FontFamily = {
   topBarTab: 'Roboto_700Bold',
   topBarCoins: 'Roboto_500Medium',
   topBarName: 'Roboto_400Regular',
+  homeCaption: 'Poppins_800ExtraBold',
+  menuButton: 'LilitaOne_400Regular',
 };
 
 export const Fonts = Platform.select({

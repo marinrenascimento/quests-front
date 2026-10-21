@@ -7,25 +7,35 @@ import { HELP_MOCKUP_WIDTH, useMockupScale } from '@/hooks/useMockupScale';
 
 type Props = {
   label: string;
-  icon: IconName;
+  /** Ícone à esquerda do texto (opcional) */
+  icon?: IconName;
   onPress: () => void;
+  /**
+   * 'support' (padrão): largura fixa e centralizado, texto semi-negrito, como o "Falar com o
+   * suporte". 'block': ocupa a largura que o pai der (flex 1), mais alto, texto de peso médio,
+   * como os botões de Meus Decks.
+   */
+  variant?: 'support' | 'block';
 };
 
 // Medidas do mockup da Help, em px
-const WIDTH = 177.5;
-const HEIGHT = 28.5;
-const RADIUS = 6;
+const VARIANTS = {
+  support: { height: 28.5, radius: 6, paddingHorizontal: 10, fontSize: 10.5 },
+  block: { height: 33, radius: 7, paddingHorizontal: 8, fontSize: 9.5 },
+};
+const SUPPORT_WIDTH = 177.5;
 const ICON_SIZE = 14;
 const ICON_GAP = 5;
-const FONT_SIZE = 10.5;
 
 /**
- * Botão compacto verde escuro (cor sólida), com ícone à esquerda do texto em sem serifa
- * semi-negrito, como o "Falar com o suporte". Diferente do PrimaryButton (degradê, largura
- * total e texto em caixa alta), usado no login e cadastro.
+ * Botão compacto verde escuro (cor sólida), com ícone opcional à esquerda do texto em sem
+ * serifa, sem caixa alta. Diferente do PrimaryButton (degradê, largura total e texto em caixa
+ * alta), usado no login e cadastro.
  */
-export function IconTextButton({ label, icon, onPress }: Props) {
+export function IconTextButton({ label, icon, onPress, variant = 'support' }: Props) {
   const { scale, layoutWidth } = useMockupScale(HELP_MOCKUP_WIDTH);
+  const size = VARIANTS[variant];
+  const isSupport = variant === 'support';
 
   return (
     <Pressable
@@ -34,13 +44,17 @@ export function IconTextButton({ label, icon, onPress }: Props) {
       onPress={onPress}
       style={({ pressed }) => [
         styles.button,
+        isSupport
+          ? {
+              // Em telas estreitas (ou fonte grande) o botão não passa da largura útil
+              width: scale(SUPPORT_WIDTH),
+              maxWidth: layoutWidth - scale(30),
+            }
+          : styles.block,
         {
-          // Em telas estreitas (ou fonte grande) o botão não passa da largura útil
-          width: scale(WIDTH),
-          maxWidth: layoutWidth - scale(30),
-          minHeight: scale(HEIGHT),
-          borderRadius: scale(RADIUS),
-          paddingHorizontal: scale(10),
+          minHeight: scale(size.height),
+          borderRadius: scale(size.radius),
+          paddingHorizontal: scale(size.paddingHorizontal),
           gap: scale(ICON_GAP),
           boxShadow: [
             { offsetX: 0, offsetY: scale(1.5), blurRadius: scale(3), color: Palette.cardShadow },
@@ -48,12 +62,18 @@ export function IconTextButton({ label, icon, onPress }: Props) {
         },
         pressed && styles.pressed,
       ]}>
-      <MaterialCommunityIcons name={icon} size={scale(ICON_SIZE)} color={Palette.white} />
+      {icon ? (
+        <MaterialCommunityIcons name={icon} size={scale(ICON_SIZE)} color={Palette.white} />
+      ) : null}
       <Text
         numberOfLines={1}
         adjustsFontSizeToFit
         maxFontSizeMultiplier={1.3}
-        style={[styles.label, { fontSize: scale(FONT_SIZE) }]}>
+        style={[
+          styles.label,
+          isSupport ? styles.labelSupport : styles.labelBlock,
+          { fontSize: scale(size.fontSize) },
+        ]}>
         {label}
       </Text>
     </Pressable>
@@ -68,10 +88,19 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     backgroundColor: Palette.forest,
   },
+  block: {
+    flex: 1,
+    alignSelf: 'stretch',
+  },
   label: {
     flexShrink: 1,
-    fontFamily: FontFamily.buttonCompact,
     color: Palette.white,
+  },
+  labelSupport: {
+    fontFamily: FontFamily.buttonCompact,
+  },
+  labelBlock: {
+    fontFamily: FontFamily.buttonMedium,
   },
   pressed: {
     opacity: 0.85,

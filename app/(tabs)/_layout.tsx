@@ -46,6 +46,14 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="decks"
+        options={{
+          title: 'Meus Decks',
+          // Ao sair da aba, a pilha volta para a lista (um deck não fica aberto por baixo)
+          popToTopOnBlur: true,
+        }}
+      />
+      <Tabs.Screen
         name="explore"
         options={{
           title: 'Explore',

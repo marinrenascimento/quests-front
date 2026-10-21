@@ -11,9 +11,15 @@ type Props = {
   title: string;
   onBack: () => void;
   backLabel: string;
-  actionIcon: IconName;
-  onAction: () => void;
-  actionLabel: string;
+  /** Botão de ícone à direita (opcional): só aparece com ícone, ação e rótulo */
+  actionIcon?: IconName;
+  onAction?: () => void;
+  actionLabel?: string;
+  /**
+   * Títulos variáveis (ex.: nome do deck): se não couber, a fonte diminui até MIN_TITLE_SCALE
+   * antes de cortar com reticências. Padrão: não diminui.
+   */
+  fitTitle?: boolean;
 };
 
 // Medidas do mockup dos Relatórios convertidas para a escala da Help, em px
@@ -21,9 +27,19 @@ const TITLE_SIZE = 7;
 const TITLE_LETTER_SPACING = 0.8;
 const TITLE_GAP = 10;
 const ACTION_ICON_SIZE = 22;
+/** Menor escala da fonte do título com fitTitle */
+const MIN_TITLE_SCALE = 0.6;
 
-/** Cabeçalho em linha: voltar à esquerda, título ao lado e um botão de ícone à direita. */
-export function ReportHeader({ title, onBack, backLabel, actionIcon, onAction, actionLabel }: Props) {
+/** Cabeçalho em linha: voltar à esquerda, título ao lado e, opcionalmente, um botão de ícone à direita. */
+export function ReportHeader({
+  title,
+  onBack,
+  backLabel,
+  actionIcon,
+  onAction,
+  actionLabel,
+  fitTitle = false,
+}: Props) {
   const { scale } = useMockupScale(HELP_MOCKUP_WIDTH);
 
   return (
@@ -33,15 +49,19 @@ export function ReportHeader({ title, onBack, backLabel, actionIcon, onAction, a
         size={scale(TITLE_SIZE)}
         letterSpacing={scale(TITLE_LETTER_SPACING)}
         color={Palette.forest}
+        adjustsFontSizeToFit={fitTitle}
+        minimumFontScale={fitTitle ? MIN_TITLE_SCALE : undefined}
         style={[styles.title, { marginHorizontal: scale(TITLE_GAP) }]}>
         {title}
       </PixelText>
-      <IconButton
-        icon={actionIcon}
-        onPress={onAction}
-        accessibilityLabel={actionLabel}
-        size={ACTION_ICON_SIZE}
-      />
+      {actionIcon && onAction && actionLabel ? (
+        <IconButton
+          icon={actionIcon}
+          onPress={onAction}
+          accessibilityLabel={actionLabel}
+          size={ACTION_ICON_SIZE}
+        />
+      ) : null}
     </View>
   );
 }

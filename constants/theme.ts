@@ -95,6 +95,8 @@ export const Palette = {
    * Sombra leve abaixo dos botões e cartões.
    */
   cardShadow: 'rgba(0, 0, 0, 0.18)',
+  /** Botões circulares dos cards de um deck (editar, excluir, ver): verde escuro acinzentado */
+  cardAction: '#2C3D34',
 };
 
 /**
@@ -121,6 +123,8 @@ export const FontFamily = {
   buttonCompact: 'Inter_600SemiBold',
   /** Valores grandes dos cartões de resumo dos Relatórios ("15.0H", "78%") */
   statValue: 'Inter_700Bold',
+  /** Botões de ação de Meus Decks ("Criar Novo Deck"): peso médio */
+  buttonMedium: 'Inter_500Medium',
 };
 
 export const Fonts = Platform.select({

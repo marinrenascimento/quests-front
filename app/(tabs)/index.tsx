@@ -17,10 +17,12 @@ export default function HomeScreen() {
       case 'relatorios':
         router.navigate('/(tabs)/relatorios');
         break;
+      case 'decks':
+        router.navigate('/(tabs)/decks');
+        break;
       case 'questoes':
       case 'jogos':
-      case 'decks':
-        // TODO: navegar para a tela correspondente (Questões, Jogos ou Decks) quando ela existir.
+        // TODO: navegar para a tela correspondente (Questões ou Jogos) quando ela existir.
         break;
     }
   };

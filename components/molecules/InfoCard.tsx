@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 
 import { PixelText } from '@/components/atoms/PixelText';
 import { Palette } from '@/constants/theme';
@@ -15,6 +15,8 @@ type Props = {
   titleSize?: 'regular' | 'small';
   /** Espaço interno em px do mockup (padrão: 15, o das telas de ajuda) */
   padding?: number;
+  /** Tamanho e posição do cartão (ex.: flex 1 para preencher uma altura fixa) */
+  style?: StyleProp<ViewStyle>;
   children: ReactNode;
 };
 
@@ -28,7 +30,13 @@ const TITLE_STYLES = {
 };
 
 /** Cartão verde sálvia de cantos arredondados, com título opcional e o conteúdo embaixo. */
-export function InfoCard({ title, titleSize = 'regular', padding = PADDING, children }: Props) {
+export function InfoCard({
+  title,
+  titleSize = 'regular',
+  padding = PADDING,
+  style,
+  children,
+}: Props) {
   const { scale } = useMockupScale(HELP_MOCKUP_WIDTH);
   const titleStyle = TITLE_STYLES[titleSize];
 
@@ -43,6 +51,7 @@ export function InfoCard({ title, titleSize = 'regular', padding = PADDING, chil
             { offsetX: 0, offsetY: scale(2), blurRadius: scale(4), color: Palette.cardShadow },
           ],
         },
+        style,
       ]}>
       {title ? (
         <PixelText

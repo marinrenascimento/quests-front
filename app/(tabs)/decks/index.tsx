@@ -21,9 +21,8 @@ export default function DecksScreen() {
       backLabel={BACK_LABEL}
       coins={TEMP_COINS}
       userName={TEMP_USER_NAME}
-      onCreatePress={() => {
-        // TODO: criar tela e navegar.
-      }}
+      // push: Meus Decks fica por baixo e o voltar do cadastro retorna a ela
+      onCreatePress={() => router.push('/(tabs)/decks/novo')}
       onStudyPress={() => {
         // TODO: criar tela e navegar.
       }}

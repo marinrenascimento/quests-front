@@ -21,7 +21,7 @@ export function CoinsUserPill({ coins, userName, onPress }: Props) {
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={`${userName}, ${formattedCoins} moedas`}
+      accessibilityLabel={`${userName}, ${formattedCoins} Moedas`}
       disabled={!onPress}
       onPress={onPress}
       style={({ pressed }) => [styles.container, pressed && styles.pressed]}>

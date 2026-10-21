@@ -14,6 +14,12 @@ type Props = {
   numberOfLines?: number;
   /** Diminui a fonte para caber em `numberOfLines` (iOS e Android) */
   adjustsFontSizeToFit?: boolean;
+  /** Com adjustsFontSizeToFit: menor escala permitida da fonte, de 0 a 1 (só iOS) */
+  minimumFontScale?: number;
+  /** Peso da fonte (padrão: regular) */
+  weight?: 'regular' | 'bold';
+  /** 'header' para títulos de seção (leitores de tela) */
+  accessibilityRole?: 'header';
   /** Margens e largura */
   style?: StyleProp<TextStyle>;
 };
@@ -22,7 +28,10 @@ type Props = {
 const DEFAULT_SIZE = 9.6;
 const DEFAULT_LINE_HEIGHT = 13.3;
 
-/** Texto em sem serifa regular (Inter), verde escuro. Por padrão quebra em quantas linhas precisar. */
+/**
+ * Texto em sem serifa (Inter), verde escuro, regular ou em negrito. Por padrão quebra em quantas
+ * linhas precisar.
+ */
 export function BodyText({
   children,
   size,
@@ -30,17 +39,23 @@ export function BodyText({
   align = 'left',
   numberOfLines,
   adjustsFontSizeToFit,
+  minimumFontScale,
+  weight = 'regular',
+  accessibilityRole,
   style,
 }: Props) {
   const { scale } = useMockupScale(HELP_MOCKUP_WIDTH);
 
   return (
     <Text
+      accessibilityRole={accessibilityRole}
       numberOfLines={numberOfLines}
       adjustsFontSizeToFit={adjustsFontSizeToFit}
+      minimumFontScale={minimumFontScale}
       maxFontSizeMultiplier={1.3}
       style={[
         styles.text,
+        weight === 'bold' && styles.bold,
         {
           fontSize: size ?? scale(DEFAULT_SIZE),
           lineHeight: lineHeight ?? scale(DEFAULT_LINE_HEIGHT),
@@ -57,5 +72,8 @@ const styles = StyleSheet.create({
   text: {
     fontFamily: FontFamily.body,
     color: Palette.forest,
+  },
+  bold: {
+    fontFamily: FontFamily.bodyBold,
   },
 });

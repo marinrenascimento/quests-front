@@ -29,7 +29,7 @@ export function HomeBanner() {
           contentFit="contain"
           contentPosition={{ left: 0, bottom: 0 }}
           style={styles.fill}
-          accessibilityLabel="Cavaleiro lendo um livro"
+          accessibilityLabel="Cavaleiro Lendo um Livro"
         />
       </View>
       <View style={styles.logoBox}>

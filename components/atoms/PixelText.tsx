@@ -20,6 +20,8 @@ type Props = {
   adjustsFontSizeToFit?: boolean;
   /** Com adjustsFontSizeToFit: menor escala permitida da fonte, de 0 a 1 (só iOS) */
   minimumFontScale?: number;
+  /** 'header' para títulos de tela ou seção (leitores de tela) */
+  accessibilityRole?: 'header';
   /** Margens, alinhamento e largura */
   style?: StyleProp<TextStyle>;
 };
@@ -47,6 +49,7 @@ export function PixelText({
   numberOfLines = 1,
   adjustsFontSizeToFit,
   minimumFontScale,
+  accessibilityRole,
   style,
 }: Props) {
   const flat = StyleSheet.flatten(style) ?? {};
@@ -55,6 +58,7 @@ export function PixelText({
 
   return (
     <Text
+      accessibilityRole={accessibilityRole}
       numberOfLines={numberOfLines}
       ellipsizeMode="tail"
       adjustsFontSizeToFit={adjustsFontSizeToFit}

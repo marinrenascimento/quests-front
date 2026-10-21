@@ -9,7 +9,7 @@ export default function LoginScreen() {
     <AuthLayout header={<AuthHeader heightRatio={0.42} />}>
       <LoginForm
         onSubmit={() => {
-          // TODO: integrar com o back (autenticar usuário/senha e salvar "Lembrar de mim")
+          // TODO: integrar com o back (autenticar usuário/senha e salvar "Lembrar de Mim")
           router.replace('/(tabs)');
         }}
         onRegisterPress={() => router.push('/register')}

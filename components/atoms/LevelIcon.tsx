@@ -42,13 +42,15 @@ const LEVEL_IMAGES: Record<RankLevel, TrimmedImageSpec> = {
 /** Pedra (ou moeda) do nível do jogador, cortada na área visível da imagem. */
 export function LevelIcon({ level, size }: Props) {
   const { source, imageSize, content } = LEVEL_IMAGES[level];
+  // Os nomes ficam em caixa alta ("DIAMANTE"); o rótulo usa só a inicial maiúscula
+  const label = RANK_LEVEL_LABELS[level];
   const layout = trimmedImageLayout(imageSize, content, size);
 
   return (
     <View
       accessible
       accessibilityRole="image"
-      accessibilityLabel={`Nível ${RANK_LEVEL_LABELS[level].toLowerCase()}`}
+      accessibilityLabel={`Nível ${label.charAt(0)}${label.slice(1).toLowerCase()}`}
       style={[styles.container, { width: layout.width, height: size }]}>
       <Image source={source} resizeMode="contain" style={layout.image} />
     </View>

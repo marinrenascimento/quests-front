@@ -5,7 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Palette } from '@/constants/theme';
 
 type Props = {
-  /** Capa no topo (ex.: <AuthHeader />), encostada nas bordas e sob a barra de status */
+  /** Capa no topo (ex.: <AuthHeader />), encostada nas bordas */
   header: ReactNode;
   children: ReactNode;
 };

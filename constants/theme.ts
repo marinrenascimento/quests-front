@@ -41,7 +41,7 @@ export const Palette = {
   /** Texto e borda do SecondaryButton */
   secondaryText: '#154235',
   secondaryBorder: '#3E5F57',
-  /** Textos escuros: labels do login e "Lembrar de mim" */
+  /** Textos escuros: labels do login e "Lembrar de Mim" */
   text: '#111111',
   /** Labels do cadastro (verde quase preto) */
   labelGreen: '#0F3329',
@@ -97,6 +97,17 @@ export const Palette = {
   cardShadow: 'rgba(0, 0, 0, 0.18)',
   /** Botões circulares dos cards de um deck (editar, excluir, ver): verde escuro acinzentado */
   cardAction: '#2C3D34',
+  /**
+   * Revisão de um deck: ícones das dificuldades não selecionadas, um sálvia pálido (a
+   * selecionada fica em `forest`). O card grande usa `rankCard` e o fundo, `homeBackground`.
+   */
+  difficultyIdle: '#B9D4C0',
+  /**
+   * Modal de confirmação: caixa em `white`, sem fundo escurecido atrás. Para destacá-la do
+   * cinza e do sálvia, duas sombras: uma larga e suave e outra curta, mais marcada na borda.
+   */
+  modalShadowWide: 'rgba(0, 0, 0, 0.22)',
+  modalShadowNear: 'rgba(0, 0, 0, 0.14)',
 };
 
 /**
@@ -125,6 +136,8 @@ export const FontFamily = {
   statValue: 'Inter_700Bold',
   /** Botões de ação de Meus Decks ("Criar Novo Deck"): peso médio */
   buttonMedium: 'Inter_500Medium',
+  /** Texto da frente do card na revisão: a sem serifa do login em negrito */
+  bodyBold: 'Inter_700Bold',
 };
 
 export const Fonts = Platform.select({

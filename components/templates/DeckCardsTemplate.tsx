@@ -13,7 +13,7 @@ type Props = {
   /** Rótulo "Disciplina - Tema" mostrado em cada card */
   cardLabel: string;
   cards: DeckCard[];
-  /** Mensagem da lista vazia ("Nenhum card neste deck" ou "Deck não encontrado") */
+  /** Mensagem da lista vazia ("Nenhum Card Neste Deck" ou "Deck Não Encontrado") */
   emptyMessage: string;
   /** Botões abaixo do título (sem botões quando o deck não existe) */
   headerActions: HeaderAction[];

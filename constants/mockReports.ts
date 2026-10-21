@@ -5,14 +5,14 @@ import { MonthlyReport, WeeklyReport } from '@/constants/reports';
 
 export const MOCK_WEEKLY_REPORT: WeeklyReport = {
   period: 'semanal',
-  title: 'Relatório semanal',
+  title: 'Relatório Semanal',
   summary: [
-    { id: 'horas', icon: 'clock-outline', value: '15.0H', label: 'Horas esta semana' },
-    { id: 'questoes', icon: 'crosshairs-gps', value: '100', label: 'Questões respondidas' },
-    { id: 'acerto', icon: 'trending-up', value: '78%', label: 'Taxa de acerto' },
-    { id: 'sequencia', icon: 'chart-bar', value: '5 DIAS', label: 'Sequência de dias' },
+    { id: 'horas', icon: 'clock-outline', value: '15.0H', label: 'Horas Esta Semana' },
+    { id: 'questoes', icon: 'crosshairs-gps', value: '100', label: 'Questões Respondidas' },
+    { id: 'acerto', icon: 'trending-up', value: '78%', label: 'Taxa de Acerto' },
+    { id: 'sequencia', icon: 'chart-bar', value: '5 DIAS', label: 'Sequência de Dias' },
   ],
-  dailyHoursTitle: 'Horas de estudo - semana',
+  dailyHoursTitle: 'Horas de Estudo - Semana',
   dailyHours: [
     { id: 'seg', label: 'Seg', value: 2.5 },
     { id: 'ter', label: 'Ter', value: 1.8 },
@@ -22,7 +22,7 @@ export const MOCK_WEEKLY_REPORT: WeeklyReport = {
     { id: 'sab', label: 'Sáb', value: 4.0 },
     { id: 'dom', label: 'Dom', value: 1.0 },
   ],
-  subjectsTitle: 'Desempenho por matéria',
+  subjectsTitle: 'Desempenho por Matéria',
   subjects: [
     { id: 'matematica', subject: 'Matemática', percent: 80 },
     { id: 'portugues', subject: 'Português', percent: 70 },
@@ -33,19 +33,19 @@ export const MOCK_WEEKLY_REPORT: WeeklyReport = {
 
 export const MOCK_MONTHLY_REPORT: MonthlyReport = {
   period: 'mensal',
-  title: 'Relatório mensal',
+  title: 'Relatório Mensal',
   summary: [
-    { id: 'horas', icon: 'clock-outline', value: '60.0H', label: 'Horas este mês' },
-    { id: 'questoes', icon: 'crosshairs-gps', value: '100', label: 'Questões respondidas' },
-    { id: 'acerto', icon: 'trending-up', value: '74%', label: 'Taxa de acerto' },
-    { id: 'sequencia', icon: 'chart-bar', value: '3 MESES', label: 'Sequência de meses' },
+    { id: 'horas', icon: 'clock-outline', value: '60.0H', label: 'Horas Este Mês' },
+    { id: 'questoes', icon: 'crosshairs-gps', value: '100', label: 'Questões Respondidas' },
+    { id: 'acerto', icon: 'trending-up', value: '74%', label: 'Taxa de Acerto' },
+    { id: 'sequencia', icon: 'chart-bar', value: '3 MESES', label: 'Sequência de Meses' },
   ],
-  hoursComparisonTitle: 'Horas de estudo',
+  hoursComparisonTitle: 'Horas de Estudo',
   hoursComparison: [
-    { id: 'este-mes', label: 'Este mês', hours: 80 },
-    { id: 'mes-passado', label: 'Mês passado', hours: 45 },
+    { id: 'este-mes', label: 'Este Mês', hours: 80 },
+    { id: 'mes-passado', label: 'Mês Passado', hours: 45 },
   ],
-  subjectsTitle: 'Desempenho por matéria neste mês',
+  subjectsTitle: 'Desempenho por Matéria Neste Mês',
   subjects: [
     { id: 'matematica', subject: 'Matemática', percent: 60 },
     { id: 'portugues', subject: 'Português', percent: 80 },

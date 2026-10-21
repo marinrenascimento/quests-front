@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, View } from 'react-native';
 
 import { Palette } from '@/constants/theme';
 import { useLayoutPadding } from '@/hooks/useLayoutPadding';
@@ -18,6 +18,11 @@ type Props = {
    * sozinha e aplica as margens com useLayoutPadding (sem aninhar listas em ScrollView).
    */
   scrollable?: boolean;
+  /**
+   * Telas com campos de texto: a área rolável encolhe acima do teclado (o campo em foco não
+   * fica coberto) e os toques continuam funcionando com o teclado aberto. Padrão: false.
+   */
+  keyboardAware?: boolean;
 };
 
 // Medidas do mockup da Help, em px
@@ -31,27 +36,47 @@ const FOOTER_GAP = 18;
  * em telas altas; em telas baixas o conteúdo todo rola. Recebe as partes por prop para não
  * acoplar organisms.
  */
-export function HelpLayout({ topBar, children, footer, scrollable = true }: Props) {
+export function HelpLayout({
+  topBar,
+  children,
+  footer,
+  scrollable = true,
+  keyboardAware = false,
+}: Props) {
   const { scale } = useMockupScale(HELP_MOCKUP_WIDTH);
   const { layoutWidth, paddingHorizontal, paddingTop, paddingBottom } = useLayoutPadding();
+
+  const scroll = (
+    <ScrollView
+      style={styles.scroll}
+      contentContainerStyle={[
+        styles.content,
+        { width: layoutWidth, paddingHorizontal, paddingTop, paddingBottom },
+      ]}
+      keyboardShouldPersistTaps={keyboardAware ? 'handled' : undefined}
+      bounces={false}
+      showsVerticalScrollIndicator={false}>
+      <View style={{ gap: scale(SECTION_GAP) }}>{children}</View>
+      {footer ? (
+        <View style={[styles.footer, { paddingTop: scale(FOOTER_GAP) }]}>{footer}</View>
+      ) : null}
+    </ScrollView>
+  );
 
   return (
     <View style={styles.screen}>
       {topBar}
       {scrollable ? (
-        <ScrollView
-          style={styles.scroll}
-          contentContainerStyle={[
-            styles.content,
-            { width: layoutWidth, paddingHorizontal, paddingTop, paddingBottom },
-          ]}
-          bounces={false}
-          showsVerticalScrollIndicator={false}>
-          <View style={{ gap: scale(SECTION_GAP) }}>{children}</View>
-          {footer ? (
-            <View style={[styles.footer, { paddingTop: scale(FOOTER_GAP) }]}>{footer}</View>
-          ) : null}
-        </ScrollView>
+        keyboardAware ? (
+          // Mesmo comportamento do AuthLayout: padding no iOS, altura no Android
+          <KeyboardAvoidingView
+            style={styles.scroll}
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+            {scroll}
+          </KeyboardAvoidingView>
+        ) : (
+          scroll
+        )
       ) : (
         <View style={styles.scroll}>{children}</View>
       )}

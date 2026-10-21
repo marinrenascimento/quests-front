@@ -42,13 +42,13 @@ export function RegisterForm({ onSubmit, onLoginPress }: Props) {
 
   function handleSubmit() {
     const nextErrors: Errors = {};
-    if (!name.trim()) nextErrors.name = 'Informe o seu nome.';
-    if (!username.trim()) nextErrors.username = 'Informe o seu usuário.';
-    if (!email.trim()) nextErrors.email = 'Informe o seu e-mail.';
-    else if (!EMAIL_REGEX.test(email.trim())) nextErrors.email = 'Digite um e-mail válido.';
-    if (!password) nextErrors.password = 'Informe a sua senha.';
-    if (!confirmPassword) nextErrors.confirmPassword = 'Repita a sua senha.';
-    else if (password !== confirmPassword) nextErrors.confirmPassword = 'As senhas não coincidem.';
+    if (!name.trim()) nextErrors.name = 'Informe o Seu Nome.';
+    if (!username.trim()) nextErrors.username = 'Informe o Seu Usuário.';
+    if (!email.trim()) nextErrors.email = 'Informe o Seu E-mail.';
+    else if (!EMAIL_REGEX.test(email.trim())) nextErrors.email = 'Digite um E-mail Válido.';
+    if (!password) nextErrors.password = 'Informe a Sua Senha.';
+    if (!confirmPassword) nextErrors.confirmPassword = 'Repita a Sua Senha.';
+    else if (password !== confirmPassword) nextErrors.confirmPassword = 'As Senhas Não Coincidem.';
 
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length === 0) {
@@ -64,13 +64,13 @@ export function RegisterForm({ onSubmit, onLoginPress }: Props) {
 
   return (
     <View>
-      <Title size="compact">Crie uma nova conta!</Title>
+      <Title size="compact">Crie uma Nova Conta!</Title>
 
       <View style={styles.firstField}>
         <FormField
           variant="outlined"
           label="Nome"
-          placeholder="Digite o seu nome"
+          placeholder="Digite o Seu Nome"
           value={name}
           onChangeText={(text) => {
             setName(text);
@@ -86,7 +86,7 @@ export function RegisterForm({ onSubmit, onLoginPress }: Props) {
         <FormField
           variant="outlined"
           label="Usuário"
-          placeholder="Digite o seu usuário"
+          placeholder="Digite o Seu Usuário"
           value={username}
           onChangeText={(text) => {
             setUsername(text);
@@ -103,7 +103,7 @@ export function RegisterForm({ onSubmit, onLoginPress }: Props) {
         <FormField
           variant="outlined"
           label="E-mail"
-          placeholder="Digite o seu e-mail"
+          placeholder="Digite o Seu E-mail"
           value={email}
           onChangeText={(text) => {
             setEmail(text);
@@ -122,7 +122,7 @@ export function RegisterForm({ onSubmit, onLoginPress }: Props) {
         <FormField
           variant="outlined"
           label="Senha"
-          placeholder="Digite a sua senha"
+          placeholder="Digite a Sua Senha"
           value={password}
           onChangeText={(text) => {
             setPassword(text);
@@ -139,8 +139,8 @@ export function RegisterForm({ onSubmit, onLoginPress }: Props) {
       <View style={styles.field}>
         <FormField
           variant="outlined"
-          label="Repita a senha"
-          placeholder="Repita a sua senha"
+          label="Repita a Senha"
+          placeholder="Repita a Sua Senha"
           value={confirmPassword}
           onChangeText={(text) => {
             setConfirmPassword(text);
@@ -156,20 +156,20 @@ export function RegisterForm({ onSubmit, onLoginPress }: Props) {
       </View>
 
       <View style={styles.checkbox}>
-        <Checkbox label="Lembrar de mim" checked={remember} onChange={setRemember} size="compact" />
+        <Checkbox label="Lembrar de Mim" checked={remember} onChange={setRemember} size="compact" />
       </View>
 
       <View style={styles.primary}>
-        <PrimaryButton title="Criar conta" onPress={handleSubmit} size="compact" />
+        <PrimaryButton title="Criar Conta" onPress={handleSubmit} size="compact" />
       </View>
 
       <View style={styles.secondary}>
-        <SecondaryButton title="Já tem conta? Entrar" onPress={onLoginPress} size="compact" />
+        <SecondaryButton title="Já Tem Conta? Entrar" onPress={onLoginPress} size="compact" />
       </View>
 
       <View style={styles.link}>
         {/* TODO: criar a tela de recuperação de senha e integrar com o back */}
-        <LinkText title="Esqueceu sua senha?" size="compact" />
+        <LinkText title="Esqueceu Sua Senha?" size="compact" />
       </View>
     </View>
   );

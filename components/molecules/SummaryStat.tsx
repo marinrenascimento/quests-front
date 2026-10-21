@@ -43,7 +43,7 @@ export function SummaryStat({ icon, value, label }: Props) {
         ]}>
         {value}
       </Text>
-      {/* Rótulos longos ("Questões respondidas") diminuem em vez de quebrar a linha */}
+      {/* Rótulos longos ("Questões Respondidas") diminuem em vez de quebrar a linha */}
       <BodyText
         size={scale(LABEL_SIZE)}
         lineHeight={scale(LABEL_LINE_HEIGHT)}

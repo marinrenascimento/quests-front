@@ -58,6 +58,6 @@ export const REPORT_FILTER_ICON: IconName = 'filter-variant';
 
 /** Rótulo de acessibilidade do botão de filtro: descreve a troca a partir do período atual */
 export const REPORT_TOGGLE_LABELS: Record<ReportPeriod, string> = {
-  semanal: 'Mostrar relatório mensal',
-  mensal: 'Mostrar relatório semanal',
+  semanal: 'Mostrar Relatório Mensal',
+  mensal: 'Mostrar Relatório Semanal',
 };

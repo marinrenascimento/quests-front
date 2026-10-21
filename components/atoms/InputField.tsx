@@ -3,7 +3,10 @@ import { StyleSheet, TextInput, TextInputProps } from 'react-native';
 import { FontFamily, Palette } from '@/constants/theme';
 
 type Props = TextInputProps & {
-  /** 'filled': fundo cinza sem borda (login). 'outlined': fundo branco com borda verde-clara (cadastro). */
+  /**
+   * 'filled': fundo cinza sem borda (login). 'outlined': fundo branco com borda verde-clara
+   * (cadastro). Com multiline, o campo fica mais alto e o texto começa no topo.
+   */
   variant?: 'filled' | 'outlined';
   hasError?: boolean;
 };
@@ -12,7 +15,13 @@ export function InputField({ variant = 'filled', hasError = false, style, ...res
   return (
     <TextInput
       placeholderTextColor={Palette.placeholder}
-      style={[styles.base, styles[variant], hasError && styles.error, style]}
+      style={[
+        styles.base,
+        styles[variant],
+        rest.multiline && styles.multiline,
+        hasError && styles.error,
+        style,
+      ]}
       {...rest}
     />
   );
@@ -41,6 +50,13 @@ const styles = StyleSheet.create({
     backgroundColor: Palette.white,
     borderWidth: 1,
     borderColor: Palette.inputBorder,
+  },
+  // Altura fixa trocada por mínima: o campo cresce com o texto (a tela rola)
+  multiline: {
+    height: undefined,
+    minHeight: 96,
+    paddingVertical: 10,
+    textAlignVertical: 'top',
   },
   error: {
     borderColor: Palette.error,

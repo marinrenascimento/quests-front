@@ -30,8 +30,8 @@ export function LoginForm({ onSubmit, onRegisterPress }: Props) {
 
   function handleSubmit() {
     const nextErrors: Errors = {};
-    if (!username.trim()) nextErrors.username = 'Informe o seu usuário.';
-    if (!password) nextErrors.password = 'Informe a sua senha.';
+    if (!username.trim()) nextErrors.username = 'Informe o Seu Usuário.';
+    if (!password) nextErrors.password = 'Informe a Sua Senha.';
 
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length === 0) {
@@ -41,12 +41,12 @@ export function LoginForm({ onSubmit, onRegisterPress }: Props) {
 
   return (
     <View>
-      <Title>{'Inicie sua sessão\nde estudos!'}</Title>
+      <Title>{'Inicie Sua Sessão\nde Estudos!'}</Title>
 
       <View style={styles.firstField}>
         <FormField
           label="Usuário"
-          placeholder="Digite o seu usuário"
+          placeholder="Digite o Seu Usuário"
           value={username}
           onChangeText={(text) => {
             setUsername(text);
@@ -62,7 +62,7 @@ export function LoginForm({ onSubmit, onRegisterPress }: Props) {
       <View style={styles.field}>
         <FormField
           label="Senha"
-          placeholder="Digite a sua senha"
+          placeholder="Digite a Sua Senha"
           value={password}
           onChangeText={(text) => {
             setPassword(text);
@@ -78,7 +78,7 @@ export function LoginForm({ onSubmit, onRegisterPress }: Props) {
       </View>
 
       <View style={styles.checkbox}>
-        <Checkbox label="Lembrar de mim" checked={remember} onChange={setRemember} />
+        <Checkbox label="Lembrar de Mim" checked={remember} onChange={setRemember} />
       </View>
 
       <View style={styles.primary}>
@@ -86,12 +86,12 @@ export function LoginForm({ onSubmit, onRegisterPress }: Props) {
       </View>
 
       <View style={styles.secondary}>
-        <SecondaryButton title="Não tem conta? Cadastre-se" onPress={onRegisterPress} />
+        <SecondaryButton title="Não Tem Conta? Cadastre-se" onPress={onRegisterPress} />
       </View>
 
       <View style={styles.link}>
         {/* TODO: criar a tela de recuperação de senha e integrar com o back */}
-        <LinkText title="Esqueceu sua senha?" />
+        <LinkText title="Esqueceu Sua Senha?" />
       </View>
     </View>
   );

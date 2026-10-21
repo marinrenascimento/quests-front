@@ -15,6 +15,8 @@ type Props = {
   titleSize?: 'regular' | 'small';
   /** Espaço interno em px do mockup (padrão: 15, o das telas de ajuda) */
   padding?: number;
+  /** Raio dos cantos em px do mockup (padrão: 10, o das telas de ajuda) */
+  radius?: number;
   /** Tamanho e posição do cartão (ex.: flex 1 para preencher uma altura fixa) */
   style?: StyleProp<ViewStyle>;
   children: ReactNode;
@@ -34,6 +36,7 @@ export function InfoCard({
   title,
   titleSize = 'regular',
   padding = PADDING,
+  radius = RADIUS,
   style,
   children,
 }: Props) {
@@ -46,7 +49,7 @@ export function InfoCard({
         styles.card,
         {
           padding: scale(padding),
-          borderRadius: scale(RADIUS),
+          borderRadius: scale(radius),
           boxShadow: [
             { offsetX: 0, offsetY: scale(2), blurRadius: scale(4), color: Palette.cardShadow },
           ],

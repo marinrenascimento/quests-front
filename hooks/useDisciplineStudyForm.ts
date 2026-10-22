@@ -1,11 +1,13 @@
 import { useState } from 'react';
 
+import { subjectLabel } from '@/constants/decks';
 import { STUDY_QUANTITY_OPTIONS } from '@/constants/study';
-import { useDeckCreation } from '@/hooks/useDeckCreation';
 import { DisciplineStudy, useDecks } from '@/hooks/useDecks';
+import { useSubjects } from '@/hooks/useSubjects';
 import { shuffle } from '@/utils/shuffle';
 
-type Field = 'discipline' | 'content' | 'quantity';
+/** Campos obrigatórios (o conteúdo é opcional) */
+type Field = 'discipline' | 'quantity';
 type Errors = Partial<Record<Field, string>>;
 
 type Options = {
@@ -20,14 +22,14 @@ const pairKey = (disciplineId: string, contentId: string) => `${disciplineId}|${
 
 /**
  * Campos de Configurar Deck por Disciplina em estado local, com o padrão de validação do Novo
- * Flashcard: os erros de obrigatório só aparecem ao tocar em "Estudar Agora" e somem quando o
- * campo é escolhido. As opções saem da fonte única de cards (decks fictícios + criados): só
+ * Flashcard: os erros de obrigatório (disciplina e quantidade; o conteúdo é opcional) só
+ * aparecem ao tocar em "Estudar Agora" e somem quando o campo é escolhido. As opções saem da fonte única de cards (decks fictícios + criados): só
  * aparecem disciplinas e conteúdos com pelo menos 1 card, e o conteúdo depende da disciplina
  * (lista só os dela e é limpo quando ela muda). Não há criação de disciplina nem de conteúdo.
  */
 export function useDisciplineStudyForm({ requiredMessages }: Options) {
   const { decks, getDeckCards } = useDecks();
-  const { disciplines, contents } = useDeckCreation();
+  const { disciplines, contents } = useSubjects();
   const [disciplineId, setDisciplineId] = useState<string | undefined>(undefined);
   const [contentId, setContentId] = useState<string | undefined>(undefined);
   const [quantity, setQuantity] = useState<number | undefined>(undefined);
@@ -68,6 +70,8 @@ export function useDisciplineStudyForm({ requiredMessages }: Options) {
     /** Quantidade escolhida, como id da opção (texto) */
     quantityId: quantity === undefined ? undefined : String(quantity),
     errors,
+    /** Alguma escolha feita (a seta e o voltar do Android pedem confirmação antes de sair) */
+    hasChoices: disciplineId !== undefined || contentId !== undefined || quantity !== undefined,
     selectDiscipline: (id: string) => {
       if (id !== disciplineId) {
         setContentId(undefined);
@@ -75,34 +79,34 @@ export function useDisciplineStudyForm({ requiredMessages }: Options) {
       setDisciplineId(id);
       clearError('discipline');
     },
-    selectContent: (id: string) => {
-      setContentId(id);
-      clearError('content');
-    },
+    selectContent: (id: string) => setContentId(id),
     selectQuantity: (id: string) => {
       setQuantity(Number(id));
       clearError('quantity');
     },
     /**
      * Confere os campos obrigatórios e mostra os erros. Com tudo certo, monta o deck temporário:
-     * os cards da disciplina + conteúdo escolhidos, sorteados sem repetir e limitados à
-     * quantidade (se houver menos, entram todos). Senão, devolve null.
+     * os cards da disciplina escolhida (só os do conteúdo escolhido ou, sem conteúdo, os de todos
+     * os conteúdos dela), sorteados sem repetir e limitados à quantidade (se houver menos, entram
+     * todos). Senão, devolve null.
      */
     submit: (): DisciplineStudy | null => {
       const nextErrors: Errors = {};
       if (!discipline) nextErrors.discipline = requiredMessages.discipline;
-      if (!content) nextErrors.content = requiredMessages.content;
       if (quantity === undefined) nextErrors.quantity = requiredMessages.quantity;
 
       setErrors(nextErrors);
-      if (!discipline || !content || quantity === undefined) {
+      if (!discipline || quantity === undefined) {
         return null;
       }
       const matching = allCards.filter(
-        (card) => card.disciplineId === discipline.id && card.contentId === content.id,
+        (card) =>
+          card.disciplineId === discipline.id && (!content || card.contentId === content.id),
       );
       return {
-        title: `${discipline.name} - ${content.name}`,
+        // Sem conteúdo, o cabeçalho da revisão mostra só a disciplina
+        // TODO: confirmar o nome do estudo sem conteúdo escolhido (RN-173).
+        title: content ? subjectLabel(discipline.name, content.name) : discipline.name,
         cards: shuffle(matching).slice(0, quantity),
       };
     },

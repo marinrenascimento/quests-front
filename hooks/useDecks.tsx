@@ -33,6 +33,11 @@ type DecksData = {
    */
   updateCard: (deckId: string, cardId: string, card: CardEdit) => void;
   /**
+   * Exclui um card de qualquer deck. Se era o último, o deck também é excluído (não existe deck
+   * sem cards); nesse caso devolve true, para a tela voltar a Meus Decks.
+   */
+  deleteCard: (deckId: string, cardId: string) => boolean;
+  /**
    * Estudo por disciplina em andamento: deck temporário (nome "Disciplina - Conteúdo" e os cards
    * sorteados), que não entra em `decks` nem é salvo. null: nenhum estudo configurado.
    */
@@ -52,23 +57,11 @@ export type DisciplineStudy = {
 
 const DecksContext = createContext<DecksData | null>(null);
 
-/**
- * Disciplina do deck criado: as dos cards vinculados, sem repetir, na ordem em que aparecem
- * (ex.: "História, Física"). O deck tem uma disciplina só e o rótulo "Disciplina - Tema" é o
- * mesmo em todos os cards.
- */
-// TODO: confirmar a regra da disciplina de um deck com cards de disciplinas diferentes.
-function deckDiscipline(cards: LinkedCard[]): string {
-  return Array.from(new Set(cards.map((card) => card.discipline.name))).join(', ');
-}
-
-/** Card de um deck a partir de um card do Novo Flashcard: o título exibido é a frente */
-function toDeckCard(deckId: string, position: number, card: Omit<LinkedCard, 'id'>): DeckCard {
+/** Card de um deck a partir de um card do Novo Flashcard (o id é único dentro do deck) */
+function toDeckCard(deckId: string, cardKey: string, card: Omit<LinkedCard, 'id'>): DeckCard {
   return {
-    // Mesmo formato dos ids fictícios (deck-posição): o próximo número nunca se repete
-    id: `${deckId}-${position}`,
+    id: `${deckId}-${cardKey}`,
     deckId,
-    title: card.front,
     front: card.front,
     back: card.back,
     disciplineId: card.discipline.id,
@@ -98,9 +91,12 @@ type Props = {
  * memória. Envolve a pilha de Meus Decks (app/(tabs)/decks/_layout.tsx), que continua montada
  * enquanto o app está aberto.
  */
-// TODO: substituir pelos decks e cards do back e persistir os decks e cards criados.
+// TODO: substituir pelos decks e cards do back e persistir os decks e cards criados, editados e
+// excluídos.
 export function DecksProvider({ children }: Props) {
   const [createdDecks, setCreatedDecks] = useState<Deck[]>([]);
+  // Decks fictícios excluídos (ao excluir o último card deles)
+  const [deletedDeckIds, setDeletedDeckIds] = useState<string[]>([]);
   // Lista completa de cards dos decks criados ou alterados, por id do deck. Cada lista só muda
   // quando o deck recebe um card (referência estável para as telas)
   const [cardsByDeck, setCardsByDeck] = useState<Record<string, DeckCard[]>>({});
@@ -111,13 +107,15 @@ export function DecksProvider({ children }: Props) {
   // A contagem continua derivada da lista de cards quando o deck tem cards em memória
   const decks = useMemo(
     () =>
-      [...createdDecks, ...MOCK_DECKS].map((deck) => {
-        const cards = cardsByDeck[deck.id];
-        return cards && cards.length !== deck.cardsCount
-          ? { ...deck, cardsCount: cards.length }
-          : deck;
-      }),
-    [createdDecks, cardsByDeck],
+      [...createdDecks, ...MOCK_DECKS]
+        .filter((deck) => !deletedDeckIds.includes(deck.id))
+        .map((deck) => {
+          const cards = cardsByDeck[deck.id];
+          return cards && cards.length !== deck.cardsCount
+            ? { ...deck, cardsCount: cards.length }
+            : deck;
+        }),
+    [createdDecks, deletedDeckIds, cardsByDeck],
   );
 
   const getDeckCards = useCallback(
@@ -131,14 +129,14 @@ export function DecksProvider({ children }: Props) {
       id,
       title,
       description,
-      discipline: deckDiscipline(cards),
       // Derivada da lista: fonte única da contagem, como nos decks fictícios
       cardsCount: cards.length,
     };
     setCreatedDecks((prev) => [deck, ...prev]);
     setCardsByDeck((prev) => ({
       ...prev,
-      [id]: cards.map((card, index) => toDeckCard(id, index + 1, card)),
+      // Mesmo formato dos ids fictícios (deck-posição)
+      [id]: cards.map((card, index) => toDeckCard(id, String(index + 1), card)),
     }));
     return deck;
   }, []);
@@ -147,7 +145,9 @@ export function DecksProvider({ children }: Props) {
     setCardsByDeck((prev) => {
       // Primeiro card novo de um deck fictício: parte dos cards gerados para ele
       const current = storedCards(prev, deckId);
-      return { ...prev, [deckId]: [...current, toDeckCard(deckId, current.length + 1, card)] };
+      // A posição pode se repetir depois de uma exclusão: o id usa o instante da criação
+      const added = toDeckCard(deckId, `novo-${Date.now().toString(36)}`, card);
+      return { ...prev, [deckId]: [...current, added] };
     });
     setCardAddedToastDeckId(deckId);
   }, []);
@@ -159,10 +159,6 @@ export function DecksProvider({ children }: Props) {
         item.id === cardId
           ? {
               ...item,
-              // Card sem título próprio (criado no app: o título é a frente) acompanha a frente;
-              // os fictícios mantêm o título deles
-              // TODO: confirmar a regra do título do card editado.
-              title: item.title === item.front ? card.front : item.title,
               front: card.front,
               back: card.back,
               disciplineId: card.discipline.id,
@@ -173,6 +169,26 @@ export function DecksProvider({ children }: Props) {
     }));
   }, []);
 
+  const deleteCard = useCallback(
+    (deckId: string, cardId: string) => {
+      const remaining = storedCards(cardsByDeck, deckId).filter((card) => card.id !== cardId);
+      if (remaining.length > 0) {
+        setCardsByDeck((prev) => ({ ...prev, [deckId]: remaining }));
+        return false;
+      }
+      // Era o último card: o deck sai de Meus Decks
+      setCreatedDecks((prev) => prev.filter((deck) => deck.id !== deckId));
+      setDeletedDeckIds((prev) => (prev.includes(deckId) ? prev : [...prev, deckId]));
+      setCardsByDeck((prev) => {
+        const next = { ...prev };
+        delete next[deckId];
+        return next;
+      });
+      return true;
+    },
+    [cardsByDeck],
+  );
+
   const hideCardAddedToast = useCallback(() => setCardAddedToastDeckId(null), []);
 
   const value = useMemo(
@@ -182,6 +198,7 @@ export function DecksProvider({ children }: Props) {
       createDeck,
       addCardToDeck,
       updateCard,
+      deleteCard,
       disciplineStudy,
       startDisciplineStudy: setDisciplineStudy,
       cardAddedToastDeckId,
@@ -193,6 +210,7 @@ export function DecksProvider({ children }: Props) {
       createDeck,
       addCardToDeck,
       updateCard,
+      deleteCard,
       disciplineStudy,
       cardAddedToastDeckId,
       hideCardAddedToast,

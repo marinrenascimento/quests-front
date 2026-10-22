@@ -4,12 +4,18 @@ import { FontFamily, Palette } from '@/constants/theme';
 import { EXAM_MOCKUP_WIDTH, useMockupScale } from '@/hooks/useMockupScale';
 
 type Props = {
-  /** Letra da alternativa (A a E) */
+  /** Letra da alternativa, pela posição (A, B, C...) */
   letter: string;
   text: string;
-  /** Alternativa escolhida: fundo verde escuro, círculo amarelo e texto branco */
+  /**
+   * Alternativa escolhida (ou, no Visualizar Questão, a correta): fundo verde escuro, círculo
+   * amarelo e texto branco
+   */
   selected: boolean;
-  onPress: () => void;
+  /** Sem ação, a linha é só leitura (ex.: Visualizar Questão): sem toque nem efeito */
+  onPress?: () => void;
+  /** Lido pelo leitor de tela depois do texto (ex.: "Correta"). Opcional. */
+  statusLabel?: string;
 };
 
 // Medidas do mockup da realização de prova, em px
@@ -30,15 +36,16 @@ const TEXT_LINE_HEIGHT = 18.4;
  * círculo branco com borda verde escura. Escolhida: fundo verde escuro, círculo amarelo sem
  * borda e texto branco.
  */
-export function AlternativeOption({ letter, text, selected, onPress }: Props) {
+export function AlternativeOption({ letter, text, selected, onPress, statusLabel }: Props) {
   const { scale } = useMockupScale(EXAM_MOCKUP_WIDTH);
   const circle = scale(CIRCLE);
 
   return (
     <Pressable
-      accessibilityRole="radio"
-      accessibilityLabel={`${letter}, ${text}`}
-      accessibilityState={{ checked: selected }}
+      accessibilityRole={onPress ? 'radio' : 'text'}
+      accessibilityLabel={[letter, text, statusLabel].filter(Boolean).join(', ')}
+      accessibilityState={onPress ? { checked: selected } : undefined}
+      disabled={!onPress}
       onPress={onPress}
       style={({ pressed }) => [
         styles.row,

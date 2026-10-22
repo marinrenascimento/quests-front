@@ -4,8 +4,8 @@ import { FlashcardViewTemplate } from '@/components/templates/FlashcardViewTempl
 import { VIEW_FLASHCARD_CONTENT } from '@/constants/decks';
 import { BACK_LABEL } from '@/constants/helpContent';
 import { TEMP_COINS, TEMP_USER_NAME } from '@/constants/mockUser';
-import { useDeckCreation } from '@/hooks/useDeckCreation';
 import { useDecks } from '@/hooks/useDecks';
+import { useSubjects } from '@/hooks/useSubjects';
 import { cardName } from '@/utils/cardName';
 
 /** Visualizar Card, aberto pelo olho de um card em Cards do Deck. Só lê: nada é alterado aqui. */
@@ -14,7 +14,7 @@ export default function ViewDeckCardScreen() {
   const { deckId, cardId } = useLocalSearchParams<{ deckId: string; cardId: string }>();
   const { decks, getDeckCards } = useDecks();
   // Mesmo catálogo de disciplinas e conteúdos do formulário (o mock + os criados no app)
-  const { disciplines, contents } = useDeckCreation();
+  const { disciplines, contents } = useSubjects();
   // TODO: substituir pelos dados do back.
   const deck = decks.find((item) => item.id === deckId);
   const card = deck ? getDeckCards(deck).find((item) => item.id === cardId) : undefined;

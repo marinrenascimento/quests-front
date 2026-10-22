@@ -1,21 +1,21 @@
 import type { IconName } from '@/constants/helpContent';
 
-/** Um deck de flashcards do usuário */
+/**
+ * Um deck de flashcards do usuário. Não tem disciplina nem conteúdo: quem tem são os cards, e um
+ * deck pode ter cards de várias disciplinas.
+ */
 export type Deck = {
   id: string;
   title: string;
   description: string;
-  /** Disciplina do deck (ex.: "História"), mostrada no rótulo dos cards */
-  discipline: string;
   /** Quantidade de cards: fonte única da contagem (os cards fictícios são gerados com ela) */
   cardsCount: number;
 };
 
-/** Um flashcard de um deck */
+/** Um flashcard de um deck. Não tem título: onde aparece o "nome" do card, aparece a frente. */
 export type DeckCard = {
   id: string;
   deckId: string;
-  title: string;
   /** Frente do card na revisão: uma pergunta curta */
   front: string;
   /** Verso do card na revisão: a resposta */
@@ -47,14 +47,14 @@ export type LinkedCard = {
   back: string;
 };
 
-/** Rótulo "Disciplina - Tema" mostrado em cada card do deck */
-export function deckSubjectLabel(deck: Deck): string {
-  return `${deck.discipline} - ${deck.title}`;
+/** Rótulo "Disciplina - Conteúdo" de um card (em Cards do Deck e nos cards vinculados) */
+export function subjectLabel(disciplineName: string, contentName: string): string {
+  return `${disciplineName} - ${contentName}`;
 }
 
 /** Rótulo "Disciplina - Conteúdo" mostrado em cada card vinculado */
 export function linkedCardLabel(card: LinkedCard): string {
-  return `${card.discipline.name} - ${card.content.name}`;
+  return subjectLabel(card.discipline.name, card.content.name);
 }
 
 /** Textos da tela Meus Decks (o título é exibido em caixa alta pelo componente) */
@@ -167,7 +167,17 @@ export const CANCEL_CARD_CONFIRM_CONTENT = {
   cancelLabel: 'Não',
 };
 
-/** Modal de confirmação ao tocar na lixeira de um card (o destaque é o título do card) */
+/**
+ * Modal de confirmação ao sair do Editar Flashcard (seta, voltar do Android ou "Cancelar") com
+ * alteração não salva: sem texto em destaque
+ */
+export const DISCARD_CARD_EDIT_CONFIRM_CONTENT = {
+  title: 'Tem Certeza que Deseja Sair sem Salvar as Alterações Desse Card?',
+  confirmLabel: 'Sim',
+  cancelLabel: 'Não',
+};
+
+/** Modal de confirmação ao tocar na lixeira de um card (o destaque é a frente do card) */
 export const DELETE_CARD_CONFIRM_CONTENT = {
   title: 'Tem Certeza que Deseja Excluir o Card:',
   confirmLabel: 'Sim',
@@ -176,6 +186,8 @@ export const DELETE_CARD_CONFIRM_CONTENT = {
 
 export type CardActionKey = 'edit' | 'delete' | 'view';
 
+// TODO (dívida): o nome fala em deck/card, mas também são os botões das questões
+// (QUESTION_ACTIONS); renomear para um nome neutro num ajuste à parte, sem mudar o comportamento.
 export type CardAction = {
   key: CardActionKey;
   icon: IconName;

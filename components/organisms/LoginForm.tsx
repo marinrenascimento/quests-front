@@ -20,9 +20,11 @@ type Props = {
   /** Chamado só quando a validação local passa */
   onSubmit: (values: LoginValues) => void;
   onRegisterPress: () => void;
+  /** "Esqueceu Sua Senha?": abre o modal de suporte (não há recuperação de senha no app) */
+  onForgotPasswordPress: () => void;
 };
 
-export function LoginForm({ onSubmit, onRegisterPress }: Props) {
+export function LoginForm({ onSubmit, onRegisterPress, onForgotPasswordPress }: Props) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [remember, setRemember] = useState(true);
@@ -90,8 +92,7 @@ export function LoginForm({ onSubmit, onRegisterPress }: Props) {
       </View>
 
       <View style={styles.link}>
-        {/* TODO: criar a tela de recuperação de senha e integrar com o back */}
-        <LinkText title="Esqueceu Sua Senha?" />
+        <LinkText title="Esqueceu Sua Senha?" onPress={onForgotPasswordPress} />
       </View>
     </View>
   );

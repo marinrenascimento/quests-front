@@ -18,10 +18,12 @@ type Props = {
   form: FlashcardFormState;
   onSave: () => void;
   /**
-   * Voltar e "Cancelar": no Novo Flashcard, quem usa abre o modal de confirmação antes de sair;
-   * no Editar Flashcard, sai direto
+   * "Cancelar": no Novo Flashcard, quem usa abre o modal de confirmação; no Editar Flashcard,
+   * pergunta só se houver alteração não salva
    */
   onCancel: () => void;
+  /** Seta de voltar: pergunta só se algo seria perdido (form.hasChanges); senão, sai direto */
+  onBack: () => void;
   /**
    * Card inexistente (Editar Flashcard): no lugar do formulário, só esta mensagem; a saída é a
    * seta de voltar. Opcional.
@@ -48,6 +50,7 @@ export function FlashcardFormTemplate({
   form,
   onSave,
   onCancel,
+  onBack,
   notFoundMessage,
   backLabel,
   coins,
@@ -72,7 +75,7 @@ export function FlashcardFormTemplate({
       keyboardAware
       scrollRef={scrollRef}
       topBar={<TopBar onTabPress={handleTabPress} coins={coins} userName={userName} />}>
-      <ReportHeader title={content.title} onBack={onCancel} backLabel={backLabel} />
+      <ReportHeader title={content.title} onBack={onBack} backLabel={backLabel} />
       {notFoundMessage ? (
         <BodyText align="center" style={{ marginTop: scale(NOT_FOUND_TOP) }}>
           {notFoundMessage}

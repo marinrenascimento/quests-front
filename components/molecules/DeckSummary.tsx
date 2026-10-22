@@ -16,7 +16,8 @@ type Props = {
   countLabel: string;
   /**
    * Máximo de linhas do título (padrão: 1, como em Meus Decks). Com mais, o espaço de todas as
-   * linhas fica reservado, para os cartões terem a mesma altura, e a fonte diminui se não couber.
+   * linhas fica reservado, para os cartões terem a mesma altura. A fonte é a mesma em todos os
+   * cartões: o que não couber é cortado com reticências.
    */
   titleLines?: number;
   /** Posição da quantidade (padrão: centralizada, como em Meus Decks) */
@@ -41,8 +42,6 @@ const DESCRIPTION_SIZE = 8.2;
 const DESCRIPTION_LINE_HEIGHT = 10.5;
 /** Altura de cada linha do título quando ele pode quebrar */
 const TITLE_LINE_HEIGHT = 7;
-/** Menor escala da fonte do título de várias linhas (iOS; no Android diminui o necessário) */
-const MIN_TITLE_SCALE = 0.6;
 const COUNT_GAP = 5;
 /** Espaço entre o título e a quantidade quando não há linha de descrição */
 const COUNT_GAP_NO_DESCRIPTION = 8;
@@ -77,8 +76,6 @@ export function DeckSummary({
       color={Palette.forest}
       numberOfLines={titleLines}
       lineHeight={multilineTitle ? titleLineHeight : undefined}
-      adjustsFontSizeToFit
-      minimumFontScale={multilineTitle ? MIN_TITLE_SCALE : undefined}
       style={multilineTitle ? styles.centered : [styles.centered, { marginTop: scale(TITLE_GAP) }]}>
       {title}
     </PixelText>

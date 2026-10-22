@@ -17,14 +17,22 @@ type Props = {
    */
   highlight?: string;
   /**
+   * Máximo de linhas do destaque (padrão: 2). Com 1 (ex.: um e-mail, que não deve quebrar), a
+   * fonte diminui até o texto inteiro caber numa linha.
+   */
+  highlightLines?: number;
+  /**
    * Frase entre a moldura e os botões (ex.: "Foram respondidas 3 de 9 questões."). Opcional: sem
    * ela, o modal fica como antes.
    */
   description?: string;
-  /** Botão claro, à esquerda (ex.: "Sim") */
+  /** Botão claro, à esquerda (ex.: "Sim"); sozinho (sem cancelLabel), fica escuro */
   confirmLabel: string;
-  /** Botão escuro, à direita (ex.: "Não") */
-  cancelLabel: string;
+  /**
+   * Botão escuro, à direita (ex.: "Não"). Opcional: sem ele, o modal é só um aviso, com o botão
+   * de confirmar sozinho (ex.: "Entendi").
+   */
+  cancelLabel?: string;
   onConfirm: () => void;
   /** Também chamado pelo voltar do Android */
   onCancel: () => void;
@@ -54,13 +62,14 @@ const MAX_WIDTH = 420;
 /**
  * Modal de confirmação: caixa branca centralizada com a pergunta, um texto em destaque numa
  * moldura de cantos e dois botões lado a lado (confirmar, claro, à esquerda; cancelar, escuro,
- * à direita). Sem fundo escurecido: a sobreposição é transparente e só bloqueia os toques na
+ * à direita), ou um botão só, nos avisos. Sem fundo escurecido: a sobreposição é transparente e só bloqueia os toques na
  * tela de baixo (tocar fora da caixa não faz nada); a caixa se destaca pela sombra.
  */
 export function ConfirmModal({
   visible,
   title,
   highlight,
+  highlightLines = 2,
   description,
   confirmLabel,
   cancelLabel,
@@ -117,7 +126,7 @@ export function ConfirmModal({
                   size={scale(HIGHLIGHT_SIZE)}
                   letterSpacing={scale(HIGHLIGHT_LETTER_SPACING)}
                   lineHeight={scale(HIGHLIGHT_LINE_HEIGHT)}
-                  numberOfLines={2}
+                  numberOfLines={highlightLines}
                   adjustsFontSizeToFit
                   color={Palette.forest}
                   style={styles.highlight}>
@@ -148,9 +157,11 @@ export function ConfirmModal({
               label={confirmLabel}
               onPress={onConfirm}
               variant="dialog"
-              tone="light"
+              tone={cancelLabel ? 'light' : 'dark'}
             />
-            <IconTextButton label={cancelLabel} onPress={onCancel} variant="dialog" />
+            {cancelLabel ? (
+              <IconTextButton label={cancelLabel} onPress={onCancel} variant="dialog" />
+            ) : null}
           </View>
         </View>
       </View>

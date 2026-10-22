@@ -1,8 +1,7 @@
 import { useState } from 'react';
 
 import { LinkedCard } from '@/constants/decks';
-import { useDeckCreation } from '@/hooks/useDeckCreation';
-import { normalizeSearch } from '@/utils/normalizeSearch';
+import { useSubjects } from '@/hooks/useSubjects';
 
 type Field = 'discipline' | 'content' | 'front' | 'back';
 type Errors = Partial<Record<Field, string>>;
@@ -19,13 +18,9 @@ type Options = {
   /** Mensagem de obrigatório de cada campo, mostrada abaixo dele ao salvar */
   requiredMessages: Record<Field, string>;
   /**
-   * Criação: nome da disciplina que já vem escolhida (ex.: a do deck, no "Adicionar Card"); o
-   * usuário pode trocar. Sem disciplina com esse nome no catálogo, o campo começa vazio.
-   */
-  initialDisciplineName?: string;
-  /**
    * Edição: os campos começam com os valores do card. Com eles, Cancelar fica sempre visível e
-   * Salvar só aparece quando algum valor for diferente do original. Sem eles, é uma criação.
+   * Salvar só aparece quando algum valor for diferente do original. Sem eles, é uma criação (que
+   * começa com todos os campos vazios, inclusive a disciplina).
    */
   initialValues?: FlashcardInitialValues;
 };
@@ -35,28 +30,15 @@ const byName = (a: { name: string }, b: { name: string }) => a.name.localeCompar
 /**
  * Campos do Novo Flashcard e do Editar Flashcard em estado local, com o padrão de validação do
  * cadastro de usuário: os erros de obrigatório só aparecem ao salvar e somem quando o campo é
- * preenchido de novo. Disciplinas e conteúdos vêm do DeckCreationProvider (o mock + os criados
- * na hora). O conteúdo depende da disciplina: lista só os dela e é limpo quando a disciplina
+ * preenchido de novo. Disciplinas e conteúdos vêm do SubjectsProvider (o mock + os criados na
+ * hora, o mesmo catálogo das questões). O conteúdo depende da disciplina: lista só os dela e é limpo quando a disciplina
  * muda. A visibilidade dos botões é decidida aqui (showCancel e showSave).
  */
-export function useFlashcardForm({
-  requiredMessages,
-  initialDisciplineName,
-  initialValues,
-}: Options) {
-  const { disciplines, contents, addDiscipline, addContent } = useDeckCreation();
+export function useFlashcardForm({ requiredMessages, initialValues }: Options) {
+  const { disciplines, contents, addDiscipline, addContent } = useSubjects();
   // Valores originais da edição, congelados na abertura da tela (base da comparação)
   const [original] = useState(initialValues);
-  const [disciplineId, setDisciplineId] = useState<string | undefined>(() => {
-    if (original) {
-      return original.disciplineId;
-    }
-    return initialDisciplineName === undefined
-      ? undefined
-      : disciplines.find(
-          (item) => normalizeSearch(item.name) === normalizeSearch(initialDisciplineName),
-        )?.id;
-  });
+  const [disciplineId, setDisciplineId] = useState<string | undefined>(original?.disciplineId);
   const [contentId, setContentId] = useState<string | undefined>(original?.contentId);
   const [front, setFrontValue] = useState(original?.front ?? '');
   const [back, setBackValue] = useState(original?.back ?? '');
@@ -114,6 +96,12 @@ export function useFlashcardForm({
      * ambos, a disciplina, o conteúdo, a frente e o verso são conferidos ao salvar.
      */
     showSave: original ? changed : filled,
+    /**
+     * Algo seria perdido ao sair (a seta e o voltar do Android pedem confirmação). Criação: texto
+     * na frente ou no verso (escolher só a disciplina ou o conteúdo não conta). Edição: alteração
+     * real em algum campo.
+     */
+    hasChanges: original ? changed : front.trim() !== '' || back.trim() !== '',
     selectDiscipline,
     selectContent,
     // TODO: criar a disciplina e o conteúdo no back (hoje só no estado em memória).

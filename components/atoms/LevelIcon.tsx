@@ -31,6 +31,16 @@ const LEVEL_IMAGES: Record<RankLevel, TrimmedImageSpec> = {
     imageSize: { width: 3180, height: 4720 },
     content: { x: 154, y: 538, width: 2838, height: 3181 },
   },
+  ouro: {
+    source: require('@/assets/images/niveis/ouro.png'),
+    imageSize: { width: 3136, height: 4928 },
+    content: { x: 73, y: 982, width: 2940, height: 3016 },
+  },
+  prata: {
+    source: require('@/assets/images/niveis/prata.png'),
+    imageSize: { width: 3056, height: 4720 },
+    content: { x: 8, y: 520, width: 2925, height: 3022 },
+  },
   // Moeda laranja do mockup
   bronze: {
     source: require('@/assets/images/niveis/bronze.png'),

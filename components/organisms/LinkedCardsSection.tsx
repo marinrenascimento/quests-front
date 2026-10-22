@@ -5,16 +5,22 @@ import { Label } from '@/components/atoms/Label';
 import { FlashcardContent } from '@/components/molecules/FlashcardContent';
 import { InfoCard } from '@/components/molecules/InfoCard';
 import { CARD_HEIGHT_RATIO, CARD_PADDING } from '@/components/organisms/FlashcardGrid';
-import { LinkedCard, linkedCardLabel } from '@/constants/decks';
 import { useGridLayout } from '@/hooks/useGridLayout';
+
+/** Um item vinculado: rótulo "Disciplina - Conteúdo" no topo e o "nome" no centro */
+export type LinkedItem = {
+  id: string;
+  label: string;
+  title: string;
+};
 
 type Props = {
   /** Rótulo acima da área (mesmo estilo dos rótulos dos campos) */
   label: string;
   /** Texto mostrado enquanto não há cards */
   emptyMessage: string;
-  /** Cards vinculados ao deck em criação (padrão: nenhum) */
-  cards?: LinkedCard[];
+  /** Cards vinculados ao deck em criação ou questões da prova em criação (padrão: nenhum) */
+  cards?: LinkedItem[];
 };
 
 /** Espaço interno do cartão do estado vazio, em px do mockup da Help */
@@ -28,6 +34,8 @@ const EMPTY_PADDING = 20;
  * direto (sem FlatList, que não pode ficar dentro do ScrollView da tela).
  */
 // TODO: listar os cards vinculados ao deck vindos do back (hoje só os criados nesta sessão).
+// TODO (dívida): o nome fala em cards, mas também lista as questões de Criar Nova Prova; renomear
+// para um nome neutro (ex.: LinkedItemsSection) num ajuste à parte.
 export function LinkedCardsSection({ label, emptyMessage, cards = [] }: Props) {
   const { gap, itemWidth: gridItemWidth } = useGridLayout();
   // Arredondada para baixo: com a soma exata, o arredondamento do layout pode jogar o segundo
@@ -47,11 +55,7 @@ export function LinkedCardsSection({ label, emptyMessage, cards = [] }: Props) {
           {cards.map((card) => (
             <View key={card.id} style={{ width: itemWidth, height: itemWidth * CARD_HEIGHT_RATIO }}>
               <InfoCard padding={CARD_PADDING} style={styles.fill}>
-                <FlashcardContent
-                  cardId={card.id}
-                  label={linkedCardLabel(card)}
-                  title={card.front}
-                />
+                <FlashcardContent cardId={card.id} label={card.label} title={card.title} />
               </InfoCard>
             </View>
           ))}

@@ -2,13 +2,38 @@ import { CARD_ACTIONS, CardAction, CardActionKey } from '@/constants/decks';
 import type { IconName } from '@/constants/helpContent';
 import { Palette } from '@/constants/theme';
 
-/** Uma prova do usuário (Minhas Provas) */
+/**
+ * Origem de uma prova: criada pelo usuário (Minhas Provas) ou prova pronta de um vestibular
+ * (Vestibulares, que não pode ser alterada)
+ */
+export type ExamOrigin = 'usuario' | 'vestibular';
+
+/** Vestibular de origem de uma prova pronta (ex.: ENEM 2023) */
+export type EntranceExamInfo = {
+  /** Nome do vestibular (ex.: "ENEM", "ITA") */
+  name: string;
+  year: number;
+};
+
+/**
+ * Uma prova. Disciplinas, conteúdos e quantidade de questões não são guardados: saem das
+ * questões dela (uma prova pode ter várias disciplinas e vários conteúdos).
+ */
 export type Exam = {
   id: string;
   title: string;
+  origin: ExamOrigin;
+  /** Só nas provas de vestibular */
+  entranceExam?: EntranceExamInfo;
   /** Quantidade de questões da prova: derivada da lista de questões dela */
   questionsCount: number;
+  /** Disciplinas e conteúdos das questões da prova, sem repetir (ids do catálogo) */
+  disciplineIds: string[];
+  contentIds: string[];
 };
+
+/** Dados guardados de uma prova (o resto sai das questões) */
+export type ExamRecord = Pick<Exam, 'id' | 'title' | 'origin' | 'entranceExam'>;
 
 /**
  * Dificuldade de uma questão, definida na própria questão. Não é a dificuldade que o usuário
@@ -37,38 +62,73 @@ export function questionStars(difficulty: QuestionDifficulty): number {
   return QUESTION_DIFFICULTY_STARS[difficulty];
 }
 
-/** Letras das alternativas, na ordem: vêm da posição da alternativa (não são guardadas) */
-export const ALTERNATIVE_LETTERS = ['A', 'B', 'C', 'D', 'E'] as const;
+/** Dificuldades na ordem da tela (da mais fácil para a mais difícil) */
+export const QUESTION_DIFFICULTIES: QuestionDifficulty[] = ['facil', 'medio', 'dificil'];
 
-export type AlternativeLetter = (typeof ALTERNATIVE_LETTERS)[number];
+/**
+ * Letra de uma alternativa pela posição (0 -> A, 1 -> B...). Não é guardada: ao remover uma
+ * alternativa, as letras das seguintes se reajustam. Depois do Z, segue AA, AB...
+ */
+export function alternativeLetter(index: number): string {
+  let letters = '';
+  let rest = index;
+  do {
+    letters = String.fromCharCode(65 + (rest % 26)) + letters;
+    rest = Math.floor(rest / 26) - 1;
+  } while (rest >= 0);
+  return letters;
+}
 
-/** Uma questão de uma prova */
-// TODO: gabarito da questão, quando os requisitos definirem.
+/** Uma alternativa de uma questão. Toda questão tem exatamente uma alternativa correta. */
+export type Alternative = {
+  id: string;
+  text: string;
+  correct: boolean;
+};
+
+/**
+ * Uma questão de uma prova. Todas são de assinalar (múltipla escolha), com quantas alternativas
+ * quem criou quiser e exatamente uma correta (o gabarito, que não aparece durante a prova).
+ */
 export type Question = {
   id: string;
   examId: string;
-  /** Disciplina (ex.: "Matemática") e conteúdo (ex.: "Equações do 1º grau") */
-  discipline: string;
-  topic: string;
-  /** Enunciado em texto normal (a lista de questões exibe em caixa alta) */
+  title: string;
+  /** Enunciado em texto normal */
   statement: string;
+  /** Disciplina e conteúdo (ids do catálogo de disciplinas e conteúdos, o mesmo dos cards) */
+  disciplineId: string;
+  contentId: string;
+  /** Escolhida por quem cria a questão */
   difficulty: QuestionDifficulty;
-  /** Textos das 5 alternativas, na ordem das letras A a E */
-  alternatives: string[];
+  /** Na ordem das letras (A, B, C...) */
+  alternatives: Alternative[];
 };
 
-/** Rótulo "Disciplina - Conteúdo" mostrado no topo do card de uma questão */
-export function questionSubjectLabel(question: Question): string {
-  return `${question.discipline} - ${question.topic}`;
+/** Campos de uma questão preenchidos no formulário (sem os ids da questão e da prova) */
+export type QuestionValues = Omit<Question, 'id' | 'examId'>;
+
+/** Questão adicionada à prova em criação (ainda um rascunho, sem prova) */
+export type DraftQuestion = QuestionValues & { id: string };
+
+/** Disciplinas e conteúdos de uma lista de questões, sem repetir, na ordem em que aparecem */
+export function questionsSubjects(questions: Pick<Question, 'disciplineId' | 'contentId'>[]) {
+  return {
+    disciplineIds: Array.from(new Set(questions.map((question) => question.disciplineId))),
+    contentIds: Array.from(new Set(questions.map((question) => question.contentId))),
+  };
 }
 
 /** Rótulo "Disciplina · Conteúdo" do card de uma questão na realização da prova */
-export function examSubjectLabel(question: Question): string {
-  return `${question.discipline} · ${question.topic}`;
+export function examSubjectLabel(disciplineName: string, contentName: string): string {
+  return `${disciplineName} · ${contentName}`;
 }
 
-/** Respostas da prova em andamento: id da questão -> letra escolhida (sem chave: sem resposta) */
-export type ExamAnswers = Record<string, AlternativeLetter>;
+/**
+ * Respostas da prova em andamento: id da questão -> id da alternativa escolhida (sem chave: sem
+ * resposta)
+ */
+export type ExamAnswers = Record<string, string>;
 
 /** Cor do marcador de texto */
 export type MarkerColor = 'blue' | 'yellow' | 'red';
@@ -139,6 +199,185 @@ export const EXAM_QUESTIONS_CONTENT = {
   notFoundMessage: 'Prova Não Encontrada',
 };
 
+/** Toast depois de salvar uma questão (na prova em criação ou numa prova que já existe) */
+export const QUESTION_ADDED_TOAST = 'Questão Adicionada com Sucesso!';
+
+/** Toast ao tentar excluir a única questão de uma prova (a prova não fica sem questões) */
+export const LAST_QUESTION_TOAST = 'A Prova Precisa de Pelo Menos 1 Questão.';
+
+/** Mensagem das telas de questão quando a prova não pode ser alterada (vestibular) */
+export const LOCKED_EXAM_MESSAGE = 'Provas de Vestibular Não Podem Ser Alteradas';
+
+/** Textos da tela Criar Nova Prova (o título é exibido em caixa alta pelo componente) */
+export const EXAM_FORM_CONTENT = {
+  title: 'Criar Nova Prova',
+  nameLabel: 'Nome da Prova',
+  namePlaceholder: 'Digite o Nome da Prova',
+  nameRequired: 'Informe o Nome da Prova.',
+  addQuestionLabel: 'Adicionar Questão +',
+  questionsLabel: 'Questões Adicionadas',
+  questionsEmpty: 'Nenhuma Questão Foi Adicionada Ainda...',
+  /** Botões que aparecem depois da primeira questão adicionada */
+  saveLabel: 'Salvar',
+  cancelLabel: 'Cancelar',
+};
+
+export type ExamFormContent = typeof EXAM_FORM_CONTENT;
+
+/** Modal ao cancelar (ou voltar de) Criar Nova Prova com questão adicionada */
+export const CANCEL_EXAM_CONFIRM_CONTENT = {
+  title: 'Tem Certeza que Deseja Cancelar a Criação Dessa Prova?',
+  confirmLabel: 'Sim',
+  cancelLabel: 'Não',
+};
+
+/** Textos da tela Adicionar Questão (o título é exibido em caixa alta pelo componente) */
+export const QUESTION_FORM_CONTENT = {
+  title: 'Adicionar Questão',
+  disciplineLabel: 'Disciplina',
+  disciplinePlaceholder: 'Pesquise ou Crie uma Disciplina',
+  disciplineRequired: 'Informe a Disciplina.',
+  createDiscipline: (text: string) => `Criar Disciplina "${text}"`,
+  contentLabel: 'Conteúdo',
+  contentPlaceholder: 'Pesquise ou Crie um Conteúdo',
+  contentDisabledPlaceholder: 'Escolha uma Disciplina Primeiro',
+  contentRequired: 'Informe o Conteúdo.',
+  createContent: (text: string) => `Criar Conteúdo "${text}"`,
+  noOptions: 'Nenhum Item Cadastrado. Digite para Criar.',
+  titleLabel: 'Título',
+  titlePlaceholder: 'Digite o Título da Questão',
+  titleRequired: 'Informe o Título.',
+  statementLabel: 'Enunciado',
+  statementPlaceholder: 'Digite o Enunciado da Questão',
+  statementRequired: 'Informe o Enunciado.',
+  difficultyLabel: 'Nível de Dificuldade',
+  difficultyRequired: 'Informe o Nível de Dificuldade.',
+  /** Opções de dificuldade com as estrelas da realização da prova (RN-156) */
+  difficultyOptions: QUESTION_DIFFICULTIES.map((value) => ({
+    value,
+    label: QUESTION_DIFFICULTY_LABELS[value],
+    stars: questionStars(value),
+    accessibilityLabel: `Dificuldade ${QUESTION_DIFFICULTY_LABELS[value]}, ${questionStars(value)} de ${MAX_QUESTION_STARS} estrelas`,
+  })),
+  maxStars: MAX_QUESTION_STARS,
+  alternativesLabel: 'Alternativas',
+  alternativesEmpty: 'Nenhuma Alternativa Foi Adicionada Ainda...',
+  addAlternativeLabel: 'Adicionar Alternativa +',
+  alternativePlaceholder: 'Digite o Texto da Alternativa',
+  alternativeRequired: 'Informe o Texto da Alternativa.',
+  /** Rótulo do campo de texto de uma alternativa, lido pelo leitor de tela */
+  alternativeLabel: (letter: string) => `Alternativa ${letter}`,
+  correctLabel: 'Correta',
+  removeAlternativeLabel: (letter: string) => `Remover Alternativa ${letter}`,
+  removeAlternativeIcon: 'trash-can-outline' as IconName,
+  starIcon: 'star' as IconName,
+  starOutlineIcon: 'star-outline' as IconName,
+  saveLabel: 'Salvar',
+  cancelLabel: 'Cancelar',
+};
+
+export type QuestionFormContent = typeof QUESTION_FORM_CONTENT & {
+  /** Questão inexistente ou prova que não pode ser alterada (Editar Questão) */
+  notFoundMessage?: string;
+};
+
+/** Textos da tela Editar Questão: o mesmo formulário, com outro título */
+export const EDIT_QUESTION_CONTENT: QuestionFormContent = {
+  ...QUESTION_FORM_CONTENT,
+  title: 'Editar Questão',
+  notFoundMessage: 'Questão Não Encontrada',
+};
+
+/** Modal ao cancelar (ou voltar de) Adicionar Questão com algo escrito */
+export const CANCEL_QUESTION_CONFIRM_CONTENT = {
+  title: 'Tem Certeza que Deseja Cancelar a Criação Dessa Questão?',
+  confirmLabel: 'Sim',
+  cancelLabel: 'Não',
+};
+
+/** Modal ao sair do Editar Questão com alteração não salva */
+export const DISCARD_QUESTION_EDIT_CONFIRM_CONTENT = {
+  title: 'Tem Certeza que Deseja Sair sem Salvar as Alterações Dessa Questão?',
+  confirmLabel: 'Sim',
+  cancelLabel: 'Não',
+};
+
+/** Modal ao excluir uma questão (o destaque é o título da questão) */
+export const DELETE_QUESTION_CONFIRM_CONTENT = {
+  title: 'Tem Certeza que Deseja Excluir a Questão:',
+  confirmLabel: 'Sim',
+  cancelLabel: 'Não',
+};
+
+/** Textos da tela Visualizar Questão (somente leitura) */
+export const VIEW_QUESTION_CONTENT = {
+  title: (name: string) => `Questão "${name}"`,
+  titleLabel: QUESTION_FORM_CONTENT.titleLabel,
+  disciplineLabel: QUESTION_FORM_CONTENT.disciplineLabel,
+  contentLabel: QUESTION_FORM_CONTENT.contentLabel,
+  difficultyLabel: QUESTION_FORM_CONTENT.difficultyLabel,
+  statementLabel: QUESTION_FORM_CONTENT.statementLabel,
+  alternativesLabel: QUESTION_FORM_CONTENT.alternativesLabel,
+  /** Lido pelo leitor de tela junto com a alternativa correta */
+  correctLabel: 'Correta',
+  starIcon: 'star' as IconName,
+  starOutlineIcon: 'star-outline' as IconName,
+  editLabel: 'Editar',
+  deleteLabel: 'Excluir',
+  notFoundMessage: 'Questão Não Encontrada',
+  viewIcon: 'eye-outline' as IconName,
+};
+
+export type ViewQuestionContent = typeof VIEW_QUESTION_CONTENT;
+
+/** Textos da tela Vestibulares (o título é exibido em caixa alta pelo componente) */
+export const ENTRANCE_EXAMS_CONTENT = {
+  title: 'Vestibulares',
+  emptyMessage: 'Nenhum Vestibular Encontrado',
+  /** Linha abaixo do nome da prova: vestibular e ano (ex.: "ENEM · 2023") */
+  description: (info: EntranceExamInfo) => `${info.name} · ${info.year}`,
+};
+
+/** Id reservado da prova temporária do estudo por disciplina (fora de Minhas Provas) */
+export const DISCIPLINE_STUDY_EXAM_ID = 'estudo-por-disciplina';
+
+/** Opção "todas as dificuldades" do estudo por disciplina (a dificuldade é opcional) */
+export const ALL_DIFFICULTIES_ID = 'todas';
+
+/** Textos de Configurar Prova por Disciplina (o título é exibido em caixa alta) */
+export const EXAM_DISCIPLINE_STUDY_CONTENT = {
+  title: 'Configurar Prova por Disciplina',
+  disciplineLabel: 'Disciplina',
+  disciplinePlaceholder: 'Pesquise uma Disciplina',
+  disciplineRequired: 'Informe a Disciplina.',
+  disciplineNoResults: 'Nenhuma Disciplina Encontrada',
+  disciplineEmpty: 'Nenhuma Disciplina com Questões',
+  contentLabel: 'Conteúdo',
+  contentPlaceholder: 'Todos os Conteúdos (Opcional)',
+  contentDisabledPlaceholder: 'Escolha uma Disciplina Primeiro',
+  contentNoResults: 'Nenhum Conteúdo Encontrado',
+  contentEmpty: 'Nenhum Conteúdo com Questões',
+  difficultyLabel: 'Nível de Dificuldade',
+  difficultyPlaceholder: 'Todas as Dificuldades (Opcional)',
+  allDifficultiesLabel: 'Todas as Dificuldades',
+  difficultyEmpty: 'Nenhuma Dificuldade Disponível',
+  /** Disciplina, conteúdo e dificuldade sem nenhuma questão em comum */
+  noQuestions: 'Nenhuma Questão com Esse Nível de Dificuldade.',
+  quantityLabel: 'Quantidade de Questões',
+  quantityPlaceholder: 'Escolha a Quantidade',
+  quantityRequired: 'Informe a Quantidade de Questões.',
+  quantityEmpty: 'Nenhuma Quantidade Disponível',
+  cancelLabel: 'Cancelar',
+  studyLabel: 'Estudar Agora',
+};
+
+/** Modal ao cancelar (ou voltar de) Configurar Prova por Disciplina */
+export const CANCEL_EXAM_DISCIPLINE_STUDY_CONFIRM_CONTENT = {
+  title: 'Tem Certeza que Deseja Cancelar a Configuração do Estudo?',
+  confirmLabel: 'Sim',
+  cancelLabel: 'Não',
+};
+
 /** Textos e ícones da realização de uma prova */
 export const EXAM_SESSION_CONTENT = {
   exitLabel: 'Sair da prova',
@@ -153,21 +392,26 @@ export const EXAM_SESSION_CONTENT = {
   notFoundMessage: EXAM_QUESTIONS_CONTENT.notFoundMessage,
 };
 
-/** Textos e ícones do card de uma questão na realização da prova */
+/**
+ * Textos e ícones do card de uma questão na realização da prova. O rótulo "Disciplina ·
+ * Conteúdo" (subjectLabel) depende do catálogo e é completado pela tela.
+ */
 export const EXAM_QUESTION_CARD_CONTENT = {
   /** Título do card: a posição da questão na prova, começando em 1 (exibido em caixa alta) */
   title: (position: number) => `Questão ${position}`,
-  subjectLabel: examSubjectLabel,
   stars: questionStars,
   maxStars: MAX_QUESTION_STARS,
   starsLabel: (stars: number, max: number) => `Dificuldade: ${stars} de ${max}`,
   starIcon: 'star' as IconName,
   starOutlineIcon: 'star-outline' as IconName,
-  letters: ALTERNATIVE_LETTERS,
+  letter: alternativeLetter,
   highlightColors: HIGHLIGHT_COLORS,
 };
 
-export type ExamQuestionCardContent = typeof EXAM_QUESTION_CARD_CONTENT;
+export type ExamQuestionCardContent = typeof EXAM_QUESTION_CARD_CONTENT & {
+  /** "Disciplina · Conteúdo" de uma questão */
+  subjectLabel: (question: Question) => string;
+};
 
 /** Modal de "Sair da prova" (o destaque é o nome da prova) */
 export const EXIT_EXAM_CONFIRM_CONTENT = {

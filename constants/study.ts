@@ -96,10 +96,10 @@ export const DISCIPLINE_STUDY_CONTENT = {
   /** Nenhuma disciplina com cards */
   disciplineEmpty: 'Nenhuma Disciplina com Cards',
   contentLabel: 'Conteúdo',
-  contentPlaceholder: 'Pesquise um Conteúdo',
+  /** O conteúdo é opcional: sem ele, entram os cards de todos os conteúdos da disciplina */
+  contentPlaceholder: 'Todos os Conteúdos (Opcional)',
   /** Placeholder do conteúdo enquanto nenhuma disciplina foi escolhida */
   contentDisabledPlaceholder: 'Escolha uma Disciplina Primeiro',
-  contentRequired: 'Informe o Conteúdo.',
   contentNoResults: 'Nenhum Conteúdo Encontrado',
   contentEmpty: 'Nenhum Conteúdo com Cards',
   quantityLabel: 'Quantidade de Flashcards',

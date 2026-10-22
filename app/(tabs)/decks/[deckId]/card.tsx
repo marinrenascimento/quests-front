@@ -1,5 +1,5 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import { ConfirmModal } from '@/components/organisms/ConfirmModal';
 import { FlashcardFormTemplate } from '@/components/templates/FlashcardFormTemplate';
@@ -8,6 +8,7 @@ import { BACK_LABEL } from '@/constants/helpContent';
 import { TEMP_COINS, TEMP_USER_NAME } from '@/constants/mockUser';
 import { useDecks } from '@/hooks/useDecks';
 import { useFlashcardForm } from '@/hooks/useFlashcardForm';
+import { useLeaveConfirm } from '@/hooks/useLeaveConfirm';
 
 /** Novo Flashcard aberto pelo "Adicionar Card" de um deck que já existe */
 export default function AddDeckCardScreen() {
@@ -23,10 +24,11 @@ export default function AddDeckCardScreen() {
       front: FLASHCARD_FORM_CONTENT.frontRequired,
       back: FLASHCARD_FORM_CONTENT.backSideRequired,
     },
-    // Já vem com a disciplina do deck (pode ser trocada)
-    initialDisciplineName: deck?.discipline,
   });
   const [confirmVisible, setConfirmVisible] = useState(false);
+  const openConfirm = useCallback(() => setConfirmVisible(true), []);
+  // Voltar do Android e gesto: perguntam só com texto na frente ou no verso
+  useLeaveConfirm({ enabled: form.hasChanges, onRequestLeave: openConfirm });
 
   const handleLeave = () => {
     // Volta para os cards do deck (que ficam por baixo na pilha); aberta sem histórico
@@ -54,7 +56,9 @@ export default function AddDeckCardScreen() {
             handleLeave();
           }
         }}
-        onCancel={() => setConfirmVisible(true)}
+        onCancel={openConfirm}
+        // Sem texto na frente nem no verso, não há nada a perder: sai direto
+        onBack={form.hasChanges ? openConfirm : handleLeave}
         backLabel={BACK_LABEL}
         coins={TEMP_COINS}
         userName={TEMP_USER_NAME}

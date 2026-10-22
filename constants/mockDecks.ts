@@ -4,9 +4,16 @@ import { Deck } from '@/constants/decks';
 // ordem dele (esquerda para a direita, de cima para baixo); os demais servem para testar a
 // rolagem, o número ímpar de cards (o último fica sozinho na linha), o singular ("1 CARD") e
 // o separador de milhar ("1.250 CARDS").
-// Disciplinas: seguem a lista definida para a tela de cards; Tabela Periódica, Leis de Newton,
-// Ecologia, Modernismo e Inglês: Verb Tenses não estavam nela e foram escolhidas por coerência.
-export const MOCK_DECKS: Deck[] = [
+// O deck não tem disciplina (os cards têm). Aqui cada deck fictício guarda só a disciplina dos
+// cards gerados para ele (todos da mesma), que não faz parte do deck: o tema do deck (o título)
+// vira o conteúdo desses cards. As disciplinas seguem a lista definida para a tela de cards;
+// Tabela Periódica, Leis de Newton, Ecologia, Modernismo e Inglês: Verb Tenses não estavam nela e
+// foram escolhidas por coerência.
+
+/** Deck fictício com a disciplina dos cards gerados para ele */
+type MockDeckSeed = Deck & { discipline: string };
+
+const MOCK_DECK_SEEDS: MockDeckSeed[] = [
   {
     id: 'substantivos-adjetivos',
     title: 'Substantivos e Adjetivos',
@@ -113,3 +120,16 @@ export const MOCK_DECKS: Deck[] = [
     cardsCount: 12,
   },
 ];
+
+/** Decks fictícios, sem a disciplina (ela é dos cards) */
+export const MOCK_DECKS: Deck[] = MOCK_DECK_SEEDS.map(({ discipline: _discipline, ...deck }) => deck);
+
+/** Disciplina dos cards fictícios de um deck fictício (vazia para outros decks) */
+export function mockDeckDiscipline(deckId: string): string {
+  return MOCK_DECK_SEEDS.find((deck) => deck.id === deckId)?.discipline ?? '';
+}
+
+/** Disciplinas dos cards fictícios, sem repetir, na ordem dos decks */
+export const MOCK_CARD_DISCIPLINES: string[] = Array.from(
+  new Set(MOCK_DECK_SEEDS.map((deck) => deck.discipline)),
+);

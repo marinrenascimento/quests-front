@@ -48,6 +48,8 @@ const EMPTY_TOP = 24;
  * largura de cada cartão é calculada a partir da tela, então todos têm o mesmo tamanho,
  * inclusive o último de uma linha incompleta.
  */
+// TODO (dívida): o nome fala em deck/card, mas também é a grade de Minhas Provas e de Vestibulares;
+// renomear para um nome neutro num ajuste à parte, sem mudar o comportamento.
 export function DeckGrid<T extends GridItem>({
   items,
   header,

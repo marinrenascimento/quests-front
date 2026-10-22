@@ -1,5 +1,5 @@
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import { ConfirmModal } from '@/components/organisms/ConfirmModal';
 import { DisciplineStudyTemplate } from '@/components/templates/DisciplineStudyTemplate';
@@ -11,6 +11,7 @@ import {
 } from '@/constants/study';
 import { useDecks } from '@/hooks/useDecks';
 import { useDisciplineStudyForm } from '@/hooks/useDisciplineStudyForm';
+import { useLeaveConfirm } from '@/hooks/useLeaveConfirm';
 
 /** Configurar Deck por Disciplina, aberto pelo "Estudar por Disciplina" de Meus Decks */
 export default function DisciplineStudyConfigScreen() {
@@ -19,11 +20,13 @@ export default function DisciplineStudyConfigScreen() {
   const form = useDisciplineStudyForm({
     requiredMessages: {
       discipline: DISCIPLINE_STUDY_CONTENT.disciplineRequired,
-      content: DISCIPLINE_STUDY_CONTENT.contentRequired,
       quantity: DISCIPLINE_STUDY_CONTENT.quantityRequired,
     },
   });
   const [confirmVisible, setConfirmVisible] = useState(false);
+  const openConfirm = useCallback(() => setConfirmVisible(true), []);
+  // Voltar do Android e gesto: perguntam só se alguma escolha foi feita
+  useLeaveConfirm({ enabled: form.hasChoices, onRequestLeave: openConfirm });
 
   const handleLeave = () => {
     // Volta para Meus Decks (que fica por baixo na pilha); aberta sem histórico, vai para ela
@@ -48,7 +51,9 @@ export default function DisciplineStudyConfigScreen() {
             router.push('/(tabs)/decks/disciplina/estudar');
           }
         }}
-        onCancel={() => setConfirmVisible(true)}
+        onCancel={openConfirm}
+        // Sem nenhuma escolha, não há nada a perder: sai direto
+        onBack={form.hasChoices ? openConfirm : handleLeave}
         backLabel={BACK_LABEL}
         coins={TEMP_COINS}
         userName={TEMP_USER_NAME}

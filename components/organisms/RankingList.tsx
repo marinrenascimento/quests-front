@@ -1,7 +1,7 @@
 import { StyleSheet, View } from 'react-native';
 
 import { RankingRow } from '@/components/molecules/RankingRow';
-import { RankingEntry } from '@/constants/ranking';
+import { rankLevelForCoins, RankingEntry } from '@/constants/ranking';
 
 type Props = {
   entries: RankingEntry[];
@@ -24,7 +24,7 @@ export function RankingList({ entries, unit }: Props) {
           position={entry.position}
           name={entry.name}
           points={entry.points}
-          level={entry.level}
+          level={rankLevelForCoins(entry.points)}
           unit={unit}
         />
       ))}

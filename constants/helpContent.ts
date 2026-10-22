@@ -36,13 +36,23 @@ export type SupportContent = {
   prompt: string;
   buttonLabel: string;
   buttonIcon: IconName;
+  /** Modal aberto pelo botão (o mesmo do "Esqueceu Sua Senha?"): o destaque é o e-mail */
+  modal: SupportModalContent;
+};
+
+/** Modal que orienta o usuário a falar com o suporte por e-mail */
+export type SupportModalContent = {
+  title: string;
+  email: string;
+  description: string;
+  closeLabel: string;
 };
 
 // Conteúdo estático das telas de ajuda. Os títulos ficam em texto normal:
 // a caixa alta é aplicada pelo componente (PixelText).
 
-// TODO: confirmar o e-mail oficial do suporte (texto provisório do mockup).
-export const SUPPORT_EMAIL = 'suporte@questforgold.com';
+/** E-mail oficial do suporte (ajuda e modal de suporte) */
+export const SUPPORT_EMAIL = 'knightofquestions@suporte.com';
 
 /** Grade de botões da Help, na ordem do mockup (as ações ficam na tela) */
 export const HELP_MENU: HelpMenuItem[] = [
@@ -59,7 +69,7 @@ export const HELP_FAQ: FaqEntry[] = [
     id: 'novo-deck',
     question: 'Como criar um novo deck de flashcards?',
     answer:
-      'Acesse a seção "Cards" no menu principal e clique no botão "+ Novo Deck". Dê um nome ao deck, escolha a matéria e comece a adicionar seus cards com frente e verso.',
+      'Acesse "Decks" no menu principal e, em Meus Decks, toque em "Criar Novo Deck". Dê um nome ao deck e comece a adicionar seus cards com frente e verso, escolhendo a disciplina e o conteúdo de cada card.',
   },
   {
     id: 'filtrar-questoes',
@@ -90,7 +100,7 @@ export const STUDY_TOPIC: HelpTopic = {
     {
       id: 'decks',
       title: 'Criando e gerenciando decks',
-      text: 'Para criar um deck, vá em Cards > + Novo Deck. Nomeie seu deck, selecione a matéria e adicione cards com frente (pergunta) e verso (resposta). Você pode editar, reorganizar ou excluir cards a qualquer momento.',
+      text: 'Para criar um deck, vá em Meus Decks > "Criar Novo Deck". Nomeie seu deck e adicione cards com frente (pergunta) e verso (resposta), escolhendo a disciplina e o conteúdo de cada card. Você pode editar, reorganizar ou excluir cards a qualquer momento.',
     },
     {
       id: 'questoes',
@@ -100,7 +110,7 @@ export const STUDY_TOPIC: HelpTopic = {
     {
       id: 'jogos',
       title: 'Jogos educativos',
-      text: 'Os jogos como Caça-Palavras e Quiz Relâmpago reforçam o aprendizado de forma divertida. Cada jogo concede XP e conta para o ranking. Novos jogos são adicionados regularmente!',
+      text: 'Os jogos como Caça-Palavras e Quiz Relâmpago reforçam o aprendizado de forma divertida. Novos jogos são adicionados regularmente!',
     },
   ],
 };
@@ -184,8 +194,15 @@ export const FEEDBACK_TOPIC: HelpTopic = {
 /** Bloco de suporte no fim de todas as telas de ajuda */
 export const SUPPORT_CONTENT: SupportContent = {
   prompt: 'Não encontrou o que procurava?',
-  buttonLabel: 'Falar com o suporte',
+  buttonLabel: 'Falar com o Suporte',
   buttonIcon: 'message-text-outline',
+  modal: {
+    title: 'Fale com o Suporte',
+    email: SUPPORT_EMAIL,
+    description:
+      'Para trocar a sua senha ou tirar dúvidas, envie um e-mail para o suporte pelo endereço acima.',
+    closeLabel: 'Entendi',
+  },
 };
 
 /** Rótulo de acessibilidade do botão voltar */

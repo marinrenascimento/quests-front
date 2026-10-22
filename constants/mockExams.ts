@@ -1,20 +1,31 @@
-import { Exam, Question } from '@/constants/exams';
+import { ExamRecord, Question, QuestionDifficulty } from '@/constants/exams';
+import { mockSubjectIds } from '@/constants/mockSubjects';
 
-// TODO: substituir pelos dados do back. Provas e questões fictícias, num lugar só: a quantidade de
-// questões de cada prova (mostrada em Minhas Provas) é derivada da lista de questões dela, então a
-// contagem e a lista nunca divergem.
+// TODO: substituir pelos dados do back. Provas do usuário (Minhas Provas) e questões fictícias. A
+// quantidade de questões de cada prova é derivada da lista de questões dela, então a contagem e a
+// lista nunca divergem. As provas de vestibular ficam em constants/mockEntranceExams (usam as
+// mesmas questões-base e o mesmo gerador daqui).
 
-/** Conteúdo de uma questão, sem os ids (que dependem da prova e da posição) */
-type QuestionBase = Pick<
-  Question,
-  'discipline' | 'topic' | 'statement' | 'difficulty' | 'alternatives'
->;
+/**
+ * Conteúdo de uma questão fictícia, sem os ids (que dependem da prova e da posição). Disciplina e
+ * conteúdo são escritos pelo nome e viram ids do catálogo (constants/mockSubjects); `correct` é
+ * a posição da alternativa correta (o gabarito).
+ */
+type QuestionBase = {
+  title: string;
+  correct: number;
+  discipline: string;
+  topic: string;
+  statement: string;
+  difficulty: QuestionDifficulty;
+  alternatives: string[];
+};
 
 /**
  * Prova fictícia antes de montar as questões: `size` é quantas questões gerar a partir da
  * lista-base; `questions`, as questões escritas à mão para ela (usadas no lugar da geração).
  */
-type ExamSeed = Pick<Exam, 'id' | 'title'> &
+export type ExamSeed = ExamRecord &
   ({ size: number; questions?: never } | { questions: QuestionBase[]; size?: never });
 
 /**
@@ -23,6 +34,8 @@ type ExamSeed = Pick<Exam, 'id' | 'title'> &
  */
 const MATH_MOCK_QUESTIONS: QuestionBase[] = [
   {
+    title: 'Menor primo maior que 15',
+    correct: 3,
     discipline: 'Matemática',
     topic: 'Aritmética',
     statement: 'Qual é o menor número primo maior que 15?',
@@ -30,6 +43,8 @@ const MATH_MOCK_QUESTIONS: QuestionBase[] = [
     alternatives: ['11', '13', '15', '17', '19'],
   },
   {
+    title: 'Área verde da praça',
+    correct: 4,
     discipline: 'Matemática',
     topic: 'Geometria',
     statement:
@@ -38,6 +53,8 @@ const MATH_MOCK_QUESTIONS: QuestionBase[] = [
     alternatives: ['112', '97', '82', '78', '67'],
   },
   {
+    title: 'Desconto na camisa',
+    correct: 1,
     discipline: 'Matemática',
     topic: 'Porcentagem',
     statement:
@@ -46,6 +63,8 @@ const MATH_MOCK_QUESTIONS: QuestionBase[] = [
     alternatives: ['R$ 80,00', 'R$ 90,00', 'R$ 95,00', 'R$ 100,00', 'R$ 105,00'],
   },
   {
+    title: 'Idade de Ana',
+    correct: 2,
     discipline: 'Matemática',
     topic: 'Equações do 1º grau',
     statement:
@@ -54,6 +73,8 @@ const MATH_MOCK_QUESTIONS: QuestionBase[] = [
     alternatives: ['20 anos', '25 anos', '30 anos', '35 anos', '40 anos'],
   },
   {
+    title: 'Bola que não é branca',
+    correct: 3,
     discipline: 'Matemática',
     topic: 'Probabilidade',
     statement:
@@ -62,6 +83,8 @@ const MATH_MOCK_QUESTIONS: QuestionBase[] = [
     alternatives: ['1/5', '3/10', '2/5', '1/2', '3/5'],
   },
   {
+    title: 'Lucro máximo da fábrica',
+    correct: 2,
     discipline: 'Matemática',
     topic: 'Funções do 2º grau',
     statement:
@@ -70,6 +93,8 @@ const MATH_MOCK_QUESTIONS: QuestionBase[] = [
     alternatives: ['6', '12', '16', '20', '36'],
   },
   {
+    title: 'Economia em 12 meses',
+    correct: 2,
     discipline: 'Matemática',
     topic: 'Progressões',
     statement:
@@ -78,6 +103,8 @@ const MATH_MOCK_QUESTIONS: QuestionBase[] = [
     alternatives: ['R$ 1.560,00', 'R$ 1.740,00', 'R$ 1.920,00', 'R$ 2.040,00', 'R$ 2.280,00'],
   },
   {
+    title: 'Altura da rampa',
+    correct: 1,
     discipline: 'Matemática',
     topic: 'Trigonometria',
     statement:
@@ -86,6 +113,8 @@ const MATH_MOCK_QUESTIONS: QuestionBase[] = [
     alternatives: ['2', '4', '4√3', '6', '8'],
   },
   {
+    title: 'Média das notas',
+    correct: 1,
     discipline: 'Matemática',
     topic: 'Estatística',
     statement:
@@ -96,42 +125,40 @@ const MATH_MOCK_QUESTIONS: QuestionBase[] = [
 ];
 
 /**
- * Provas fictícias. As 6 primeiras são as do mockup de Minhas Provas, na ordem dele; depois vem o
- * Simulado de Matemática (escrito à mão); as seguintes testam a rolagem, o nome longo e o
- * singular ("1 QUESTÃO"); as 8 últimas são vestibulares (com uma prova de 1 questão e uma vazia,
- * para o estado vazio).
+ * Provas fictícias do usuário. As 6 primeiras são as do mockup de Minhas Provas, na ordem dele;
+ * depois vem o Simulado de Matemática (escrito à mão); as seguintes testam a rolagem, o nome longo
+ * e o singular ("1 QUESTÃO"). As 8 provas de vestibular que ficavam no fim desta lista estão em
+ * constants/mockEntranceExams, com as mesmas questões.
  */
-const EXAM_SEEDS: ExamSeed[] = [
-  { id: 'substantivos-adjetivos', title: 'Substantivos e Adjetivos', size: 53 },
-  { id: 'sistema-nervoso', title: 'Sistema Nervoso', size: 15 },
-  { id: 'primeira-guerra', title: 'Primeira Guerra Mundial', size: 27 },
-  { id: 'renascimento', title: 'Renascimento', size: 231 },
-  { id: 'radiciacao-potenciacao', title: 'Radiciação e Potenciação', size: 5 },
-  { id: 'guerra-fria', title: 'Guerra Fria', size: 38 },
-  { id: 'simulado-matematica', title: 'Simulado de Matemática', questions: MATH_MOCK_QUESTIONS },
-  { id: 'funcoes-primeiro-grau', title: 'Funções do 1º Grau', size: 42 },
-  { id: 'tabela-periodica', title: 'Tabela Periódica', size: 64 },
+const USER_EXAM_SEEDS: ExamSeed[] = [
+  { id: 'substantivos-adjetivos', title: 'Substantivos e Adjetivos', origin: 'usuario', size: 53 },
+  { id: 'sistema-nervoso', title: 'Sistema Nervoso', origin: 'usuario', size: 15 },
+  { id: 'primeira-guerra', title: 'Primeira Guerra Mundial', origin: 'usuario', size: 27 },
+  { id: 'renascimento', title: 'Renascimento', origin: 'usuario', size: 231 },
+  { id: 'radiciacao-potenciacao', title: 'Radiciação e Potenciação', origin: 'usuario', size: 5 },
+  { id: 'guerra-fria', title: 'Guerra Fria', origin: 'usuario', size: 38 },
+  {
+    id: 'simulado-matematica',
+    title: 'Simulado de Matemática',
+    origin: 'usuario',
+    questions: MATH_MOCK_QUESTIONS,
+  },
+  { id: 'funcoes-primeiro-grau', title: 'Funções do 1º Grau', origin: 'usuario', size: 42 },
+  { id: 'tabela-periodica', title: 'Tabela Periódica', origin: 'usuario', size: 64 },
   {
     id: 'interpretacao-textos',
     title: 'Interpretação de Textos Literários e Não Literários do Enem',
+    origin: 'usuario',
     size: 120,
   },
-  { id: 'leis-de-newton', title: 'Leis de Newton', size: 19 },
-  { id: 'ecologia', title: 'Ecologia', size: 1 },
-  { id: 'brasil-colonia', title: 'Brasil Colônia', size: 33 },
-  { id: 'modernismo', title: 'Modernismo', size: 48 },
-  { id: 'geometria-plana', title: 'Geometria Plana', size: 76 },
-  { id: 'revolucao-industrial', title: 'Revolução Industrial', size: 26 },
-  { id: 'verb-tenses', title: 'Inglês: Verb Tenses', size: 12 },
-  { id: 'estequiometria', title: 'Estequiometria', size: 9 },
-  { id: 'enem-2023-dia-1', title: 'ENEM 2023 - 1º Dia', size: 90 },
-  { id: 'enem-2023-dia-2', title: 'ENEM 2023 - 2º Dia', size: 90 },
-  { id: 'fuvest-2024-fase-1', title: 'FUVEST 2024 - 1ª Fase', size: 90 },
-  { id: 'ita-2023-fase-1', title: 'ITA 2023 - 1ª Fase', size: 40 },
-  { id: 'unicamp-2024-fase-1', title: 'UNICAMP 2024 - 1ª Fase', size: 72 },
-  { id: 'uerj-2024-qualificacao', title: 'UERJ 2024 - Exame de Qualificação', size: 24 },
-  { id: 'ufsc-2023', title: 'UFSC 2023', size: 1 },
-  { id: 'uel-2023', title: 'UEL 2023', size: 0 },
+  { id: 'leis-de-newton', title: 'Leis de Newton', origin: 'usuario', size: 19 },
+  { id: 'ecologia', title: 'Ecologia', origin: 'usuario', size: 1 },
+  { id: 'brasil-colonia', title: 'Brasil Colônia', origin: 'usuario', size: 33 },
+  { id: 'modernismo', title: 'Modernismo', origin: 'usuario', size: 48 },
+  { id: 'geometria-plana', title: 'Geometria Plana', origin: 'usuario', size: 76 },
+  { id: 'revolucao-industrial', title: 'Revolução Industrial', origin: 'usuario', size: 26 },
+  { id: 'verb-tenses', title: 'Inglês: Verb Tenses', origin: 'usuario', size: 12 },
+  { id: 'estequiometria', title: 'Estequiometria', origin: 'usuario', size: 9 },
 ];
 
 /**
@@ -141,6 +168,8 @@ const EXAM_SEEDS: ExamSeed[] = [
  */
 const QUESTION_BASES: QuestionBase[] = [
   {
+    title: 'Pontos da gincana',
+    correct: 2,
     discipline: 'Matemática',
     topic: 'Equações do 1º grau',
     statement:
@@ -149,6 +178,8 @@ const QUESTION_BASES: QuestionBase[] = [
     alternatives: ['3', '4', '5', '6', '7'],
   },
   {
+    title: 'Concordância com sujeito posposto',
+    correct: 3,
     discipline: 'Português',
     topic: 'Concordância verbal',
     statement:
@@ -163,6 +194,8 @@ const QUESTION_BASES: QuestionBase[] = [
     ],
   },
   {
+    title: 'Burguesia nos Estados Gerais',
+    correct: 1,
     discipline: 'História',
     topic: 'Revolução Francesa',
     statement:
@@ -177,6 +210,8 @@ const QUESTION_BASES: QuestionBase[] = [
     ],
   },
   {
+    title: 'Clima do sertão nordestino',
+    correct: 2,
     discipline: 'Geografia',
     topic: 'Climas do Brasil',
     statement:
@@ -185,6 +220,8 @@ const QUESTION_BASES: QuestionBase[] = [
     alternatives: ['Equatorial úmido', 'Subtropical', 'Semiárido', 'Tropical de altitude', 'Temperado'],
   },
   {
+    title: 'Velocidade média do carro',
+    correct: 2,
     discipline: 'Física',
     topic: 'Cinemática',
     statement:
@@ -193,6 +230,8 @@ const QUESTION_BASES: QuestionBase[] = [
     alternatives: ['60', '72', '80', '90', '100'],
   },
   {
+    title: 'Combustão do metano',
+    correct: 3,
     discipline: 'Química',
     topic: 'Estequiometria',
     statement:
@@ -201,6 +240,8 @@ const QUESTION_BASES: QuestionBase[] = [
     alternatives: ['1 mol', '2 mols', '3 mols', '4 mols', '6 mols'],
   },
   {
+    title: 'Organela da respiração celular',
+    correct: 1,
     discipline: 'Biologia',
     topic: 'Citologia',
     statement:
@@ -215,6 +256,8 @@ const QUESTION_BASES: QuestionBase[] = [
     ],
   },
   {
+    title: 'Aumento de preço',
+    correct: 2,
     discipline: 'Matemática',
     topic: 'Porcentagem',
     statement:
@@ -223,6 +266,8 @@ const QUESTION_BASES: QuestionBase[] = [
     alternatives: ['R$ 88,00', 'R$ 90,00', 'R$ 92,00', 'R$ 95,00', 'R$ 96,00'],
   },
   {
+    title: 'O silêncio gritava',
+    correct: 1,
     discipline: 'Português',
     topic: 'Figuras de linguagem',
     statement:
@@ -231,6 +276,8 @@ const QUESTION_BASES: QuestionBase[] = [
     alternatives: ['Metonímia', 'Paradoxo', 'Hipérbato', 'Eufemismo', 'Pleonasmo'],
   },
   {
+    title: 'Revolução de 1930',
+    correct: 1,
     discipline: 'História',
     topic: 'Era Vargas',
     statement:
@@ -245,6 +292,8 @@ const QUESTION_BASES: QuestionBase[] = [
     ],
   },
   {
+    title: 'Cidades que se encontram',
+    correct: 1,
     discipline: 'Geografia',
     topic: 'Urbanização',
     statement:
@@ -253,6 +302,8 @@ const QUESTION_BASES: QuestionBase[] = [
     alternatives: ['Metropolização', 'Conurbação', 'Gentrificação', 'Êxodo rural', 'Megalópole'],
   },
   {
+    title: 'Resistores em paralelo',
+    correct: 0,
     discipline: 'Física',
     topic: 'Eletrodinâmica',
     statement:
@@ -261,6 +312,8 @@ const QUESTION_BASES: QuestionBase[] = [
     alternatives: ['2 Ω e 6 A', '3 Ω e 4 A', '6 Ω e 2 A', '18 Ω e 0,67 A', '2 Ω e 3 A'],
   },
   {
+    title: 'Símbolo do sódio',
+    correct: 2,
     discipline: 'Química',
     topic: 'Tabela periódica',
     statement:
@@ -269,6 +322,8 @@ const QUESTION_BASES: QuestionBase[] = [
     alternatives: ['So', 'Sd', 'Na', 'S', 'Nb'],
   },
   {
+    title: 'Cruzamento de heterozigotos',
+    correct: 1,
     discipline: 'Biologia',
     topic: 'Genética',
     statement:
@@ -277,6 +332,8 @@ const QUESTION_BASES: QuestionBase[] = [
     alternatives: ['0%', '25%', '50%', '75%', '100%'],
   },
   {
+    title: 'Raízes da função',
+    correct: 1,
     discipline: 'Matemática',
     topic: 'Funções do 2º grau',
     statement:
@@ -285,6 +342,8 @@ const QUESTION_BASES: QuestionBase[] = [
     alternatives: ['1 e 6', '2 e 3', '-2 e -3', '-1 e 6', '0 e 5'],
   },
   {
+    title: 'Classe de "rapidamente"',
+    correct: 1,
     discipline: 'Português',
     topic: 'Classes de palavras',
     statement:
@@ -293,6 +352,8 @@ const QUESTION_BASES: QuestionBase[] = [
     alternatives: ['Adjetivo', 'Advérbio', 'Substantivo', 'Preposição', 'Conjunção'],
   },
   {
+    title: 'Crise dos Mísseis',
+    correct: 1,
     discipline: 'História',
     topic: 'Guerra Fria',
     statement:
@@ -307,6 +368,8 @@ const QUESTION_BASES: QuestionBase[] = [
     ],
   },
   {
+    title: 'Escala do mapa',
+    correct: 1,
     discipline: 'Geografia',
     topic: 'Cartografia',
     statement:
@@ -315,6 +378,8 @@ const QUESTION_BASES: QuestionBase[] = [
     alternatives: ['0,2 km', '2 km', '20 km', '200 km', '2.000 km'],
   },
   {
+    title: 'Recuo da arma',
+    correct: 2,
     discipline: 'Física',
     topic: 'Leis de Newton',
     statement:
@@ -329,6 +394,8 @@ const QUESTION_BASES: QuestionBase[] = [
     ],
   },
   {
+    title: 'Concentração do soro',
+    correct: 3,
     discipline: 'Química',
     topic: 'Soluções',
     statement:
@@ -337,6 +404,8 @@ const QUESTION_BASES: QuestionBase[] = [
     alternatives: ['4 g/L', '10 g/L', '20 g/L', '40 g/L', '100 g/L'],
   },
   {
+    title: 'Energia na cadeia alimentar',
+    correct: 0,
     discipline: 'Biologia',
     topic: 'Ecologia',
     statement:
@@ -355,43 +424,57 @@ const QUESTION_BASES: QuestionBase[] = [
 /** Deslocamento do início da lista-base de uma prova para a seguinte (provas começam diferente) */
 const START_STEP = 5;
 
+/** Questão fictícia a partir da questão-base (ids das alternativas pela posição) */
+function toQuestion(base: QuestionBase, id: string, examId: string, statement: string): Question {
+  return {
+    id,
+    examId,
+    title: base.title,
+    statement,
+    ...mockSubjectIds(base.discipline, base.topic),
+    difficulty: base.difficulty,
+    alternatives: base.alternatives.map((text, index) => ({
+      id: `${id}-a${index + 1}`,
+      text,
+      correct: index === base.correct,
+    })),
+  };
+}
+
 /**
  * Questões de uma prova, determinísticas (ids estáveis, sem aleatoriedade). Com questões escritas
  * à mão, usa elas, na ordem. Senão, gera exatamente seed.size questões a partir da lista-base,
- * começando num ponto que depende da posição da prova; quando a quantidade passa da lista-base,
- * ela se repete (mesmo enunciado e alternativas) com o número da repetição no final do enunciado
- * ("... (2)", "... (3)").
+ * começando num ponto que depende da posição da prova (examIndex); quando a quantidade passa da
+ * lista-base, ela se repete (mesmo título, enunciado e alternativas) com o número da repetição no
+ * final do título e do enunciado ("... (2)", "... (3)").
  */
-function buildQuestions(seed: ExamSeed, examIndex: number): Question[] {
+export function buildMockQuestions(seed: ExamSeed, examIndex: number): Question[] {
   if (seed.questions) {
-    return seed.questions.map((base, index) => ({
-      ...base,
-      id: `${seed.id}-q${index + 1}`,
-      examId: seed.id,
-    }));
+    return seed.questions.map((base, index) =>
+      toQuestion(base, `${seed.id}-q${index + 1}`, seed.id, base.statement),
+    );
   }
 
   const start = (examIndex * START_STEP) % QUESTION_BASES.length;
   return Array.from({ length: seed.size }, (_, index) => {
     const base = QUESTION_BASES[(start + index) % QUESTION_BASES.length];
     const round = Math.floor(index / QUESTION_BASES.length);
+    const suffix = round === 0 ? '' : ` (${round + 1})`;
     return {
-      ...base,
-      id: `${seed.id}-q${index + 1}`,
-      examId: seed.id,
-      statement: round === 0 ? base.statement : `${base.statement} (${round + 1})`,
+      ...toQuestion(base, `${seed.id}-q${index + 1}`, seed.id, `${base.statement}${suffix}`),
+      title: `${base.title}${suffix}`,
     };
   });
 }
 
-/** Questões de cada prova, por id da prova (montadas uma vez, ao carregar o arquivo) */
+/** Questões de cada prova do usuário, por id da prova (montadas uma vez, ao carregar o arquivo) */
 export const MOCK_EXAM_QUESTIONS: Record<string, Question[]> = Object.fromEntries(
-  EXAM_SEEDS.map((seed, index) => [seed.id, buildQuestions(seed, index)]),
+  USER_EXAM_SEEDS.map((seed, index) => [seed.id, buildMockQuestions(seed, index)]),
 );
 
-/** Provas fictícias, com a quantidade de questões derivada da lista de cada uma */
-export const MOCK_EXAMS: Exam[] = EXAM_SEEDS.map(({ id, title }) => ({
+/** Provas fictícias do usuário (a quantidade de questões sai das questões de cada uma) */
+export const MOCK_EXAMS: ExamRecord[] = USER_EXAM_SEEDS.map(({ id, title, origin }) => ({
   id,
   title,
-  questionsCount: MOCK_EXAM_QUESTIONS[id].length,
+  origin,
 }));

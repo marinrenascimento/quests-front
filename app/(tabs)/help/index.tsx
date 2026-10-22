@@ -1,6 +1,7 @@
 import { useRouter } from 'expo-router';
 
 import { SupportBlock } from '@/components/molecules/SupportBlock';
+import { ConfirmModal } from '@/components/organisms/ConfirmModal';
 import { FaqCard } from '@/components/organisms/FaqCard';
 import { HelpLayout } from '@/components/organisms/HelpLayout';
 import { HelpMenuGrid } from '@/components/organisms/HelpMenuGrid';
@@ -13,11 +14,13 @@ import {
   SUPPORT_CONTENT,
 } from '@/constants/helpContent';
 import { TEMP_COINS, TEMP_USER_NAME } from '@/constants/mockUser';
+import { useSupportModal } from '@/hooks/useSupportModal';
 import { useTopBarNavigation } from '@/hooks/useTopBarNavigation';
 
 export default function HelpScreen() {
   const router = useRouter();
   const handleTabPress = useTopBarNavigation();
+  const support = useSupportModal(SUPPORT_CONTENT.modal);
 
   const handleMenuSelect = (key: HelpMenuKey) => {
     switch (key) {
@@ -51,13 +54,12 @@ export default function HelpScreen() {
           prompt={SUPPORT_CONTENT.prompt}
           buttonLabel={SUPPORT_CONTENT.buttonLabel}
           buttonIcon={SUPPORT_CONTENT.buttonIcon}
-          onPress={() => {
-            // TODO: definir canal de suporte.
-          }}
+          onPress={support.open}
         />
       }>
       <HelpMenuGrid items={HELP_MENU} onSelect={handleMenuSelect} />
       <FaqCard title={HELP_FAQ_TITLE} items={HELP_FAQ} />
+      <ConfirmModal {...support.modalProps} />
     </HelpLayout>
   );
 }

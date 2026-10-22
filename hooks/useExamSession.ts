@@ -1,7 +1,6 @@
 import { useCallback, useMemo, useReducer } from 'react';
 
 import {
-  AlternativeLetter,
   ExamAnswers,
   ExamHighlights,
   INITIAL_MARKER_COLOR,
@@ -24,7 +23,7 @@ type State = {
 };
 
 type Action =
-  | { type: 'answer'; questionId: string; letter: AlternativeLetter }
+  | { type: 'answer'; questionId: string; alternativeId: string }
   | { type: 'current'; index: number }
   | { type: 'color'; color: MarkerColor }
   | { type: 'toggleMarker' }
@@ -71,10 +70,10 @@ function reducer(state: State, action: Action): State {
     case 'answer': {
       // Tocar de novo na escolhida desmarca (a questão volta a não respondida)
       const answers = { ...state.answers };
-      if (answers[action.questionId] === action.letter) {
+      if (answers[action.questionId] === action.alternativeId) {
         delete answers[action.questionId];
       } else {
-        answers[action.questionId] = action.letter;
+        answers[action.questionId] = action.alternativeId;
       }
       return { ...state, answers };
     }
@@ -126,8 +125,8 @@ export function useExamSession(questions: Question[]) {
   const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
 
   const selectAnswer = useCallback(
-    (questionId: string, letter: AlternativeLetter) =>
-      dispatch({ type: 'answer', questionId, letter }),
+    (questionId: string, alternativeId: string) =>
+      dispatch({ type: 'answer', questionId, alternativeId }),
     [],
   );
   const setCurrentIndex = useCallback((index: number) => dispatch({ type: 'current', index }), []);

@@ -1,19 +1,18 @@
 import { useRouter } from 'expo-router';
 
 import { Toast } from '@/components/molecules/Toast';
-import { FlashcardGrid } from '@/components/organisms/FlashcardGrid';
+import { FlashcardCardItem, FlashcardGrid } from '@/components/organisms/FlashcardGrid';
 import { HelpLayout } from '@/components/organisms/HelpLayout';
 import { HeaderAction, ListPageHeader } from '@/components/organisms/ListPageHeader';
 import { TopBar } from '@/components/organisms/TopBar';
-import { CardAction, CardActionKey, DeckCard } from '@/constants/decks';
+import { CardAction, CardActionKey } from '@/constants/decks';
 import { useTopBarNavigation } from '@/hooks/useTopBarNavigation';
 
 type Props = {
   /** Nome do deck no cabeçalho (vazio quando o deck não existe) */
   title: string;
-  /** Rótulo "Disciplina - Tema" mostrado em cada card */
-  cardLabel: string;
-  cards: DeckCard[];
+  /** Cards com o rótulo "Disciplina - Conteúdo" de cada um e a frente */
+  cards: FlashcardCardItem[];
   /** Mensagem da lista vazia ("Nenhum Card Neste Deck" ou "Deck Não Encontrado") */
   emptyMessage: string;
   /** Botões abaixo do título (sem botões quando o deck não existe) */
@@ -36,7 +35,6 @@ type Props = {
  */
 export function DeckCardsTemplate({
   title,
-  cardLabel,
   cards,
   emptyMessage,
   headerActions,
@@ -70,7 +68,6 @@ export function DeckCardsTemplate({
       }>
       <FlashcardGrid
         cards={cards}
-        label={cardLabel}
         emptyMessage={emptyMessage}
         actions={cardActions}
         onAction={onCardAction}

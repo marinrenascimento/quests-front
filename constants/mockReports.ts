@@ -8,7 +8,7 @@ export const MOCK_WEEKLY_REPORT: WeeklyReport = {
   title: 'Relatório Semanal',
   summary: [
     { id: 'horas', icon: 'clock-outline', value: '15.0H', label: 'Horas Esta Semana' },
-    { id: 'questoes', icon: 'crosshairs-gps', value: '100', label: 'Questões Respondidas' },
+    { id: 'questoes', icon: 'crosshairs-gps', value: '100', label: 'Questões Acertadas' },
     { id: 'acerto', icon: 'trending-up', value: '78%', label: 'Taxa de Acerto' },
     { id: 'sequencia', icon: 'chart-bar', value: '5 DIAS', label: 'Sequência de Dias' },
   ],
@@ -36,7 +36,7 @@ export const MOCK_MONTHLY_REPORT: MonthlyReport = {
   title: 'Relatório Mensal',
   summary: [
     { id: 'horas', icon: 'clock-outline', value: '60.0H', label: 'Horas Este Mês' },
-    { id: 'questoes', icon: 'crosshairs-gps', value: '100', label: 'Questões Respondidas' },
+    { id: 'questoes', icon: 'crosshairs-gps', value: '100', label: 'Questões Acertadas' },
     { id: 'acerto', icon: 'trending-up', value: '74%', label: 'Taxa de Acerto' },
     { id: 'sequencia', icon: 'chart-bar', value: '3 MESES', label: 'Sequência de Meses' },
   ],

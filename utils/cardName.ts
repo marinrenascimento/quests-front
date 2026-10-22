@@ -6,11 +6,15 @@ const MAX_LENGTH = 30;
 const ELLIPSIS = '...';
 
 /**
- * Nome do card mostrado no título do Visualizar Card: o mesmo título da grade de Cards do Deck
- * (nos cards criados no app, é a frente). Só na exibição, é cortado em MAX_LENGTH caracteres com
- * reticências; o título guardado no card não muda.
+ * Nome curto para o título das telas de visualização: cortado em MAX_LENGTH caracteres com
+ * reticências (só na exibição; o texto guardado não muda).
  */
-export function cardName(card: Pick<DeckCard, 'title'>): string {
-  const title = card.title.trim();
-  return title.length > MAX_LENGTH ? `${title.slice(0, MAX_LENGTH).trimEnd()}${ELLIPSIS}` : title;
+export function shortName(text: string): string {
+  const name = text.trim();
+  return name.length > MAX_LENGTH ? `${name.slice(0, MAX_LENGTH).trimEnd()}${ELLIPSIS}` : name;
+}
+
+/** Nome do card mostrado no título do Visualizar Card: a frente, já que o card não tem título */
+export function cardName(card: Pick<DeckCard, 'front'>): string {
+  return shortName(card.front);
 }

@@ -10,7 +10,7 @@ import { HELP_MOCKUP_WIDTH, useMockupScale } from '@/hooks/useMockupScale';
 
 type Props = {
   cardId: string;
-  /** Rótulo "Disciplina - Tema" no topo */
+  /** Rótulo "Disciplina - Conteúdo" no topo */
   label: string;
   title: string;
   /** Botões do canto inferior direito; sem ações (ex.: cards vinculados), a linha não aparece */
@@ -46,6 +46,8 @@ const FOOTER_GAP = 4;
  * como as linhas são limitadas, o título nunca passa por baixo dos botões.
  * Memorizado: numa lista grande só re-renderiza se os próprios dados mudarem.
  */
+// TODO (dívida): o nome fala em deck/card, mas também é o conteúdo do card de uma questão; renomear
+// para um nome neutro num ajuste à parte, sem mudar o comportamento.
 export const FlashcardContent = memo(function FlashcardContent({
   cardId,
   label,

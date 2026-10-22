@@ -40,7 +40,8 @@ export default function HomeScreen() {
         />
       }
       banner={<HomeBanner />}
-      // TODO: integrar com o back (itens acessados recentemente). Por enquanto, slots vazios.
+      // TODO: integrar com o back (os 2 últimos decks ou provas estudados, com o nome, e o toque
+      // abrindo o item). Por enquanto, os 2 quadrados ficam vazios.
       sidebar={<RecentAccessGrid items={[]} />}>
       <HomeMenu onSelect={handleMenuSelect} />
     </HomeLayout>

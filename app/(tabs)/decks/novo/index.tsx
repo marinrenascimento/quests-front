@@ -1,5 +1,5 @@
 import { useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { ConfirmModal } from '@/components/organisms/ConfirmModal';
 import { DeckFormTemplate } from '@/components/templates/DeckFormTemplate';
@@ -13,6 +13,7 @@ import { TEMP_COINS, TEMP_USER_NAME } from '@/constants/mockUser';
 import { useDeckCreation } from '@/hooks/useDeckCreation';
 import { useDeckForm } from '@/hooks/useDeckForm';
 import { useDecks } from '@/hooks/useDecks';
+import { useLeaveConfirm } from '@/hooks/useLeaveConfirm';
 
 export default function NewDeckScreen() {
   const router = useRouter();
@@ -20,6 +21,11 @@ export default function NewDeckScreen() {
   const { linkedCards, linkedToastVisible, hideLinkedToast, resetDraft } = useDeckCreation();
   const { createDeck } = useDecks();
   const [confirmVisible, setConfirmVisible] = useState(false);
+  const openConfirm = useCallback(() => setConfirmVisible(true), []);
+  // Só ter card vinculado conta como algo a perder (nome e descrição sozinhos, não)
+  const hasLinkedCards = linkedCards.length > 0;
+  // Voltar do Android e gesto: com card vinculado, perguntam como o "Cancelar"
+  useLeaveConfirm({ enabled: hasLinkedCards, onRequestLeave: openConfirm });
 
   // O Novo Flashcard abre por cima (esta tela continua montada). Ao sair da pilha (voltar,
   // salvar ou cancelar para Meus Decks, ou trocar de aba), o rascunho é descartado e o próximo
@@ -44,8 +50,8 @@ export default function NewDeckScreen() {
         onAddCardPress={() => router.push('/(tabs)/decks/novo/card')}
         linkedCards={linkedCards}
         toast={{ message: LINKED_CARD_TOAST, visible: linkedToastVisible, onHide: hideLinkedToast }}
-        // Comportamento de antes: sai direto, sem confirmação
-        onBack={handleLeave}
+        // Com card vinculado, pergunta como o "Cancelar"; sem, sai direto
+        onBack={hasLinkedCards ? openConfirm : handleLeave}
         onSave={() => {
           if (form.validate()) {
             // Cria em memória (Meus Decks passa a listá-lo no início da grade)
@@ -58,7 +64,7 @@ export default function NewDeckScreen() {
             handleLeave();
           }
         }}
-        onCancel={() => setConfirmVisible(true)}
+        onCancel={openConfirm}
         backLabel={BACK_LABEL}
         coins={TEMP_COINS}
         userName={TEMP_USER_NAME}

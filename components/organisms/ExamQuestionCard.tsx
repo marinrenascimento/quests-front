@@ -8,7 +8,6 @@ import { DifficultyStars } from '@/components/molecules/DifficultyStars';
 import { HighlightableText } from '@/components/molecules/HighlightableText';
 import { InfoCard } from '@/components/molecules/InfoCard';
 import type {
-  AlternativeLetter,
   ExamQuestionCardContent,
   Question,
   QuestionHighlights,
@@ -24,8 +23,8 @@ type Props = {
   question: Question;
   /** Posição da questão na prova, começando em 1 (título "QUESTÃO N") */
   position: number;
-  /** Letra escolhida nesta questão (sem resposta: undefined) */
-  answer?: AlternativeLetter;
+  /** Id da alternativa escolhida nesta questão (sem resposta: undefined) */
+  answer?: string;
   /** Marcações do enunciado desta questão */
   highlights?: QuestionHighlights;
   /** Palavra do primeiro toque do marcador nesta questão (null: nenhuma) */
@@ -35,7 +34,7 @@ type Props = {
   /** Textos, ícones e cores do card */
   content: ExamQuestionCardContent;
   /** Recebem o id da questão: funções estáveis, as mesmas para todos os cards */
-  onSelectAnswer: (questionId: string, letter: AlternativeLetter) => void;
+  onSelectAnswer: (questionId: string, alternativeId: string) => void;
   onWordPress: (questionId: string, wordIndex: number) => void;
 };
 
@@ -56,8 +55,9 @@ const CARD_RADIUS = toHelpPx(20);
 /**
  * Card de uma questão na realização da prova, no cartão verde sálvia: "QUESTÃO N" e a
  * dificuldade em estrelas no topo, "Disciplina · Conteúdo", o enunciado (com as marcações do
- * marcador de texto) e as 5 alternativas. Memorizado: numa prova grande só re-renderiza quando a
- * própria resposta, as próprias marcações ou o modo do marcador mudam.
+ * marcador de texto) e as alternativas (quantas a questão tiver, com as letras pela posição).
+ * Memorizado: numa prova grande só re-renderiza quando a própria resposta, as próprias marcações
+ * ou o modo do marcador mudam.
  */
 export const ExamQuestionCard = memo(function ExamQuestionCard({
   question,
@@ -109,18 +109,15 @@ export const ExamQuestionCard = memo(function ExamQuestionCard({
         />
       </View>
       <View style={{ marginTop: scale(ALTERNATIVES_TOP), gap: scale(ALTERNATIVES_GAP) }}>
-        {question.alternatives.map((text, index) => {
-          const letter = content.letters[index];
-          return (
-            <AlternativeOption
-              key={letter}
-              letter={letter}
-              text={text}
-              selected={answer === letter}
-              onPress={() => onSelectAnswer(question.id, letter)}
-            />
-          );
-        })}
+        {question.alternatives.map((alternative, index) => (
+          <AlternativeOption
+            key={alternative.id}
+            letter={content.letter(index)}
+            text={alternative.text}
+            selected={answer === alternative.id}
+            onPress={() => onSelectAnswer(question.id, alternative.id)}
+          />
+        ))}
       </View>
     </InfoCard>
   );

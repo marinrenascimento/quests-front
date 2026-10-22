@@ -1,5 +1,5 @@
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import { ConfirmModal } from '@/components/organisms/ConfirmModal';
 import { FlashcardFormTemplate } from '@/components/templates/FlashcardFormTemplate';
@@ -8,6 +8,7 @@ import { BACK_LABEL } from '@/constants/helpContent';
 import { TEMP_COINS, TEMP_USER_NAME } from '@/constants/mockUser';
 import { useDeckCreation } from '@/hooks/useDeckCreation';
 import { useFlashcardForm } from '@/hooks/useFlashcardForm';
+import { useLeaveConfirm } from '@/hooks/useLeaveConfirm';
 
 export default function NewFlashcardScreen() {
   const router = useRouter();
@@ -21,6 +22,9 @@ export default function NewFlashcardScreen() {
     },
   });
   const [confirmVisible, setConfirmVisible] = useState(false);
+  const openConfirm = useCallback(() => setConfirmVisible(true), []);
+  // Voltar do Android e gesto: perguntam só com texto na frente ou no verso
+  useLeaveConfirm({ enabled: form.hasChanges, onRequestLeave: openConfirm });
 
   const handleLeave = () => {
     // Volta para o cadastro de deck (que fica por baixo na pilha); aberta sem histórico
@@ -46,7 +50,9 @@ export default function NewFlashcardScreen() {
             handleLeave();
           }
         }}
-        onCancel={() => setConfirmVisible(true)}
+        onCancel={openConfirm}
+        // Sem texto na frente nem no verso, não há nada a perder: sai direto
+        onBack={form.hasChanges ? openConfirm : handleLeave}
         backLabel={BACK_LABEL}
         coins={TEMP_COINS}
         userName={TEMP_USER_NAME}

@@ -4,14 +4,21 @@ import { FlatList, ListRenderItem, StyleSheet, View } from 'react-native';
 import { BodyText } from '@/components/atoms/BodyText';
 import { FlashcardContent } from '@/components/molecules/FlashcardContent';
 import { InfoCard } from '@/components/molecules/InfoCard';
-import { CardAction, CardActionKey, DeckCard } from '@/constants/decks';
+import { CardAction, CardActionKey } from '@/constants/decks';
 import { useGridLayout } from '@/hooks/useGridLayout';
 import { HELP_MOCKUP_WIDTH, useMockupScale } from '@/hooks/useMockupScale';
 
-type Props = {
-  cards: DeckCard[];
-  /** Rótulo "Disciplina - Tema", igual em todos os cards do deck */
+/** Textos prontos de um card da grade (montados fora da lista, não no renderItem) */
+export type FlashcardCardItem = {
+  id: string;
+  /** "Disciplina - Conteúdo" do próprio card */
   label: string;
+  /** Frente do card (o card não tem título) */
+  title: string;
+};
+
+type Props = {
+  cards: FlashcardCardItem[];
   /** Conteúdo acima da grade, que rola junto com ela (cabeçalho e botões) */
   header: ReactElement;
   emptyMessage: string;
@@ -35,25 +42,25 @@ export const ROWS_PER_BATCH = 5;
 /** Telas mantidas montadas (a visível + 3 acima e 3 abaixo); o padrão do React Native é 21 */
 export const WINDOW_SIZE = 7;
 
-const keyExtractor = (card: DeckCard) => card.id;
+const keyExtractor = (card: FlashcardCardItem) => card.id;
 
 /**
  * Grade de flashcards em 2 colunas, para decks com muitos cards: uma FlatList só (o cabeçalho
  * entra como ListHeaderComponent), cartões de largura e altura fixas, item memorizado e
  * callbacks estáveis.
  */
-export function FlashcardGrid({ cards, label, header, emptyMessage, actions, onAction }: Props) {
+export function FlashcardGrid({ cards, header, emptyMessage, actions, onAction }: Props) {
   const { scale } = useMockupScale(HELP_MOCKUP_WIDTH);
   const { gap, itemWidth, contentContainerStyle } = useGridLayout(COLUMNS);
   const itemHeight = itemWidth * CARD_HEIGHT_RATIO;
 
-  const renderItem = useCallback<ListRenderItem<DeckCard>>(
+  const renderItem = useCallback<ListRenderItem<FlashcardCardItem>>(
     ({ item }) => (
       <View style={{ width: itemWidth, height: itemHeight }}>
         <InfoCard padding={CARD_PADDING} style={styles.fill}>
           <FlashcardContent
             cardId={item.id}
-            label={label}
+            label={item.label}
             title={item.title}
             actions={actions}
             onAction={onAction}
@@ -61,7 +68,7 @@ export function FlashcardGrid({ cards, label, header, emptyMessage, actions, onA
         </InfoCard>
       </View>
     ),
-    [itemWidth, itemHeight, label, actions, onAction],
+    [itemWidth, itemHeight, actions, onAction],
   );
 
   const renderSeparator = useCallback(() => <View style={{ height: gap }} />, [gap]);

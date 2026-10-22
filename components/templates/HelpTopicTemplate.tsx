@@ -1,11 +1,13 @@
 import { useRouter } from 'expo-router';
 
 import { SupportBlock } from '@/components/molecules/SupportBlock';
+import { ConfirmModal } from '@/components/organisms/ConfirmModal';
 import { HelpLayout } from '@/components/organisms/HelpLayout';
 import { HelpSectionList } from '@/components/organisms/HelpSectionList';
 import { HelpTopicHeader } from '@/components/organisms/HelpTopicHeader';
 import { TopBar } from '@/components/organisms/TopBar';
 import { HelpTopic, SupportContent } from '@/constants/helpContent';
+import { useSupportModal } from '@/hooks/useSupportModal';
 import { useTopBarNavigation } from '@/hooks/useTopBarNavigation';
 
 type Props = {
@@ -14,7 +16,7 @@ type Props = {
   /** Moedas e nome do usuário mostrados no TopBar */
   coins: number;
   userName: string;
-  /** Texto e botão do bloco de suporte no fim da tela */
+  /** Texto e botão do bloco de suporte no fim da tela (o botão abre o modal de suporte) */
   support: SupportContent;
   /** Rótulo de acessibilidade do botão voltar */
   backLabel: string;
@@ -28,6 +30,7 @@ type Props = {
 export function HelpTopicTemplate({ topic, coins, userName, support, backLabel }: Props) {
   const router = useRouter();
   const handleTabPress = useTopBarNavigation();
+  const supportModal = useSupportModal(support.modal);
 
   const handleBack = () => {
     // Volta na pilha da Help; aberta sem histórico (ex.: link direto), vai para a Help
@@ -48,9 +51,7 @@ export function HelpTopicTemplate({ topic, coins, userName, support, backLabel }
           prompt={support.prompt}
           buttonLabel={support.buttonLabel}
           buttonIcon={support.buttonIcon}
-          onPress={() => {
-            // TODO: definir canal de suporte.
-          }}
+          onPress={supportModal.open}
         />
       }>
       <HelpTopicHeader
@@ -61,6 +62,7 @@ export function HelpTopicTemplate({ topic, coins, userName, support, backLabel }
         backLabel={backLabel}
       />
       <HelpSectionList sections={topic.sections} />
+      <ConfirmModal {...supportModal.modalProps} />
     </HelpLayout>
   );
 }

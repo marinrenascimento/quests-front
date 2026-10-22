@@ -4,7 +4,7 @@ import { LevelIcon } from '@/components/atoms/LevelIcon';
 import { PixelNumber } from '@/components/atoms/PixelNumber';
 import { PixelText } from '@/components/atoms/PixelText';
 import { TrimmedImage } from '@/components/atoms/TrimmedImage';
-import { RANK_LEVEL_LABELS, RankingEntry } from '@/constants/ranking';
+import { RANK_LEVEL_LABELS, rankLevelForCoins, RankingEntry } from '@/constants/ranking';
 import { Palette } from '@/constants/theme';
 import { formatThousands } from '@/utils/formatNumber';
 import { TrimmedImageSpec } from '@/utils/trimmedImage';
@@ -43,6 +43,8 @@ const MIN_LEVEL_FONT = 5;
 
 /** Cartão do usuário logado: posição no canto, avatar grande, nome, pontuação, nível e ícone. */
 export function UserRankCard({ entry, avatar, unit }: Props) {
+  const level = rankLevelForCoins(entry.points);
+
   return (
     <View
       style={[
@@ -84,11 +86,11 @@ export function UserRankCard({ entry, avatar, unit }: Props) {
             letterSpacing={LEVEL_LETTER_SPACING * unit}
             color={Palette.forest}
             style={{ marginTop: POINTS_LEVEL_GAP * unit }}>
-            {RANK_LEVEL_LABELS[entry.level]}
+            {RANK_LEVEL_LABELS[level]}
           </PixelText>
         </View>
         <View style={{ marginLeft: ICON_GAP * unit }}>
-          <LevelIcon level={entry.level} size={ICON_SIZE * unit} />
+          <LevelIcon level={level} size={ICON_SIZE * unit} />
         </View>
       </View>
     </View>

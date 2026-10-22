@@ -23,11 +23,13 @@ type Props = {
   /** Chamado só quando a validação local passa */
   onSubmit: (values: RegisterValues) => void;
   onLoginPress: () => void;
+  /** "Esqueceu Sua Senha?": abre o modal de suporte (não há recuperação de senha no app) */
+  onForgotPasswordPress: () => void;
 };
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-export function RegisterForm({ onSubmit, onLoginPress }: Props) {
+export function RegisterForm({ onSubmit, onLoginPress, onForgotPasswordPress }: Props) {
   const [name, setName] = useState('');
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
@@ -168,8 +170,7 @@ export function RegisterForm({ onSubmit, onLoginPress }: Props) {
       </View>
 
       <View style={styles.link}>
-        {/* TODO: criar a tela de recuperação de senha e integrar com o back */}
-        <LinkText title="Esqueceu Sua Senha?" size="compact" />
+        <LinkText title="Esqueceu Sua Senha?" size="compact" onPress={onForgotPasswordPress} />
       </View>
     </View>
   );

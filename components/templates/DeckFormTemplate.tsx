@@ -6,7 +6,7 @@ import { DeckForm } from '@/components/organisms/DeckForm';
 import { HelpLayout } from '@/components/organisms/HelpLayout';
 import { LinkedCardsSection } from '@/components/organisms/LinkedCardsSection';
 import { TopBar } from '@/components/organisms/TopBar';
-import type { DeckFormContent, LinkedCard } from '@/constants/decks';
+import { DeckFormContent, LinkedCard, linkedCardLabel } from '@/constants/decks';
 import type { DeckFormState } from '@/hooks/useDeckForm';
 import { useTopBarNavigation } from '@/hooks/useTopBarNavigation';
 
@@ -79,7 +79,11 @@ export function DeckFormTemplate({
       <LinkedCardsSection
         label={content.linkedCardsLabel}
         emptyMessage={content.linkedCardsEmpty}
-        cards={linkedCards}
+        cards={linkedCards.map((card) => ({
+          id: card.id,
+          label: linkedCardLabel(card),
+          title: card.front,
+        }))}
       />
       {/* Sem espaço reservado: antes do primeiro card não há nada abaixo da seção, e ao vincular
           o card a tela já muda (a grade substitui a mensagem) */}

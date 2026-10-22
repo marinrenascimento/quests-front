@@ -1,5 +1,5 @@
 import { ReactElement, useCallback } from 'react';
-import { FlatList, ListRenderItem, StyleSheet, View } from 'react-native';
+import { FlatList, ListRenderItem, Pressable, StyleSheet, View } from 'react-native';
 
 import { BodyText } from '@/components/atoms/BodyText';
 import { FlashcardContent } from '@/components/molecules/FlashcardContent';
@@ -20,7 +20,8 @@ export type QuestionCardItem = {
   id: string;
   /** "Disciplina - Conteúdo" */
   label: string;
-  statement: string;
+  /** Título da questão (o "nome" dela na grade) */
+  title: string;
   /** Nome da dificuldade (ex.: "Médio") */
   difficultyLabel: string;
 };
@@ -32,6 +33,8 @@ type Props = {
   emptyMessage: string;
   actions: CardAction[];
   onAction: (action: CardActionKey, questionId: string) => void;
+  /** Toque no cartão (fora dos botões): recebe o id da questão. Estável. */
+  onPress: (questionId: string) => void;
 };
 
 /** Cartões por linha */
@@ -45,21 +48,33 @@ const keyExtractor = (question: QuestionCardItem) => question.id;
  * mesmo cartão e mesma proporção (altura de ~80% da largura, medida no mockup), mesmo conteúdo (FlashcardContent, com o rótulo em 1 linha e a dificuldade ao
  * lado dos botões), mesmas margens e a mesma configuração de lista grande. Uma FlatList só (o
  * cabeçalho entra como ListHeaderComponent), cartões de largura e altura fixas (o último de uma
- * linha ímpar não estica), item memorizado e callbacks estáveis.
+ * linha ímpar não estica), item memorizado e callbacks estáveis. Tocar no cartão (fora dos
+ * botões) abre a questão.
  */
-export function QuestionGrid({ questions, header, emptyMessage, actions, onAction }: Props) {
+export function QuestionGrid({
+  questions,
+  header,
+  emptyMessage,
+  actions,
+  onAction,
+  onPress,
+}: Props) {
   const { scale } = useMockupScale(HELP_MOCKUP_WIDTH);
   const { gap, itemWidth, contentContainerStyle } = useGridLayout(COLUMNS);
   const itemHeight = itemWidth * CARD_HEIGHT_RATIO;
 
   const renderItem = useCallback<ListRenderItem<QuestionCardItem>>(
     ({ item }) => (
-      <View style={{ width: itemWidth, height: itemHeight }}>
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={`${item.title}, ${item.label}`}
+        onPress={() => onPress(item.id)}
+        style={({ pressed }) => [{ width: itemWidth, height: itemHeight }, pressed && styles.pressed]}>
         <InfoCard padding={CARD_PADDING} style={styles.fill}>
           <FlashcardContent
             cardId={item.id}
             label={item.label}
-            title={item.statement}
+            title={item.title}
             actions={actions}
             onAction={onAction}
             labelLines={1}
@@ -67,9 +82,9 @@ export function QuestionGrid({ questions, header, emptyMessage, actions, onActio
             footerLabel={item.difficultyLabel}
           />
         </InfoCard>
-      </View>
+      </Pressable>
     ),
-    [itemWidth, itemHeight, actions, onAction],
+    [itemWidth, itemHeight, actions, onAction, onPress],
   );
 
   const renderSeparator = useCallback(() => <View style={{ height: gap }} />, [gap]);
@@ -105,5 +120,8 @@ const styles = StyleSheet.create({
   },
   fill: {
     flex: 1,
+  },
+  pressed: {
+    opacity: 0.85,
   },
 });

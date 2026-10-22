@@ -4,7 +4,6 @@ import { FlatList, ListRenderItem, Platform, StyleSheet, View, ViewToken } from 
 import { BodyText } from '@/components/atoms/BodyText';
 import { ExamQuestionCard } from '@/components/organisms/ExamQuestionCard';
 import type {
-  AlternativeLetter,
   ExamAnswers,
   ExamHighlights,
   ExamQuestionCardContent,
@@ -28,7 +27,8 @@ type Props = {
   markerOn: boolean;
   content: ExamQuestionCardContent;
   emptyMessage: string;
-  onSelectAnswer: (questionId: string, letter: AlternativeLetter) => void;
+  /** Recebe o id da questão e o da alternativa escolhida */
+  onSelectAnswer: (questionId: string, alternativeId: string) => void;
   onWordPress: (questionId: string, wordIndex: number) => void;
   /** Questão atual mudou pela rolagem do usuário (primeiro card com 50% visível) */
   onCurrentChange: (index: number) => void;

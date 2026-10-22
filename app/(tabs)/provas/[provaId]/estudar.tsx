@@ -1,5 +1,5 @@
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { BackHandler } from 'react-native';
 
 import type { TopBarTabKey } from '@/components/molecules/TopBarTabs';
@@ -8,17 +8,20 @@ import type { ExamQuestionListHandle } from '@/components/organisms/ExamQuestion
 import { ExamQuestionsTemplate } from '@/components/templates/ExamQuestionsTemplate';
 import { ExamSessionTemplate } from '@/components/templates/ExamSessionTemplate';
 import {
+  DISCIPLINE_STUDY_EXAM_ID,
   EXAM_QUESTION_CARD_CONTENT,
   EXAM_SESSION_CONTENT,
+  examSubjectLabel,
   EXIT_EXAM_CONFIRM_CONTENT,
   MARKER_COLORS,
   Question,
   SUBMIT_EXAM_CONFIRM_CONTENT,
 } from '@/constants/exams';
 import { BACK_LABEL } from '@/constants/helpContent';
-import { MOCK_EXAM_QUESTIONS, MOCK_EXAMS } from '@/constants/mockExams';
 import { TEMP_COINS, TEMP_USER_NAME } from '@/constants/mockUser';
+import { useExams } from '@/hooks/useExams';
 import { useExamSession } from '@/hooks/useExamSession';
+import { useSubjectNames } from '@/hooks/useSubjects';
 import { useTopBarNavigation } from '@/hooks/useTopBarNavigation';
 import { answeredProgressSuffix, answeredSummary } from '@/utils/examProgress';
 import { formatThousands } from '@/utils/formatNumber';
@@ -30,14 +33,32 @@ const noop = () => {};
 
 type ConfirmKind = 'exit' | 'submit';
 
-/** Realização de uma prova, aberta pelo "Estudar Agora" da tela de questões da prova */
+/**
+ * Realização de uma prova, aberta pelo "Estudar Agora" da tela de questões da prova (provas do
+ * usuário e de vestibular) ou de Configurar Prova por Disciplina (a prova temporária, pelo id
+ * reservado DISCIPLINE_STUDY_EXAM_ID)
+ */
 export default function ExamSessionScreen() {
   const router = useRouter();
   const { provaId } = useLocalSearchParams<{ provaId: string }>();
   // TODO: substituir pela prova e pelas questões vindas do back.
-  const exam = MOCK_EXAMS.find((item) => item.id === provaId);
-  const questions = exam ? (MOCK_EXAM_QUESTIONS[exam.id] ?? NO_QUESTIONS) : NO_QUESTIONS;
+  const { getExam, getExamQuestions } = useExams();
+  const exam = getExam(provaId);
+  const questions = exam ? getExamQuestions(exam.id) : NO_QUESTIONS;
   const session = useExamSession(questions);
+  const { disciplineNames, contentNames } = useSubjectNames();
+  // "Disciplina · Conteúdo" de cada card, pelos nomes do catálogo
+  const cardContent = useMemo(
+    () => ({
+      ...EXAM_QUESTION_CARD_CONTENT,
+      subjectLabel: (question: Question) =>
+        examSubjectLabel(
+          disciplineNames.get(question.disciplineId) ?? '',
+          contentNames.get(question.contentId) ?? '',
+        ),
+    }),
+    [disciplineNames, contentNames],
+  );
   const handleTabPress = useTopBarNavigation();
   const listRef = useRef<ExamQuestionListHandle>(null);
   const [confirmVisible, setConfirmVisible] = useState(false);
@@ -45,13 +66,17 @@ export default function ExamSessionScreen() {
   const [confirmKind, setConfirmKind] = useState<ConfirmKind>('exit');
   // Aba do TopBar tocada durante a prova: o destino, se o usuário confirmar a saída
   const [pendingTab, setPendingTab] = useState<TopBarTabKey | null>(null);
-  const hasQuestions = questions.length > 0;
+  // Algo seria perdido ao sair: alguma questão respondida ou alguma marcação feita
+  const hasProgress =
+    session.answeredCount > 0 || Object.keys(session.highlights).length > 0;
 
   const leave = () => {
-    // Volta para as questões da prova (que ficam por baixo na pilha); aberta sem histórico
-    // (ex.: link direto), vai para elas
+    // Volta para a tela de baixo (as questões da prova ou a configuração do estudo por
+    // disciplina, com as escolhas mantidas); aberta sem histórico (ex.: link direto), vai para ela
     if (router.canDismiss()) {
       router.back();
+    } else if (provaId === DISCIPLINE_STUDY_EXAM_ID) {
+      router.replace('/(tabs)/provas/disciplina');
     } else {
       router.replace({ pathname: '/(tabs)/provas/[provaId]', params: { provaId } });
     }
@@ -69,11 +94,11 @@ export default function ExamSessionScreen() {
     setPendingTab(null);
   };
 
-  // Sem questões, não há nada a perder: sai direto
-  const requestExit = () => (hasQuestions ? openConfirm('exit') : leave());
+  // Sem resposta nem marcação, não há nada a perder: sai direto
+  const requestExit = () => (hasProgress ? openConfirm('exit') : leave());
 
   const handleTopBarTab = (tab: TopBarTabKey) => {
-    if (!hasQuestions) {
+    if (!hasProgress) {
       handleTabPress(tab);
       return;
     }
@@ -97,7 +122,7 @@ export default function ExamSessionScreen() {
   };
 
   // Voltar do Android: pede confirmação como o "Sair da prova"; com o modal aberto, fecha como
-  // "Não". Sem questões, deixa o voltar normal acontecer.
+  // "Não". Sem resposta nem marcação, deixa o voltar normal acontecer.
   useFocusEffect(
     useCallback(() => {
       const subscription = BackHandler.addEventListener('hardwareBackPress', () => {
@@ -106,7 +131,7 @@ export default function ExamSessionScreen() {
           setPendingTab(null);
           return true;
         }
-        if (!hasQuestions) {
+        if (!hasProgress) {
           return false;
         }
         setConfirmKind('exit');
@@ -114,7 +139,7 @@ export default function ExamSessionScreen() {
         return true;
       });
       return () => subscription.remove();
-    }, [confirmVisible, hasQuestions]),
+    }, [confirmVisible, hasProgress]),
   );
 
   // Toque no navegador: vira a questão atual na hora e a lista rola até ela
@@ -137,6 +162,7 @@ export default function ExamSessionScreen() {
         headerActions={[]}
         questionActions={[]}
         onQuestionAction={noop}
+        onQuestionPress={noop}
         onBack={leave}
         backLabel={BACK_LABEL}
         coins={TEMP_COINS}
@@ -160,7 +186,7 @@ export default function ExamSessionScreen() {
         questions={questions}
         session={session}
         content={EXAM_SESSION_CONTENT}
-        cardContent={EXAM_QUESTION_CARD_CONTENT}
+        cardContent={cardContent}
         markers={MARKER_COLORS}
         answeredLabel={answeredLabel}
         progressSuffix={progressSuffix}

@@ -108,6 +108,24 @@ export const Palette = {
    */
   modalShadowWide: 'rgba(0, 0, 0, 0.22)',
   modalShadowNear: 'rgba(0, 0, 0, 0.14)',
+  /**
+   * Realização de prova: cabeçalho fixo num verde-menta claro; alternativas num quase branco
+   * esverdeado; o amarelo do círculo da alternativa escolhida e do anel da questão atual; e o
+   * rótulo "Disciplina · Conteúdo", num verde acinzentado mais suave que o texto. O resto usa
+   * `forest`, `rankCard` (cards e barra inferior), `homeBackground` e `white`.
+   */
+  examHeader: '#DEF0E1',
+  examOption: '#EAF7F0',
+  examYellow: '#F5C732',
+  examSubjectLabel: '#3E5B48',
+  /** Bolinhas do marcador de texto (mais saturadas) e o destaque atrás das palavras marcadas */
+  markerBlue: '#3380BA',
+  markerYellow: '#F4EA4C',
+  markerRed: '#DB4F4A',
+  highlightBlue: '#88C2DE',
+  highlightYellow: '#F4E760',
+  /** Não aparece no mockup: um vermelho suave, na mesma intensidade do amarelo e do azul */
+  highlightRed: '#F4A6A0',
 };
 
 /**
@@ -138,6 +156,8 @@ export const FontFamily = {
   buttonMedium: 'Inter_500Medium',
   /** Texto da frente do card na revisão: a sem serifa do login em negrito */
   bodyBold: 'Inter_700Bold',
+  /** Rótulo e dificuldade do card de uma questão: a sem serifa em peso médio */
+  bodyMedium: 'Inter_500Medium',
 };
 
 export const Fonts = Platform.select({

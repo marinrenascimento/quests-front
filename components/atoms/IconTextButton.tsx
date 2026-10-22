@@ -16,8 +16,12 @@ type Props = {
    * como os botões de Meus Decks. 'compact': mesmo estilo do 'block', mas com a largura do
    * texto (mais o espaço lateral), para ficar ao lado de outro conteúdo (ex.: "Encerrar Revisão").
    * 'dialog': como o 'block' (flex 1), com texto maior, para os botões lado a lado de um modal.
+   * 'action': como o 'compact' (largura do texto), mais alto, com mais espaço lateral e texto
+   * semi-negrito (ex.: "Entregar prova").
    */
-  variant?: 'support' | 'block' | 'compact' | 'dialog';
+  variant?: 'support' | 'block' | 'compact' | 'dialog' | 'action';
+  /** Desabilitado: opacidade reduzida, sem toque e informado ao leitor de tela */
+  disabled?: boolean;
   /**
    * 'dark' (padrão): fundo verde escuro e texto branco. 'light': fundo verde sálvia (o dos
    * cartões) e texto verde escuro, para a opção secundária ao lado de um botão escuro.
@@ -33,6 +37,8 @@ const VARIANTS = {
   compact: { height: 31, radius: 5, paddingHorizontal: 12, fontSize: 10.5 },
   // Medidas do mockup do modal de confirmação convertidas para a escala da Help
   dialog: { height: 33, radius: 7, paddingHorizontal: 8, fontSize: 11 },
+  // Medidas do mockup da realização de prova (38, 8, 20 e 13px) convertidas para a escala da Help
+  action: { height: 33.8, radius: 7.1, paddingHorizontal: 17.8, fontSize: 11.5 },
 };
 const SUPPORT_WIDTH = 177.5;
 const ICON_SIZE = 14;
@@ -51,17 +57,21 @@ export function IconTextButton({
   onPress,
   variant = 'support',
   tone = 'dark',
+  disabled = false,
 }: Props) {
   const { scale, layoutWidth } = useMockupScale(HELP_MOCKUP_WIDTH);
   const size = VARIANTS[variant];
   const isSupport = variant === 'support';
   const isLight = tone === 'light';
+  const fitsText = variant === 'compact' || variant === 'action';
   const slop = Math.max(0, (MIN_TOUCH - scale(size.height)) / 2);
 
   return (
     <Pressable
       accessibilityRole="button"
       accessibilityLabel={label}
+      accessibilityState={disabled ? { disabled } : undefined}
+      disabled={disabled}
       onPress={onPress}
       hitSlop={{ top: slop, bottom: slop }}
       style={({ pressed }) => [
@@ -73,7 +83,7 @@ export function IconTextButton({
               width: scale(SUPPORT_WIDTH),
               maxWidth: layoutWidth - scale(30),
             }
-          : variant === 'compact'
+          : fitsText
             ? styles.compact
             : styles.block,
         {
@@ -86,6 +96,7 @@ export function IconTextButton({
           ],
         },
         pressed && styles.pressed,
+        disabled && styles.disabled,
       ]}>
       {icon ? (
         <MaterialCommunityIcons
@@ -101,7 +112,7 @@ export function IconTextButton({
         style={[
           styles.label,
           isLight && styles.labelLight,
-          isSupport ? styles.labelSupport : styles.labelBlock,
+          isSupport || variant === 'action' ? styles.labelSupport : styles.labelBlock,
           { fontSize: scale(size.fontSize) },
         ]}>
         {label}
@@ -144,5 +155,8 @@ const styles = StyleSheet.create({
   },
   pressed: {
     opacity: 0.85,
+  },
+  disabled: {
+    opacity: 0.45,
   },
 });

@@ -1,3 +1,4 @@
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { StyleSheet, View } from 'react-native';
 
 import { BackButton } from '@/components/atoms/BackButton';
@@ -20,6 +21,11 @@ type Props = {
   actionLabel?: string;
   /** Botão de texto verde escuro à direita, com a largura do texto (ex.: "Encerrar Revisão") */
   textAction?: { label: string; onPress: () => void };
+  /**
+   * Ícone pequeno e só decorativo à direita (ex.: olho do Visualizar Card): sem toque e fora do
+   * leitor de tela. Opcional.
+   */
+  indicatorIcon?: IconName;
   /** Máximo de linhas do título, alinhado à esquerda (padrão: 1) */
   titleLines?: number;
   /**
@@ -36,12 +42,13 @@ const TITLE_LETTER_SPACING = 0.8;
 const TITLE_LINE_HEIGHT = 13;
 const TITLE_GAP = 10;
 const ACTION_ICON_SIZE = 22;
+const INDICATOR_ICON_SIZE = 16;
 /** Menor escala da fonte do título com fitTitle */
 const MIN_TITLE_SCALE = 0.6;
 
 /**
  * Cabeçalho em linha: voltar à esquerda (opcional), título ao lado e, opcionalmente, um botão
- * de ícone ou de texto à direita. O título ocupa o espaço que sobra e nunca passa por baixo
+ * de ícone ou de texto ou um ícone decorativo à direita. O título ocupa o espaço que sobra e nunca passa por baixo
  * dos botões.
  */
 export function ReportHeader({
@@ -52,6 +59,7 @@ export function ReportHeader({
   onAction,
   actionLabel,
   textAction,
+  indicatorIcon,
   titleLines = 1,
   fitTitle = false,
 }: Props) {
@@ -94,6 +102,19 @@ export function ReportHeader({
           onPress={textAction.onPress}
           variant="compact"
         />
+      ) : null}
+      {indicatorIcon ? (
+        <View
+          accessible={false}
+          accessibilityElementsHidden
+          importantForAccessibility="no-hide-descendants"
+          pointerEvents="none">
+          <MaterialCommunityIcons
+            name={indicatorIcon}
+            size={scale(INDICATOR_ICON_SIZE)}
+            color={Palette.forest}
+          />
+        </View>
       ) : null}
     </View>
   );

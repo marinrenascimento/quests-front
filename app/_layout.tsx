@@ -15,11 +15,18 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
+import { LogBox } from 'react-native';
 import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
 SplashScreen.preventAutoHideAsync();
+
+// Só em desenvolvimento: o Expo tenta manter a tela acesa (expo-keep-awake, dentro do próprio
+// expo) e, no Android, falha quando o app recarrega com a tela bloqueada ou em segundo plano. O
+// erro não vem do app e não existe em produção; esconde só esta mensagem no LogBox.
+// TODO: remover quando o Expo tratar essa falha.
+LogBox.ignoreLogs(['Unable to activate keep awake']);
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();

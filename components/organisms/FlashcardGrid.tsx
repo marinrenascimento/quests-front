@@ -28,11 +28,12 @@ const COLUMNS = 2;
 export const CARD_HEIGHT_RATIO = 0.8;
 export const CARD_PADDING = 10;
 const EMPTY_TOP = 24;
-// Linhas (não cards) renderizadas de início e por lote: ~2 telas, o bastante para não piscar
-const INITIAL_ROWS = 5;
-const ROWS_PER_BATCH = 5;
+// Linhas (não cards) renderizadas de início e por lote: ~2 telas, o bastante para não piscar.
+// Exportadas para a grade de questões de uma prova usar a mesma configuração.
+export const INITIAL_ROWS = 5;
+export const ROWS_PER_BATCH = 5;
 /** Telas mantidas montadas (a visível + 3 acima e 3 abaixo); o padrão do React Native é 21 */
-const WINDOW_SIZE = 7;
+export const WINDOW_SIZE = 7;
 
 const keyExtractor = (card: DeckCard) => card.id;
 

@@ -50,7 +50,11 @@ export default function DeckCardsScreen() {
           break;
         }
         case 'view':
-          // TODO: visualizar card (cardId).
+          // push: os cards do deck ficam por baixo e o Visualizar Card volta para eles
+          router.push({
+            pathname: '/(tabs)/decks/[deckId]/cards/[cardId]',
+            params: { deckId, cardId },
+          });
           break;
       }
     },

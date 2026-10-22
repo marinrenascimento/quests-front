@@ -17,7 +17,7 @@ type Props = {
   /** Com adjustsFontSizeToFit: menor escala permitida da fonte, de 0 a 1 (só iOS) */
   minimumFontScale?: number;
   /** Peso da fonte (padrão: regular) */
-  weight?: 'regular' | 'bold';
+  weight?: 'regular' | 'medium' | 'bold';
   /** 'header' para títulos de seção (leitores de tela) */
   accessibilityRole?: 'header';
   /** Margens e largura */
@@ -29,7 +29,7 @@ const DEFAULT_SIZE = 9.6;
 const DEFAULT_LINE_HEIGHT = 13.3;
 
 /**
- * Texto em sem serifa (Inter), verde escuro, regular ou em negrito. Por padrão quebra em quantas
+ * Texto em sem serifa (Inter), verde escuro, regular, médio ou em negrito. Por padrão quebra em quantas
  * linhas precisar.
  */
 export function BodyText({
@@ -55,6 +55,7 @@ export function BodyText({
       maxFontSizeMultiplier={1.3}
       style={[
         styles.text,
+        weight === 'medium' && styles.medium,
         weight === 'bold' && styles.bold,
         {
           fontSize: size ?? scale(DEFAULT_SIZE),
@@ -72,6 +73,9 @@ const styles = StyleSheet.create({
   text: {
     fontFamily: FontFamily.body,
     color: Palette.forest,
+  },
+  medium: {
+    fontFamily: FontFamily.bodyMedium,
   },
   bold: {
     fontFamily: FontFamily.bodyBold,

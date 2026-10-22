@@ -21,8 +21,10 @@ export default function HomeScreen() {
         router.navigate('/(tabs)/decks');
         break;
       case 'questoes':
+        router.navigate('/(tabs)/provas');
+        break;
       case 'jogos':
-        // TODO: navegar para a tela correspondente (Questões ou Jogos) quando ela existir.
+        // TODO: navegar para a tela de Jogos quando ela existir.
         break;
     }
   };

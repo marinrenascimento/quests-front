@@ -16,6 +16,11 @@ type Props = {
    * sem ele (ou vazio), a moldura não aparece e os botões ficam logo abaixo da pergunta.
    */
   highlight?: string;
+  /**
+   * Frase entre a moldura e os botões (ex.: "Foram respondidas 3 de 9 questões."). Opcional: sem
+   * ela, o modal fica como antes.
+   */
+  description?: string;
   /** Botão claro, à esquerda (ex.: "Sim") */
   confirmLabel: string;
   /** Botão escuro, à direita (ex.: "Não") */
@@ -36,6 +41,10 @@ const FRAME_TOP = 16;
 const HIGHLIGHT_SIZE = 7;
 const HIGHLIGHT_LETTER_SPACING = 1;
 const HIGHLIGHT_LINE_HEIGHT = 13;
+/** Frase opcional: 15dp numa tela de 360dp, convertidos para a escala da Help */
+const DESCRIPTION_TOP = 14;
+const DESCRIPTION_SIZE = 12.9;
+const DESCRIPTION_LINE_HEIGHT = 17;
 const BUTTONS_TOP = 18;
 const BUTTONS_WIDTH = 177;
 const BUTTONS_GAP = 12;
@@ -52,6 +61,7 @@ export function ConfirmModal({
   visible,
   title,
   highlight,
+  description,
   confirmLabel,
   cancelLabel,
   onConfirm,
@@ -116,6 +126,15 @@ export function ConfirmModal({
               </CornerFrame>
             </View>
           ) : null}
+          {description ? (
+            <BodyText
+              size={scale(DESCRIPTION_SIZE)}
+              lineHeight={scale(DESCRIPTION_LINE_HEIGHT)}
+              align="center"
+              style={[styles.description, { marginTop: scale(DESCRIPTION_TOP) }]}>
+              {description}
+            </BodyText>
+          ) : null}
           <View
             style={[
               styles.buttons,
@@ -162,6 +181,9 @@ const styles = StyleSheet.create({
   highlight: {
     alignSelf: 'stretch',
     textAlign: 'center',
+  },
+  description: {
+    alignSelf: 'stretch',
   },
   buttons: {
     flexDirection: 'row',

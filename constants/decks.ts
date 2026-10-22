@@ -143,6 +143,23 @@ export const EDIT_FLASHCARD_CONTENT = {
   notFoundMessage: 'Card Não Encontrado',
 };
 
+/**
+ * Textos da tela Visualizar Card (somente leitura): os mesmos rótulos do formulário, o título
+ * Card "nome do card" e a mensagem de card inexistente do Editar Flashcard
+ */
+export const VIEW_FLASHCARD_CONTENT = {
+  title: (name: string) => `Card "${name}"`,
+  disciplineLabel: FLASHCARD_FORM_CONTENT.disciplineLabel,
+  contentLabel: FLASHCARD_FORM_CONTENT.contentLabel,
+  frontLabel: FLASHCARD_FORM_CONTENT.frontLabel,
+  backSideLabel: FLASHCARD_FORM_CONTENT.backSideLabel,
+  notFoundMessage: EDIT_FLASHCARD_CONTENT.notFoundMessage,
+  /** Ícone decorativo do canto do cabeçalho, que indica que a tela é só de visualização */
+  viewIcon: 'eye-outline' as IconName,
+};
+
+export type ViewFlashcardContent = typeof VIEW_FLASHCARD_CONTENT;
+
 /** Modal de confirmação ao cancelar (ou voltar de) o Novo Flashcard: sem texto em destaque */
 export const CANCEL_CARD_CONFIRM_CONTENT = {
   title: 'Tem Certeza que Deseja Cancelar a Criação Desse Card?',

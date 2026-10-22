@@ -54,6 +54,14 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="provas"
+        options={{
+          title: 'Minhas Provas',
+          // Ao sair da aba, a pilha volta para a lista (como em Meus Decks)
+          popToTopOnBlur: true,
+        }}
+      />
+      <Tabs.Screen
         name="explore"
         options={{
           title: 'Explore',

@@ -7,6 +7,8 @@ const MOCKUP_SCREEN_WIDTH = 306;
  * para esta mesma escala, então as duas telas usam as mesmas medidas.
  */
 export const HELP_MOCKUP_WIDTH = 310;
+/** Largura da tela no mockup da realização de prova, em px (as medidas da tela saem dele) */
+export const EXAM_MOCKUP_WIDTH = 349;
 /** Em tablets o layout para de crescer nesta largura (dp) e fica centralizado. */
 const MAX_LAYOUT_WIDTH = 480;
 

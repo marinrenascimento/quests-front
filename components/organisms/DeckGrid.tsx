@@ -4,19 +4,37 @@ import { FlatList, Pressable, StyleSheet, View } from 'react-native';
 import { BodyText } from '@/components/atoms/BodyText';
 import { DeckSummary } from '@/components/molecules/DeckSummary';
 import { InfoCard } from '@/components/molecules/InfoCard';
-import { Deck } from '@/constants/decks';
 import { useGridLayout } from '@/hooks/useGridLayout';
 import { HELP_MOCKUP_WIDTH, useMockupScale } from '@/hooks/useMockupScale';
 import { formatCount } from '@/utils/formatCount';
 
-type Props = {
-  decks: Deck[];
+/** O mínimo de um item da grade: um deck (Meus Decks) ou uma prova (Minhas Provas) */
+type GridItem = {
+  id: string;
+  title: string;
+  /** Com descrição (mesmo vazia), o cartão mostra a linha dela; sem, não */
+  description?: string;
+};
+
+type Props<T extends GridItem> = {
+  items: T[];
   /** Conteúdo acima da grade, que rola junto com ela (ex.: cabeçalho e botões) */
   header: ReactElement;
   emptyMessage: string;
+  /** Quantidade mostrada no cartão (ex.: cards do deck, questões da prova) */
+  getCount: (item: T) => number;
   /** Palavra da quantidade no singular e no plural (ex.: card / cards) */
   countLabels: { one: string; other: string };
-  onDeckPress: (deck: Deck) => void;
+  onItemPress: (item: T) => void;
+  /** Máximo de linhas do título (padrão: 1); o espaço delas fica reservado em todos os cartões */
+  titleLines?: number;
+  /** Posição da quantidade no cartão (padrão: centralizada) */
+  countAlign?: 'center' | 'right';
+  /**
+   * O leitor de tela lê o título e a quantidade ("Renascimento, 231 Questões"). Padrão: só o
+   * título.
+   */
+  countInAccessibilityLabel?: boolean;
 };
 
 /** Cartões por linha */
@@ -25,34 +43,52 @@ const CARD_PADDING = 7;
 const EMPTY_TOP = 24;
 
 /**
- * Grade de decks em 2 colunas: a FlatList é a única rolagem da tela (o cabeçalho entra como
- * ListHeaderComponent, sem ScrollView em volta). A largura de cada cartão é calculada a partir
- * da tela, então todos têm o mesmo tamanho, inclusive o último de uma linha incompleta.
+ * Grade de cartões com baú em 2 colunas (Meus Decks e Minhas Provas): a FlatList é a única
+ * rolagem da tela (o cabeçalho entra como ListHeaderComponent, sem ScrollView em volta). A
+ * largura de cada cartão é calculada a partir da tela, então todos têm o mesmo tamanho,
+ * inclusive o último de uma linha incompleta.
  */
-export function DeckGrid({ decks, header, emptyMessage, countLabels, onDeckPress }: Props) {
+export function DeckGrid<T extends GridItem>({
+  items,
+  header,
+  emptyMessage,
+  getCount,
+  countLabels,
+  onItemPress,
+  titleLines,
+  countAlign,
+  countInAccessibilityLabel = false,
+}: Props<T>) {
   const { scale } = useMockupScale(HELP_MOCKUP_WIDTH);
   const { gap, itemWidth, contentContainerStyle } = useGridLayout(COLUMNS);
 
   return (
     <FlatList
-      data={decks}
-      keyExtractor={(deck) => deck.id}
+      data={items}
+      keyExtractor={(item) => item.id}
       numColumns={COLUMNS}
-      renderItem={({ item }) => (
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel={item.title}
-          onPress={() => onDeckPress(item)}
-          style={({ pressed }) => [{ width: itemWidth }, pressed && styles.pressed]}>
-          <InfoCard padding={CARD_PADDING}>
-            <DeckSummary
-              title={item.title}
-              description={item.description}
-              countLabel={formatCount(item.cardsCount, countLabels)}
-            />
-          </InfoCard>
-        </Pressable>
-      )}
+      renderItem={({ item }) => {
+        const countLabel = formatCount(getCount(item), countLabels);
+        return (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={
+              countInAccessibilityLabel ? `${item.title}, ${countLabel}` : item.title
+            }
+            onPress={() => onItemPress(item)}
+            style={({ pressed }) => [{ width: itemWidth }, pressed && styles.pressed]}>
+            <InfoCard padding={CARD_PADDING}>
+              <DeckSummary
+                title={item.title}
+                description={item.description}
+                countLabel={countLabel}
+                titleLines={titleLines}
+                countAlign={countAlign}
+              />
+            </InfoCard>
+          </Pressable>
+        );
+      }}
       ListHeaderComponent={header}
       ListEmptyComponent={
         <BodyText align="center" style={{ marginTop: scale(EMPTY_TOP) }}>
@@ -62,7 +98,7 @@ export function DeckGrid({ decks, header, emptyMessage, countLabels, onDeckPress
       ItemSeparatorComponent={() => <View style={{ height: gap }} />}
       columnWrapperStyle={{ gap }}
       contentContainerStyle={[styles.content, contentContainerStyle]}
-      // TODO: carregar mais decks (onEndReached) quando integrar com o back.
+      // TODO: carregar mais itens (onEndReached) quando integrar com o back.
       bounces={false}
       showsVerticalScrollIndicator={false}
     />

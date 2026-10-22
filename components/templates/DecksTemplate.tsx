@@ -47,10 +47,11 @@ export function DecksTemplate({
       scrollable={false}
       topBar={<TopBar onTabPress={handleTabPress} coins={coins} userName={userName} />}>
       <DeckGrid
-        decks={decks}
+        items={decks}
         emptyMessage={emptyMessage}
+        getCount={(deck) => deck.cardsCount}
         countLabels={countLabels}
-        onDeckPress={onDeckPress}
+        onItemPress={onDeckPress}
         header={
           <ListPageHeader
             title={title}

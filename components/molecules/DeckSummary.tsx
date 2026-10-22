@@ -16,6 +16,8 @@ type Props = {
 const CHEST = require('@/assets/images/outros/bau.png');
 /** bau.png tem 1410 x 1115 px */
 const CHEST_ASPECT_RATIO = 1410 / 1115;
+/** Texto da linha de descrição quando o deck não tem descrição (espaço sem quebra) */
+const NO_DESCRIPTION = ' ';
 /** Largura da imagem em relação ao cartão */
 const CHEST_WIDTH = '60%';
 
@@ -59,7 +61,9 @@ export function DeckSummary({ title, description, countLabel }: Props) {
         lineHeight={scale(DESCRIPTION_LINE_HEIGHT)}
         numberOfLines={1}
         style={[styles.description, { marginTop: scale(DESCRIPTION_GAP) }]}>
-        {description}
+        {/* Descrição vazia (é opcional no cadastro): espaço sem quebra, para a linha continuar
+            ocupando a altura e o cartão ficar do mesmo tamanho dos outros */}
+        {description || NO_DESCRIPTION}
       </BodyText>
       <Text
         numberOfLines={1}

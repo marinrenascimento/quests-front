@@ -81,3 +81,50 @@ export const COMPLETED_IMAGE: SizedImage = {
   source: require('@/assets/images/outros/bau.png'),
   aspectRatio: 1410 / 1115,
 };
+
+/** Quantidades de flashcards que podem ser escolhidas no estudo por disciplina */
+export const STUDY_QUANTITY_OPTIONS = [5, 10, 15, 20, 25, 30];
+
+/** Textos da tela Configurar Deck por Disciplina (o título é exibido em caixa alta) */
+export const DISCIPLINE_STUDY_CONTENT = {
+  title: 'Configurar Deck por Disciplina',
+  disciplineLabel: 'Disciplina',
+  disciplinePlaceholder: 'Pesquise uma Disciplina',
+  disciplineRequired: 'Informe a Disciplina.',
+  /** Pesquisa sem resultado (não há criação nesta tela) */
+  disciplineNoResults: 'Nenhuma Disciplina Encontrada',
+  /** Nenhuma disciplina com cards */
+  disciplineEmpty: 'Nenhuma Disciplina com Cards',
+  contentLabel: 'Conteúdo',
+  contentPlaceholder: 'Pesquise um Conteúdo',
+  /** Placeholder do conteúdo enquanto nenhuma disciplina foi escolhida */
+  contentDisabledPlaceholder: 'Escolha uma Disciplina Primeiro',
+  contentRequired: 'Informe o Conteúdo.',
+  contentNoResults: 'Nenhum Conteúdo Encontrado',
+  contentEmpty: 'Nenhum Conteúdo com Cards',
+  quantityLabel: 'Quantidade de Flashcards',
+  quantityPlaceholder: 'Escolha a Quantidade',
+  quantityRequired: 'Informe a Quantidade de Flashcards.',
+  /** Lista de quantidades vazia (não acontece com as opções fixas) */
+  quantityEmpty: 'Nenhuma Quantidade Disponível',
+  cancelLabel: 'Cancelar',
+  studyLabel: 'Estudar Agora',
+};
+
+export type DisciplineStudyContent = typeof DISCIPLINE_STUDY_CONTENT;
+
+/** Modal de confirmação ao cancelar (ou voltar de) Configurar Deck por Disciplina */
+export const CANCEL_DISCIPLINE_STUDY_CONFIRM_CONTENT = {
+  title: 'Tem Certeza que Deseja Cancelar a Configuração do Estudo?',
+  confirmLabel: 'Sim',
+  cancelLabel: 'Não',
+};
+
+/**
+ * Textos da revisão do estudo por disciplina: os mesmos da revisão de um deck, com a mensagem de
+ * revisão aberta sem estudo configurado (ex.: link direto)
+ */
+export const DISCIPLINE_STUDY_SESSION_CONTENT: StudyContent = {
+  ...STUDY_CONTENT,
+  notFoundMessage: 'Nenhum Estudo Configurado',
+};

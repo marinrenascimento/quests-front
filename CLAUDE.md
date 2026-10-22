@@ -22,5 +22,6 @@ Expo SDK 54 + Expo Router 6 + React Native 0.81 + TypeScript strict. Leia també
 - Para chamar o back, use o IP do PC e não `localhost` (o Expo Go roda no celular).
 - Instale libs com `npx expo install`. Verifique compatibilidade com o Expo Go.
 - Antes de concluir: `npx expo lint` e `npx tsc --noEmit`.
+- Toda tela ou regra de negócio nova (ou alterada) deve ser registrada em `docs/REGRAS_DE_NEGOCIO.md`, com ID, tela e status.
 - Não rode `npm run reset-project`. Não renomeie os arquivos legados fora do padrão (imagens camelCase, componentes kebab-case do template) sem pedido explícito.
 - Nunca commitar `node_modules/` nem `.env`. Commits pequenos e com mensagens claras.

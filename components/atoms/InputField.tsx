@@ -5,7 +5,8 @@ import { FontFamily, Palette } from '@/constants/theme';
 type Props = TextInputProps & {
   /**
    * 'filled': fundo cinza sem borda (login). 'outlined': fundo branco com borda verde-clara
-   * (cadastro). Com multiline, o campo fica mais alto e o texto começa no topo.
+   * (cadastro). Com multiline, o campo fica mais alto e o texto começa no topo. Com
+   * editable={false}, o fundo fica cinza (campo desabilitado).
    */
   variant?: 'filled' | 'outlined';
   hasError?: boolean;
@@ -19,6 +20,7 @@ export function InputField({ variant = 'filled', hasError = false, style, ...res
         styles.base,
         styles[variant],
         rest.multiline && styles.multiline,
+        rest.editable === false && styles.disabled,
         hasError && styles.error,
         style,
       ]}
@@ -57,6 +59,10 @@ const styles = StyleSheet.create({
     minHeight: 96,
     paddingVertical: 10,
     textAlignVertical: 'top',
+  },
+  // Mesmo cinza do campo 'filled' do login
+  disabled: {
+    backgroundColor: Palette.inputFill,
   },
   error: {
     borderColor: Palette.error,

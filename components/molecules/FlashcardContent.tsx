@@ -13,9 +13,10 @@ type Props = {
   /** Rótulo "Disciplina - Tema" no topo */
   label: string;
   title: string;
-  actions: CardAction[];
+  /** Botões do canto inferior direito; sem ações (ex.: cards vinculados), a linha não aparece */
+  actions?: CardAction[];
   /** Recebe a ação e o id do card: uma função só, estável, para todos os cards */
-  onAction: (action: CardActionKey, cardId: string) => void;
+  onAction?: (action: CardActionKey, cardId: string) => void;
 };
 
 // Medidas do mockup dos cards de um deck convertidas para a escala da Help, em px
@@ -37,7 +38,7 @@ export const FlashcardContent = memo(function FlashcardContent({
   cardId,
   label,
   title,
-  actions,
+  actions = [],
   onAction,
 }: Props) {
   const { scale } = useMockupScale(HELP_MOCKUP_WIDTH);
@@ -61,16 +62,18 @@ export const FlashcardContent = memo(function FlashcardContent({
           {title}
         </PixelText>
       </View>
-      <View style={[styles.actions, { gap: scale(ACTIONS_GAP) }]}>
-        {actions.map((action) => (
-          <CircleIconButton
-            key={action.key}
-            icon={action.icon}
-            accessibilityLabel={action.label}
-            onPress={() => onAction(action.key, cardId)}
-          />
-        ))}
-      </View>
+      {actions.length > 0 && onAction ? (
+        <View style={[styles.actions, { gap: scale(ACTIONS_GAP) }]}>
+          {actions.map((action) => (
+            <CircleIconButton
+              key={action.key}
+              icon={action.icon}
+              accessibilityLabel={action.label}
+              onPress={() => onAction(action.key, cardId)}
+            />
+          ))}
+        </View>
+      ) : null}
     </View>
   );
 });

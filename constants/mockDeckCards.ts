@@ -1,10 +1,14 @@
 import { Deck, DeckCard } from '@/constants/decks';
+import { slugify } from '@/utils/normalizeSearch';
 
 // TODO: substituir pelos dados do back. Cards fictícios, gerados a partir dos cards-base abaixo.
 // A quantidade de cada deck vem de deck.cardsCount (a mesma exibida em Meus Decks): a geração
 // produz exatamente esse número, então a contagem e a lista nunca divergem.
 
-/** Título (mostrado na lista de cards) e frente/verso (mostrados na revisão) de um card-base */
+/**
+ * Título (mostrado na lista de cards) e frente/verso (mostrados na revisão) de um card-base. A
+ * disciplina e o conteúdo vêm do deck.
+ */
 type CardBase = Pick<DeckCard, 'title' | 'front' | 'back'>;
 
 /**
@@ -702,6 +706,10 @@ export function getMockDeckCards(deck: Deck): DeckCard[] {
             title: round === 0 ? base.title : `${base.title} ${round + 1}`,
             front: base.front,
             back: base.back,
+            // Mesmos ids do catálogo fictício (constants/mockSubjects): a disciplina do deck e o
+            // tema do deck como conteúdo
+            disciplineId: slugify(deck.discipline),
+            contentId: deck.id,
           };
         });
 

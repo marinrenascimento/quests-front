@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode, RefObject } from 'react';
 import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, View } from 'react-native';
 
 import { Palette } from '@/constants/theme';
@@ -23,6 +23,13 @@ type Props = {
    * fica coberto) e os toques continuam funcionando com o teclado aberto. Padrão: false.
    */
   keyboardAware?: boolean;
+  /**
+   * Camada por cima do conteúdo, no topo da área abaixo do TopBar e centralizada (ex.: um
+   * toast). Não empurra o layout nem cobre o TopBar; os toques fora dela passam para o conteúdo.
+   */
+  overlay?: ReactNode;
+  /** Referência do ScrollView do conteúdo (ex.: rolar até o fim). Só com scrollable. */
+  scrollRef?: RefObject<ScrollView | null>;
 };
 
 // Medidas do mockup da Help, em px
@@ -42,12 +49,15 @@ export function HelpLayout({
   footer,
   scrollable = true,
   keyboardAware = false,
+  overlay,
+  scrollRef,
 }: Props) {
   const { scale } = useMockupScale(HELP_MOCKUP_WIDTH);
   const { layoutWidth, paddingHorizontal, paddingTop, paddingBottom } = useLayoutPadding();
 
   const scroll = (
     <ScrollView
+      ref={scrollRef}
       style={styles.scroll}
       contentContainerStyle={[
         styles.content,
@@ -63,22 +73,35 @@ export function HelpLayout({
     </ScrollView>
   );
 
+  const body = scrollable ? (
+    keyboardAware ? (
+      // Mesmo comportamento do AuthLayout: padding no iOS, altura no Android
+      <KeyboardAvoidingView
+        style={styles.scroll}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+        {scroll}
+      </KeyboardAvoidingView>
+    ) : (
+      scroll
+    )
+  ) : (
+    <View style={styles.scroll}>{children}</View>
+  );
+
   return (
     <View style={styles.screen}>
       {topBar}
-      {scrollable ? (
-        keyboardAware ? (
-          // Mesmo comportamento do AuthLayout: padding no iOS, altura no Android
-          <KeyboardAvoidingView
-            style={styles.scroll}
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-            {scroll}
-          </KeyboardAvoidingView>
-        ) : (
-          scroll
-        )
+      {overlay ? (
+        <View style={styles.scroll}>
+          {body}
+          <View
+            pointerEvents="box-none"
+            style={[styles.overlay, { width: layoutWidth, paddingHorizontal, paddingTop }]}>
+            {overlay}
+          </View>
+        </View>
       ) : (
-        <View style={styles.scroll}>{children}</View>
+        body
       )}
     </View>
   );
@@ -99,5 +122,12 @@ const styles = StyleSheet.create({
   },
   footer: {
     marginTop: 'auto',
+  },
+  // Topo da área do conteúdo, com as mesmas margens dele
+  overlay: {
+    position: 'absolute',
+    top: 0,
+    alignSelf: 'center',
+    alignItems: 'center',
   },
 });

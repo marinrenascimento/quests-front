@@ -1,5 +1,6 @@
 import { useRouter } from 'expo-router';
 
+import { Toast } from '@/components/molecules/Toast';
 import { FlashcardGrid } from '@/components/organisms/FlashcardGrid';
 import { HelpLayout } from '@/components/organisms/HelpLayout';
 import { HeaderAction, ListPageHeader } from '@/components/organisms/ListPageHeader';
@@ -19,6 +20,8 @@ type Props = {
   headerActions: HeaderAction[];
   cardActions: CardAction[];
   onCardAction: (action: CardActionKey, cardId: string) => void;
+  /** Toast no topo do conteúdo (ex.: depois de adicionar um card). Opcional. */
+  toast?: { message: string; visible: boolean; onHide: () => void };
   backLabel: string;
   /** Moedas e nome do usuário mostrados no TopBar */
   coins: number;
@@ -28,7 +31,8 @@ type Props = {
 /**
  * Template da tela de cards de um deck, aberta por cima de Meus Decks: TopBar sem aba em
  * destaque e uma lista só (a grade de cards), que rola levando junto o cabeçalho (voltar +
- * nome do deck) e os botões de ação. O voltar retorna à lista de decks.
+ * nome do deck) e os botões de ação. O voltar retorna à lista de decks. O toast (opcional)
+ * aparece por cima da grade, logo abaixo do TopBar, sem empurrar o layout.
  */
 export function DeckCardsTemplate({
   title,
@@ -38,6 +42,7 @@ export function DeckCardsTemplate({
   headerActions,
   cardActions,
   onCardAction,
+  toast,
   backLabel,
   coins,
   userName,
@@ -57,7 +62,12 @@ export function DeckCardsTemplate({
   return (
     <HelpLayout
       scrollable={false}
-      topBar={<TopBar onTabPress={handleTabPress} coins={coins} userName={userName} />}>
+      topBar={<TopBar onTabPress={handleTabPress} coins={coins} userName={userName} />}
+      overlay={
+        toast ? (
+          <Toast message={toast.message} visible={toast.visible} onHide={toast.onHide} />
+        ) : undefined
+      }>
       <FlashcardGrid
         cards={cards}
         label={cardLabel}

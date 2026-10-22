@@ -11,8 +11,11 @@ type Props = {
   visible: boolean;
   /** Pergunta no topo (exibida em caixa alta) */
   title: string;
-  /** Texto em destaque dentro da moldura de cantos (ex.: nome do deck), em caixa alta */
-  highlight: string;
+  /**
+   * Texto em destaque dentro da moldura de cantos (ex.: nome do deck), em caixa alta. Opcional:
+   * sem ele (ou vazio), a moldura não aparece e os botões ficam logo abaixo da pergunta.
+   */
+  highlight?: string;
   /** Botão claro, à esquerda (ex.: "Sim") */
   confirmLabel: string;
   /** Botão escuro, à direita (ex.: "Não") */
@@ -97,20 +100,22 @@ export function ConfirmModal({
             style={styles.title}>
             {title}
           </BodyText>
-          <View style={[styles.frame, { marginTop: scale(FRAME_TOP) }]}>
-            <CornerFrame>
-              <PixelText
-                size={scale(HIGHLIGHT_SIZE)}
-                letterSpacing={scale(HIGHLIGHT_LETTER_SPACING)}
-                lineHeight={scale(HIGHLIGHT_LINE_HEIGHT)}
-                numberOfLines={2}
-                adjustsFontSizeToFit
-                color={Palette.forest}
-                style={styles.highlight}>
-                {highlight}
-              </PixelText>
-            </CornerFrame>
-          </View>
+          {highlight ? (
+            <View style={[styles.frame, { marginTop: scale(FRAME_TOP) }]}>
+              <CornerFrame>
+                <PixelText
+                  size={scale(HIGHLIGHT_SIZE)}
+                  letterSpacing={scale(HIGHLIGHT_LETTER_SPACING)}
+                  lineHeight={scale(HIGHLIGHT_LINE_HEIGHT)}
+                  numberOfLines={2}
+                  adjustsFontSizeToFit
+                  color={Palette.forest}
+                  style={styles.highlight}>
+                  {highlight}
+                </PixelText>
+              </CornerFrame>
+            </View>
+          ) : null}
           <View
             style={[
               styles.buttons,

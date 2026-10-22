@@ -3,8 +3,6 @@ import { useState } from 'react';
 
 import { ConfirmModal } from '@/components/organisms/ConfirmModal';
 import { StudySessionTemplate } from '@/components/templates/StudySessionTemplate';
-import { getMockDeckCards } from '@/constants/mockDeckCards';
-import { MOCK_DECKS } from '@/constants/mockDecks';
 import { TEMP_COINS, TEMP_USER_NAME } from '@/constants/mockUser';
 import {
   COMPLETED_IMAGE,
@@ -12,14 +10,16 @@ import {
   END_CONFIRM_CONTENT,
   STUDY_CONTENT,
 } from '@/constants/study';
+import { useDecks } from '@/hooks/useDecks';
 import { useStudySession } from '@/hooks/useStudySession';
 
 export default function StudyScreen() {
   const router = useRouter();
   const { deckId } = useLocalSearchParams<{ deckId: string }>();
   // TODO: substituir pelos dados do back.
-  const deck = MOCK_DECKS.find((item) => item.id === deckId);
-  const session = useStudySession(deck ? getMockDeckCards(deck) : []);
+  const { decks, getDeckCards } = useDecks();
+  const deck = decks.find((item) => item.id === deckId);
+  const session = useStudySession(deck ? getDeckCards(deck) : []);
   const [confirmVisible, setConfirmVisible] = useState(false);
 
   const handleEnd = () => {

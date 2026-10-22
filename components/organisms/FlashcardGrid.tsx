@@ -21,9 +21,12 @@ type Props = {
 
 /** Cartões por linha */
 const COLUMNS = 2;
-/** Altura fixa do cartão em relação à largura (~80%, como no mockup) */
-const CARD_HEIGHT_RATIO = 0.8;
-const CARD_PADDING = 10;
+/**
+ * Altura fixa do cartão em relação à largura (~80%, como no mockup). Exportada com o espaço
+ * interno para os cards vinculados do cadastro de deck terem o mesmo tamanho.
+ */
+export const CARD_HEIGHT_RATIO = 0.8;
+export const CARD_PADDING = 10;
 const EMPTY_TOP = 24;
 // Linhas (não cards) renderizadas de início e por lote: ~2 telas, o bastante para não piscar
 const INITIAL_ROWS = 5;

@@ -12,14 +12,17 @@ import {
 } from '@/constants/study';
 import { useDecks } from '@/hooks/useDecks';
 import { useStudySession } from '@/hooks/useStudySession';
+import { buildReviewQueue } from '@/utils/reviewQueue';
 
 export default function StudyScreen() {
   const router = useRouter();
   const { deckId } = useLocalSearchParams<{ deckId: string }>();
   // TODO: substituir pelos dados do back.
-  const { decks, getDeckCards } = useDecks();
+  const { decks, getDeckCards, saveCardDifficulty } = useDecks();
   const deck = decks.find((item) => item.id === deckId);
-  const session = useStudySession(deck ? getDeckCards(deck) : []);
+  // Montada uma vez, ao abrir: o que for marcado agora só muda as próximas revisões
+  const [queue] = useState(() => (deck ? buildReviewQueue(getDeckCards(deck)) : []));
+  const session = useStudySession(queue, { onSaveDifficulty: saveCardDifficulty });
   const [confirmVisible, setConfirmVisible] = useState(false);
 
   const handleEnd = () => {
@@ -42,7 +45,7 @@ export default function StudyScreen() {
         session={session}
         completedImage={COMPLETED_IMAGE}
         // Com um card na tela (revisão em andamento) pede confirmação; no fim ("Voltar para o
-        // Início"), com o deck vazio ou inexistente, sai direto
+        // Início") ou com o deck inexistente, sai direto
         onEnd={session.card ? () => setConfirmVisible(true) : handleEnd}
         coins={TEMP_COINS}
         userName={TEMP_USER_NAME}
@@ -56,6 +59,7 @@ export default function StudyScreen() {
         // Fecha antes de navegar, para o modal não aparecer durante a troca de tela
         onConfirm={() => {
           setConfirmVisible(false);
+          session.saveMark();
           handleEnd();
         }}
         // Só fecha: o card, o lado e a dificuldade continuam como estavam

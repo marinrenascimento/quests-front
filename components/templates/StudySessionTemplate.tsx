@@ -47,9 +47,9 @@ const COMPLETED_TITLE_LINES = 2;
 /**
  * Template da revisão de um deck, aberta por cima dos cards do deck: TopBar sem aba em
  * destaque, cabeçalho (nome do deck + Encerrar Revisão), o card grande e a linha de controles.
- * Sem rolagem: o card ocupa toda a altura que sobra (flex 1). Com o deck vazio ou inexistente,
- * o card mostra uma mensagem e os controles somem. No fim da revisão, o card de conclusão (baú
- * + texto) tem altura proporcional à largura, e o espaço abaixo dele fica vazio.
+ * Sem rolagem: o card ocupa toda a altura que sobra (flex 1). Com o deck inexistente, o card
+ * mostra uma mensagem e os controles somem. No fim da revisão, o card de conclusão (baú + texto)
+ * tem altura proporcional à largura, e o espaço abaixo dele fica vazio.
  */
 export function StudySessionTemplate({
   title,
@@ -67,15 +67,13 @@ export function StudySessionTemplate({
   const handleTabPress = useTopBarNavigation();
   // Largura útil entre as margens laterais (a dos cards da revisão)
   const cardWidth = layoutWidth - paddingHorizontal * 2;
-  // Passou do último card de um deck existente com cards
+  // Passou do último card de um deck existente
   // TODO: salvar o resultado da revisão (back).
-  const completed = !notFound && session.total > 0 && session.finished;
+  const completed = !notFound && session.finished;
 
   let card: StudyCardContentProps | null = null;
   if (notFound) {
     card = { text: content.notFoundMessage, variant: 'front' };
-  } else if (session.total === 0) {
-    card = { label: content.endTag, text: content.emptyMessage, variant: 'front' };
   } else if (session.card) {
     card = {
       label: session.flipped ? content.backTag : content.frontTag,
@@ -88,7 +86,17 @@ export function StudySessionTemplate({
   return (
     <HelpLayout
       scrollable={false}
-      topBar={<TopBar onTabPress={handleTabPress} coins={coins} userName={userName} />}>
+      topBar={
+        <TopBar
+          // Trocar de aba sai da revisão: o que está marcado no card atual fica salvo
+          onTabPress={(tab) => {
+            session.saveMark();
+            handleTabPress(tab);
+          }}
+          coins={coins}
+          userName={userName}
+        />
+      }>
       <View
         style={[
           styles.content,

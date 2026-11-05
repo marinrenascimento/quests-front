@@ -115,9 +115,8 @@ export default function DeckCardsScreen() {
       <DeckCardsTemplate
         title={shownDeck?.title ?? ''}
         cards={deck ? cardItems : (removedDeck?.items ?? [])}
-        emptyMessage={
-          shownDeck ? DECK_CARDS_CONTENT.emptyMessage : DECK_CARDS_CONTENT.notFoundMessage
-        }
+        // Não existe deck sem cards: a lista só fica vazia quando o deck não existe
+        emptyMessage={DECK_CARDS_CONTENT.notFoundMessage}
         headerActions={
           deck
             ? [

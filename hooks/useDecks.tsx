@@ -3,6 +3,7 @@ import { createContext, ReactNode, useCallback, useContext, useMemo, useState } 
 import { Deck, DeckCard, LinkedCard } from '@/constants/decks';
 import { getMockDeckCards } from '@/constants/mockDeckCards';
 import { MOCK_DECKS } from '@/constants/mockDecks';
+import type { Difficulty } from '@/constants/study';
 import { slugify } from '@/utils/normalizeSearch';
 
 /** Dados do cadastro de deck no momento de salvar */
@@ -37,6 +38,8 @@ type DecksData = {
    * sem cards); nesse caso devolve true, para a tela voltar a Meus Decks.
    */
   deleteCard: (deckId: string, cardId: string) => boolean;
+  /** Guarda no card a dificuldade marcada numa revisão (vale a última marcação) */
+  saveCardDifficulty: (card: DeckCard, difficulty: Difficulty) => void;
   /**
    * Estudo por disciplina em andamento: deck temporário (nome "Disciplina - Conteúdo" e os cards
    * sorteados), que não entra em `decks` nem é salvo. null: nenhum estudo configurado.
@@ -189,6 +192,16 @@ export function DecksProvider({ children }: Props) {
     [cardsByDeck],
   );
 
+  // TODO: salvar a dificuldade no back (hoje vale enquanto o app está aberto).
+  const saveCardDifficulty = useCallback((card: DeckCard, difficulty: Difficulty) => {
+    setCardsByDeck((prev) => ({
+      ...prev,
+      [card.deckId]: storedCards(prev, card.deckId).map((item) =>
+        item.id === card.id ? { ...item, difficulty } : item,
+      ),
+    }));
+  }, []);
+
   const hideCardAddedToast = useCallback(() => setCardAddedToastDeckId(null), []);
 
   const value = useMemo(
@@ -199,6 +212,7 @@ export function DecksProvider({ children }: Props) {
       addCardToDeck,
       updateCard,
       deleteCard,
+      saveCardDifficulty,
       disciplineStudy,
       startDisciplineStudy: setDisciplineStudy,
       cardAddedToastDeckId,
@@ -211,6 +225,7 @@ export function DecksProvider({ children }: Props) {
       addCardToDeck,
       updateCard,
       deleteCard,
+      saveCardDifficulty,
       disciplineStudy,
       cardAddedToastDeckId,
       hideCardAddedToast,

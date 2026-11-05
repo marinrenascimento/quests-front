@@ -1,4 +1,5 @@
 import type { IconName } from '@/constants/helpContent';
+import type { Difficulty } from '@/constants/study';
 
 /**
  * Um deck de flashcards do usuário. Não tem disciplina nem conteúdo: quem tem são os cards, e um
@@ -23,6 +24,11 @@ export type DeckCard = {
   /** Disciplina e conteúdo do card (ids do catálogo de constants/mockSubjects + criados no app) */
   disciplineId: string;
   contentId: string;
+  /**
+   * Última dificuldade marcada numa revisão: define quantas vezes o card aparece nas próximas
+   * revisões do deck. Sem ela, o card ainda não foi marcado.
+   */
+  difficulty?: Difficulty;
 };
 
 /** Disciplina que pode ser escolhida ao cadastrar um card (ex.: "História") */
@@ -72,7 +78,6 @@ export const CARDS_COUNT_LABELS = { one: 'Card', other: 'Cards' };
 export const DECK_CARDS_CONTENT = {
   studyLabel: 'Estudar Agora',
   addLabel: 'Adicionar Card',
-  emptyMessage: 'Nenhum Card Neste Deck',
   notFoundMessage: 'Deck Não Encontrado',
 };
 

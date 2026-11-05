@@ -20,8 +20,11 @@ import { useStudySession } from '@/hooks/useStudySession';
  */
 export default function DisciplineStudyScreen() {
   const router = useRouter();
-  const { disciplineStudy } = useDecks();
-  const session = useStudySession(disciplineStudy?.cards ?? []);
+  const { disciplineStudy, saveCardDifficulty } = useDecks();
+  // Sem repetições por dificuldade (só na revisão de um deck), mas a marcação fica salva no card
+  const session = useStudySession(disciplineStudy?.cards ?? [], {
+    onSaveDifficulty: saveCardDifficulty,
+  });
   const [confirmVisible, setConfirmVisible] = useState(false);
 
   const handleEnd = () => {
@@ -59,6 +62,7 @@ export default function DisciplineStudyScreen() {
         // Fecha antes de navegar, para o modal não aparecer durante a troca de tela
         onConfirm={() => {
           setConfirmVisible(false);
+          session.saveMark();
           handleEnd();
         }}
         // Só fecha: o card, o lado e a dificuldade continuam como estavam

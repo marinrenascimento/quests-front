@@ -126,6 +126,15 @@ export const Palette = {
   highlightYellow: '#F4E760',
   /** Não aparece no mockup: um vermelho suave, na mesma intensidade do amarelo e do azul */
   highlightRed: '#F4A6A0',
+  /**
+   * Jogos (sem mockup): vidas cheias e perdidas; resposta errada; e o fundo da equação em cima do
+   * monstro, escuro o bastante para o texto branco se destacar da floresta. As respostas usam
+   * `forest` e `examYellow`.
+   */
+  gameLife: '#E5484D',
+  gameLifeLost: 'rgba(255, 255, 255, 0.45)',
+  gameAnswerWrong: '#9F2E2E',
+  gameEquationBackground: 'rgba(11, 26, 23, 0.85)',
 };
 
 /**

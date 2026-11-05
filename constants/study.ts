@@ -42,18 +42,24 @@ export const DIFFICULTY_OPTIONS: DifficultyConfig[] = [
   },
 ];
 
+/**
+ * Quantas vezes um card aparece na revisão de um deck, pela dificuldade salva nele (RN-171). As
+ * que não estão aqui, e o card ainda sem dificuldade, aparecem 1 vez.
+ */
+export const REVIEW_APPEARANCES: Partial<Record<Difficulty, number>> = {
+  dificil: 3,
+  impossivel: 4,
+};
+
 /** Textos e ícones da tela de revisão de um deck (os rótulos são exibidos em caixa alta) */
 export const STUDY_CONTENT = {
   endLabel: 'Encerrar Revisão',
   /** Rótulos do canto do card: em inglês, como no mockup */
   frontTag: 'Front',
   backTag: 'Back',
-  /** Rótulo do card quando o deck não tem cards */
-  endTag: 'Fim',
   /** Fim da revisão: texto do card e botão do cabeçalho (volta para os cards do deck) */
   completedTitle: 'Revisão Concluída!',
   completedEndLabel: 'Voltar para o Início',
-  emptyMessage: 'Nenhum Card para Revisar',
   notFoundMessage: 'Deck Não Encontrado',
   flipIcon: 'sync' as IconName,
   flipLabel: 'Virar Card',

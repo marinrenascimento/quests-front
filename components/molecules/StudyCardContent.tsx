@@ -10,7 +10,7 @@ import { HELP_MOCKUP_WIDTH, useMockupScale } from '@/hooks/useMockupScale';
 import { fitFontSize } from '@/utils/fitFontSize';
 
 type Props = {
-  /** Rótulo do canto superior esquerdo ("Front", "Back", "Fim"), em caixa alta. Opcional. */
+  /** Rótulo do canto superior esquerdo ("Front", "Back"), em caixa alta. Opcional. */
   label?: string;
   /** Texto principal, centralizado na área livre do card */
   text: string;

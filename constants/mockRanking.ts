@@ -15,7 +15,7 @@ export const MOCK_RANKING: RankingEntry[] = [
 export const MOCK_CURRENT_USER_RANK: RankingEntry = {
   id: 'me',
   position: 34,
-  name: 'Gabriel B.',
+  name: 'Maria A.',
   points: 2000,
 };
 

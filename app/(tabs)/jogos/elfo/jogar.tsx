@@ -4,11 +4,11 @@ import { useCallback, useState } from 'react';
 import { ConfirmModal } from '@/components/organisms/ConfirmModal';
 import { MathGameTemplate } from '@/components/templates/MathGameTemplate';
 import {
-  DEFAULT_MATH_DIFFICULTY,
+  DEFAULT_GAME_DIFFICULTY,
   ELF_GAME_SCENE,
   EXIT_GAME_CONFIRM_CONTENT,
   GAME_OVER_CONTENT,
-  isMathDifficulty,
+  isGameDifficulty,
   MATH_GAME_CONTENT,
 } from '@/constants/games';
 import { useAppActive } from '@/hooks/useAppActive';
@@ -21,7 +21,7 @@ export default function MathGameScreen() {
   const router = useRouter();
   const { dificuldade } = useLocalSearchParams<{ dificuldade?: string }>();
   // Aberta sem nível válido (ex.: link direto): joga no nível padrão
-  const difficulty = isMathDifficulty(dificuldade) ? dificuldade : DEFAULT_MATH_DIFFICULTY;
+  const difficulty = isGameDifficulty(dificuldade) ? dificuldade : DEFAULT_GAME_DIFFICULTY;
   const game = useMathGame(difficulty);
   const appActive = useAppActive();
   const [exitVisible, setExitVisible] = useState(false);

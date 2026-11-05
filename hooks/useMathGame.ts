@@ -1,6 +1,6 @@
 import { useCallback, useReducer } from 'react';
 
-import { MATH_GAME_CONFIG, type MathDifficulty } from '@/constants/games';
+import { MATH_GAME_CONFIG, type GameDifficulty } from '@/constants/games';
 import { generateEquation, type MathEquation } from '@/utils/mathEquation';
 
 /**
@@ -83,7 +83,7 @@ export function mathGameReducer(state: MathGameState, action: Action): MathGameS
  * (useMonsterWalk), que avisa aqui quando ele alcançou o elfo e quando terminou de sumir. Nada é
  * salvo: a partida existe só enquanto a tela está aberta (RN-286).
  */
-export function useMathGame(difficulty: MathDifficulty) {
+export function useMathGame(difficulty: GameDifficulty) {
   const [state, dispatch] = useReducer(mathGameReducer, difficulty, (level) =>
     initialMathGameState(generateEquation(level)),
   );

@@ -1,4 +1,4 @@
-import { MATH_GAME_CONFIG, type MathDifficulty } from '@/constants/games';
+import { MATH_GAME_CONFIG, type GameDifficulty } from '@/constants/games';
 import { shuffle } from '@/utils/shuffle';
 
 /** Uma equação do Elfo Matemático: o texto mostrado, a resposta e as opções de resposta */
@@ -77,7 +77,7 @@ function hard(): Pick<MathEquation, 'text' | 'answer'> {
   return { text: `${a}x - ${b} = ${a * answer - b}`, answer };
 }
 
-const GENERATORS: Record<MathDifficulty, () => Pick<MathEquation, 'text' | 'answer'>> = {
+const GENERATORS: Record<GameDifficulty, () => Pick<MathEquation, 'text' | 'answer'>> = {
   facil: easy,
   medio: medium,
   dificil: hard,
@@ -96,7 +96,7 @@ function buildOptions(answer: number): number[] {
  * Sorteia uma equação do nível. `previousText` é a equação do monstro anterior: ela não se repete
  * logo em seguida.
  */
-export function generateEquation(difficulty: MathDifficulty, previousText?: string): MathEquation {
+export function generateEquation(difficulty: GameDifficulty, previousText?: string): MathEquation {
   let equation = GENERATORS[difficulty]();
   while (equation.text === previousText) {
     equation = GENERATORS[difficulty]();

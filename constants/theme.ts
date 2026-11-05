@@ -134,6 +134,8 @@ export const Palette = {
   gameLife: '#E5484D',
   gameLifeLost: 'rgba(255, 255, 255, 0.45)',
   gameAnswerWrong: '#9F2E2E',
+  /** Resposta certa, no Goblin Ortográfico (o mesmo verde do botão Jogos da Home) */
+  gameAnswerRight: '#218045',
   gameEquationBackground: 'rgba(11, 26, 23, 0.85)',
 };
 

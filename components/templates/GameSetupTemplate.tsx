@@ -8,18 +8,20 @@ import { ReportHeader } from '@/components/molecules/ReportHeader';
 import { HelpLayout } from '@/components/organisms/HelpLayout';
 import { TopBar } from '@/components/organisms/TopBar';
 import {
-  MATH_DIFFICULTY_MAX_STARS,
-  MATH_DIFFICULTY_OPTIONS,
-  MathDifficulty,
-  MathGameContent,
+  GAME_DIFFICULTY_MAX_STARS,
+  GameDifficulty,
+  GameDifficultyOption,
+  GameSetupContent,
 } from '@/constants/games';
 import { HELP_MOCKUP_WIDTH, useMockupScale } from '@/hooks/useMockupScale';
 import { useTopBarNavigation } from '@/hooks/useTopBarNavigation';
 
 type Props = {
-  content: MathGameContent;
-  difficulty: MathDifficulty;
-  onSelectDifficulty: (value: MathDifficulty) => void;
+  content: GameSetupContent;
+  /** Os níveis do jogo, com o que cai em cada um */
+  difficultyOptions: GameDifficultyOption[];
+  difficulty: GameDifficulty;
+  onSelectDifficulty: (value: GameDifficulty) => void;
   onPlay: () => void;
   onBack: () => void;
   backLabel: string;
@@ -33,12 +35,13 @@ const PARAGRAPH_GAP = 7;
 const HINT_TOP = 7;
 
 /**
- * Template da preparação do Elfo Matemático: TopBar, cabeçalho (voltar + nome do jogo), como jogar,
- * a escolha do nível (com o que cai nele) e o botão de começar. O seletor é o mesmo das questões:
+ * Template da preparação de um jogo: TopBar, cabeçalho (voltar + nome do jogo), como jogar, a
+ * escolha do nível (com o que cai nele) e o botão de começar. O seletor é o mesmo das questões:
  * mesmas estrelas e mesmo visual.
  */
-export function MathGameSetupTemplate({
+export function GameSetupTemplate({
   content,
+  difficultyOptions,
   difficulty,
   onSelectDifficulty,
   onPlay,
@@ -49,7 +52,7 @@ export function MathGameSetupTemplate({
 }: Props) {
   const { scale } = useMockupScale(HELP_MOCKUP_WIDTH);
   const handleTabPress = useTopBarNavigation();
-  const hint = MATH_DIFFICULTY_OPTIONS.find((option) => option.value === difficulty)?.hint ?? '';
+  const hint = difficultyOptions.find((option) => option.value === difficulty)?.hint ?? '';
 
   return (
     <HelpLayout topBar={<TopBar onTabPress={handleTabPress} coins={coins} userName={userName} />}>
@@ -65,10 +68,10 @@ export function MathGameSetupTemplate({
       <View>
         <QuestionDifficultyPicker
           label={content.difficultyLabel}
-          options={MATH_DIFFICULTY_OPTIONS}
+          options={difficultyOptions}
           selected={difficulty}
-          onSelect={(value) => onSelectDifficulty(value as MathDifficulty)}
-          maxStars={MATH_DIFFICULTY_MAX_STARS}
+          onSelect={(value) => onSelectDifficulty(value as GameDifficulty)}
+          maxStars={GAME_DIFFICULTY_MAX_STARS}
           starIcon={content.starIcon}
           starOutlineIcon={content.starOutlineIcon}
         />

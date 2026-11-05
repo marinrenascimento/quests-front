@@ -12,38 +12,33 @@ type Props = {
   name: string;
   description: string;
   image: TrimmedImageSpec;
-  /** Aviso em destaque de um jogo que ainda não foi feito ("Em Breve"). Sem ele, o jogo abre. */
-  badge?: string;
   onPress: () => void;
 };
 
-// Medidas em px do mockup da Help (o jogo não tem mockup: seguem os cartões de Meus Decks)
+// Medidas em px do mockup da Help (os jogos não têm mockup: seguem os cartões de Meus Decks)
 const THUMB_SIZE = 74;
 const THUMB_RADIUS = 8;
-const IMAGE_WIDTH = 60;
+const IMAGE_SIZE = 60;
 const CARD_PADDING = 9;
 const CONTENT_GAP = 10;
 const NAME_SIZE = 6.5;
 const NAME_LETTER_SPACING = 0.5;
 const NAME_LINE_HEIGHT = 11;
 const TEXT_GAP = 6;
-const BADGE_SIZE = 4.6;
-const BADGE_LETTER_SPACING = 0.4;
-const BADGE_RADIUS = 4;
-const BADGE_PADDING_HORIZONTAL = 6;
-const BADGE_PADDING_VERTICAL = 4;
 
 /**
  * Cartão de um jogo na tela Jogos: a imagem à esquerda, sobre um quadrado verde escuro, e à direita
- * o nome, a descrição e, nos jogos que ainda não foram feitos, o aviso. O cartão inteiro é o botão.
+ * o nome e a descrição. O cartão inteiro é o botão. A imagem cabe no quadrado pelo lado maior, seja
+ * ela mais larga (o goblin) ou mais alta (o mago).
  */
-export function GameCard({ name, description, image, badge, onPress }: Props) {
+export function GameCard({ name, description, image, onPress }: Props) {
   const { scale } = useMockupScale(HELP_MOCKUP_WIDTH);
+  const isTall = image.content.height > image.content.width;
 
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={badge ? `${name}, ${badge}` : name}
+      accessibilityLabel={name}
       accessibilityHint={description}
       onPress={onPress}
       style={({ pressed }) => pressed && styles.pressed}>
@@ -62,7 +57,7 @@ export function GameCard({ name, description, image, badge, onPress }: Props) {
               source={image.source}
               imageSize={image.imageSize}
               content={image.content}
-              style={{ width: scale(IMAGE_WIDTH) }}
+              style={isTall ? { height: scale(IMAGE_SIZE) } : { width: scale(IMAGE_SIZE) }}
             />
           </View>
           <View style={styles.texts}>
@@ -75,25 +70,6 @@ export function GameCard({ name, description, image, badge, onPress }: Props) {
               {name}
             </PixelText>
             <BodyText style={{ marginTop: scale(TEXT_GAP) }}>{description}</BodyText>
-            {badge ? (
-              <View
-                style={[
-                  styles.badge,
-                  {
-                    marginTop: scale(TEXT_GAP),
-                    borderRadius: scale(BADGE_RADIUS),
-                    paddingHorizontal: scale(BADGE_PADDING_HORIZONTAL),
-                    paddingVertical: scale(BADGE_PADDING_VERTICAL),
-                  },
-                ]}>
-                <PixelText
-                  size={scale(BADGE_SIZE)}
-                  letterSpacing={scale(BADGE_LETTER_SPACING)}
-                  color={Palette.white}>
-                  {badge}
-                </PixelText>
-              </View>
-            ) : null}
           </View>
         </View>
       </InfoCard>
@@ -114,10 +90,6 @@ const styles = StyleSheet.create({
   // Ocupa o que sobra ao lado da imagem: os textos quebram em vez de sair do cartão
   texts: {
     flex: 1,
-  },
-  badge: {
-    alignSelf: 'flex-start',
-    backgroundColor: Palette.forest,
   },
   pressed: {
     opacity: 0.85,

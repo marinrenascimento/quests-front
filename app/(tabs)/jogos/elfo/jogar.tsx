@@ -71,6 +71,7 @@ export default function MathGameScreen() {
         visible={over && !closing}
         title={GAME_OVER_CONTENT.title}
         highlight={formatCount(game.score, GAME_OVER_CONTENT.highlightLabels)}
+        description={formatCount(game.pointsEarned, MATH_GAME_CONTENT.pointsEarnedLabels)}
         confirmLabel={GAME_OVER_CONTENT.playAgainLabel}
         cancelLabel={GAME_OVER_CONTENT.exitLabel}
         onConfirm={() => {

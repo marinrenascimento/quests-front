@@ -5,7 +5,7 @@ import type { GameDifficulty, WordSearchQuestion } from '@/constants/games';
 // e caber na grade do nível (Fácil até 8 letras, Médio até 10 e Difícil até 12). Uma resposta não
 // pode repetir, nem estar dentro de outra do mesmo nível.
 
-/** Perguntas do Caça-Palavras por nível (RN-305): biologia e química */
+/** Perguntas do Mago da Ciência por nível (RN-305): ciências da natureza, biologia e química */
 export const MOCK_WORD_SEARCH_QUESTIONS: Record<GameDifficulty, WordSearchQuestion[]> = {
   facil: [
     { subject: 'biologia', question: 'Qual órgão bombeia o sangue pelo corpo?', answer: 'coração' },

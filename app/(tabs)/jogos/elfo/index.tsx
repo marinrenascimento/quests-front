@@ -9,7 +9,6 @@ import {
   MATH_GAME_CONTENT,
 } from '@/constants/games';
 import { BACK_LABEL } from '@/constants/helpContent';
-import { TEMP_COINS, TEMP_USER_NAME } from '@/constants/mockUser';
 
 /** Preparação do Elfo Matemático: como jogar e a escolha do nível (RN-274) */
 export default function MathGameSetupScreen() {
@@ -37,8 +36,6 @@ export default function MathGameSetupScreen() {
       }
       onBack={handleBack}
       backLabel={BACK_LABEL}
-      coins={TEMP_COINS}
-      userName={TEMP_USER_NAME}
     />
   );
 }

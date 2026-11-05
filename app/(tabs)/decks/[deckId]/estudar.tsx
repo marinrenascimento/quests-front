@@ -3,7 +3,6 @@ import { useState } from 'react';
 
 import { ConfirmModal } from '@/components/organisms/ConfirmModal';
 import { StudySessionTemplate } from '@/components/templates/StudySessionTemplate';
-import { TEMP_COINS, TEMP_USER_NAME } from '@/constants/mockUser';
 import {
   COMPLETED_IMAGE,
   DIFFICULTY_OPTIONS,
@@ -47,8 +46,6 @@ export default function StudyScreen() {
         // Com um card na tela (revisão em andamento) pede confirmação; no fim ("Voltar para o
         // Início") ou com o deck inexistente, sai direto
         onEnd={session.card ? () => setConfirmVisible(true) : handleEnd}
-        coins={TEMP_COINS}
-        userName={TEMP_USER_NAME}
       />
       <ConfirmModal
         visible={confirmVisible}

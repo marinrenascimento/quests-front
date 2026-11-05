@@ -3,7 +3,6 @@ import { useRouter } from 'expo-router';
 import { ExamsTemplate } from '@/components/templates/ExamsTemplate';
 import { EXAMS_CONTENT, QUESTIONS_COUNT_LABELS } from '@/constants/exams';
 import { BACK_LABEL } from '@/constants/helpContent';
-import { TEMP_COINS, TEMP_USER_NAME } from '@/constants/mockUser';
 import { useExams } from '@/hooks/useExams';
 
 /** Minhas Provas, aberta pelo "Questões" do menu da Home */
@@ -34,22 +33,20 @@ export default function ExamsScreen() {
           onPress: () => router.push('/(tabs)/provas/nova'),
         },
         {
-          key: 'entrance-exams',
-          label: EXAMS_CONTENT.entranceExamsLabel,
-          onPress: () => router.push('/(tabs)/provas/vestibulares'),
-        },
-        {
           key: 'study',
           label: EXAMS_CONTENT.studyLabel,
           onPress: () => router.push('/(tabs)/provas/disciplina'),
         },
       ]}
+      titleAction={{
+        key: 'entrance-exams',
+        label: EXAMS_CONTENT.entranceExamsLabel,
+        onPress: () => router.push('/(tabs)/provas/vestibulares'),
+      }}
       emptyMessage={EXAMS_CONTENT.emptyMessage}
       countLabels={QUESTIONS_COUNT_LABELS}
       onBack={handleBack}
       backLabel={BACK_LABEL}
-      coins={TEMP_COINS}
-      userName={TEMP_USER_NAME}
       // push: a lista fica por baixo na pilha e o voltar das questões retorna a ela
       onExamPress={(exam) =>
         router.push({ pathname: '/(tabs)/provas/[provaId]', params: { provaId: exam.id } })

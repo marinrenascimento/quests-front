@@ -27,9 +27,6 @@ type Props = {
   onSave: () => void;
   onCancel: () => void;
   backLabel: string;
-  /** Moedas e nome do usuário mostrados no TopBar */
-  coins: number;
-  userName: string;
 };
 
 /**
@@ -48,15 +45,13 @@ export function ExamFormTemplate({
   onSave,
   onCancel,
   backLabel,
-  coins,
-  userName,
 }: Props) {
   const handleTabPress = useTopBarNavigation();
 
   return (
     <HelpLayout
       keyboardAware
-      topBar={<TopBar onTabPress={handleTabPress} coins={coins} userName={userName} />}
+      topBar={<TopBar onTabPress={handleTabPress} />}
       overlay={<Toast message={toast.message} visible={toast.visible} onHide={toast.onHide} />}>
       <ReportHeader title={content.title} onBack={onBack} backLabel={backLabel} />
       <FormField

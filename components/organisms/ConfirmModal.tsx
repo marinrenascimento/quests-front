@@ -1,9 +1,10 @@
-import { Modal, StyleSheet, View } from 'react-native';
+import { KeyboardAvoidingView, Modal, Platform, StyleSheet, View } from 'react-native';
 
 import { BodyText } from '@/components/atoms/BodyText';
 import { CornerFrame } from '@/components/atoms/CornerFrame';
 import { IconTextButton } from '@/components/atoms/IconTextButton';
 import { PixelText } from '@/components/atoms/PixelText';
+import { FormField } from '@/components/molecules/FormField';
 import { Palette } from '@/constants/theme';
 import { HELP_MOCKUP_WIDTH, useMockupScale } from '@/hooks/useMockupScale';
 
@@ -26,6 +27,17 @@ type Props = {
    * ela, o modal fica como antes.
    */
   description?: string;
+  /**
+   * Campo de senha entre a frase e os botões (ex.: para confirmar a exclusão da conta). Quem usa
+   * guarda o valor e decide, em onConfirm, se pode continuar. Opcional.
+   */
+  passwordField?: {
+    label: string;
+    placeholder: string;
+    value: string;
+    onChangeText: (text: string) => void;
+    error?: string;
+  };
   /** Botão claro, à esquerda (ex.: "Sim"); sozinho (sem cancelLabel), fica escuro */
   confirmLabel: string;
   /**
@@ -53,6 +65,7 @@ const HIGHLIGHT_LINE_HEIGHT = 13;
 const DESCRIPTION_TOP = 14;
 const DESCRIPTION_SIZE = 12.9;
 const DESCRIPTION_LINE_HEIGHT = 17;
+const FIELD_TOP = 14;
 const BUTTONS_TOP = 18;
 const BUTTONS_WIDTH = 177;
 const BUTTONS_GAP = 12;
@@ -63,7 +76,8 @@ const MAX_WIDTH = 420;
  * Modal de confirmação: caixa branca centralizada com a pergunta, um texto em destaque numa
  * moldura de cantos e dois botões lado a lado (confirmar, claro, à esquerda; cancelar, escuro,
  * à direita), ou um botão só, nos avisos. Sem fundo escurecido: a sobreposição é transparente e só bloqueia os toques na
- * tela de baixo (tocar fora da caixa não faz nada); a caixa se destaca pela sombra.
+ * tela de baixo (tocar fora da caixa não faz nada); a caixa se destaca pela sombra. Com o teclado
+ * aberto, a caixa sobe para o campo e os botões não ficarem cobertos.
  */
 export function ConfirmModal({
   visible,
@@ -71,6 +85,7 @@ export function ConfirmModal({
   highlight,
   highlightLines = 2,
   description,
+  passwordField,
   confirmLabel,
   cancelLabel,
   onConfirm,
@@ -86,7 +101,10 @@ export function ConfirmModal({
       statusBarTranslucent
       navigationBarTranslucent
       onRequestClose={onCancel}>
-      <View style={[styles.overlay, { paddingHorizontal: scale(MARGIN) }]}>
+      {/* Mesmo comportamento do AuthLayout: padding no iOS, altura no Android */}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={[styles.overlay, { paddingHorizontal: scale(MARGIN) }]}>
         <View
           accessibilityViewIsModal
           style={[
@@ -144,6 +162,21 @@ export function ConfirmModal({
               {description}
             </BodyText>
           ) : null}
+          {passwordField ? (
+            <View style={[styles.field, { marginTop: scale(FIELD_TOP) }]}>
+              <FormField
+                variant="outlined"
+                label={passwordField.label}
+                placeholder={passwordField.placeholder}
+                value={passwordField.value}
+                onChangeText={passwordField.onChangeText}
+                error={passwordField.error}
+                secureTextEntry
+                autoCapitalize="none"
+                autoCorrect={false}
+              />
+            </View>
+          ) : null}
           <View
             style={[
               styles.buttons,
@@ -164,7 +197,7 @@ export function ConfirmModal({
             ) : null}
           </View>
         </View>
-      </View>
+      </KeyboardAvoidingView>
     </Modal>
   );
 }
@@ -194,6 +227,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   description: {
+    alignSelf: 'stretch',
+  },
+  field: {
     alignSelf: 'stretch',
   },
   buttons: {

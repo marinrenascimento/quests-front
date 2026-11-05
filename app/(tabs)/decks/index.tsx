@@ -3,7 +3,6 @@ import { useRouter } from 'expo-router';
 import { DecksTemplate } from '@/components/templates/DecksTemplate';
 import { CARDS_COUNT_LABELS, DECKS_CONTENT } from '@/constants/decks';
 import { BACK_LABEL } from '@/constants/helpContent';
-import { TEMP_COINS, TEMP_USER_NAME } from '@/constants/mockUser';
 import { useDecks } from '@/hooks/useDecks';
 
 export default function DecksScreen() {
@@ -21,8 +20,6 @@ export default function DecksScreen() {
       emptyMessage={DECKS_CONTENT.emptyMessage}
       countLabels={CARDS_COUNT_LABELS}
       backLabel={BACK_LABEL}
-      coins={TEMP_COINS}
-      userName={TEMP_USER_NAME}
       // push: Meus Decks fica por baixo e o voltar do cadastro retorna a ela
       onCreatePress={() => router.push('/(tabs)/decks/novo')}
       // push: Meus Decks fica por baixo e o voltar da configuração retorna a ela

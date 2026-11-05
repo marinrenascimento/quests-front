@@ -30,9 +30,6 @@ type Props = {
   /** Seta de voltar: sai direto, sem confirmação (nada é editado nesta tela) */
   onBack: () => void;
   backLabel: string;
-  /** Moedas e nome do usuário mostrados no TopBar */
-  coins: number;
-  userName: string;
 };
 
 /** Máximo de linhas do título: com mais texto, a fonte diminui antes de cortar */
@@ -55,15 +52,13 @@ export function QuestionViewTemplate({
   toast,
   onBack,
   backLabel,
-  coins,
-  userName,
 }: Props) {
   const { scale } = useMockupScale(HELP_MOCKUP_WIDTH);
   const handleTabPress = useTopBarNavigation();
 
   return (
     <HelpLayout
-      topBar={<TopBar onTabPress={handleTabPress} coins={coins} userName={userName} />}
+      topBar={<TopBar onTabPress={handleTabPress} />}
       overlay={
         toast ? (
           <Toast message={toast.message} visible={toast.visible} onHide={toast.onHide} />

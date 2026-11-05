@@ -4,7 +4,6 @@ import { useMemo } from 'react';
 import { ExamsTemplate } from '@/components/templates/ExamsTemplate';
 import { ENTRANCE_EXAMS_CONTENT, QUESTIONS_COUNT_LABELS } from '@/constants/exams';
 import { BACK_LABEL } from '@/constants/helpContent';
-import { TEMP_COINS, TEMP_USER_NAME } from '@/constants/mockUser';
 import { useExams } from '@/hooks/useExams';
 
 /** Vestibulares, aberta pelo botão "Vestibulares" de Minhas Provas: provas prontas */
@@ -42,8 +41,6 @@ export default function EntranceExamsScreen() {
       countLabels={QUESTIONS_COUNT_LABELS}
       onBack={handleBack}
       backLabel={BACK_LABEL}
-      coins={TEMP_COINS}
-      userName={TEMP_USER_NAME}
       // push: Vestibulares fica por baixo e o voltar das questões retorna a ela
       onExamPress={(exam) =>
         router.push({ pathname: '/(tabs)/provas/[provaId]', params: { provaId: exam.id } })

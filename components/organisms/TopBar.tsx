@@ -5,15 +5,15 @@ import { TrimmedImage } from '@/components/atoms/TrimmedImage';
 import { CoinsUserPill } from '@/components/molecules/CoinsUserPill';
 import { TopBarTabKey, TopBarTabs } from '@/components/molecules/TopBarTabs';
 import { Palette } from '@/constants/theme';
+import { useOpenProfile } from '@/hooks/useOpenProfile';
+import { useUser } from '@/hooks/useUser';
 
 type Props = {
   /** Aba em destaque (branca). Sem valor, nenhuma fica em destaque (ex.: Relatórios). */
   activeTab?: TopBarTabKey;
-  // TODO: navegar com o Expo Router. Quem usar o TopBar decide a rota em onTabPress
-  // (Rank e Help ainda não têm telas).
+  /** Quem usar o TopBar decide a rota de cada aba (useTopBarNavigation) */
   onTabPress: (tab: TopBarTabKey) => void;
-  coins: number;
-  userName: string;
+  /** Toque na pílula do usuário. Padrão: abre o Perfil; só a prova em andamento pergunta antes. */
   onUserPress?: () => void;
 };
 
@@ -21,8 +21,10 @@ type Props = {
 const LOGO_IMAGE_SIZE = { width: 1024, height: 1024 };
 const LOGO_CONTENT = { x: 117, y: 325, width: 795, height: 271 };
 
-export function TopBar({ activeTab, onTabPress, coins, userName, onUserPress }: Props) {
+export function TopBar({ activeTab, onTabPress, onUserPress }: Props) {
   const insets = useSafeAreaInsets();
+  const { name, coins, avatar } = useUser();
+  const openProfile = useOpenProfile();
 
   return (
     // O fundo se estende por baixo da barra de status; o conteúdo começa abaixo da área segura
@@ -38,7 +40,12 @@ export function TopBar({ activeTab, onTabPress, coins, userName, onUserPress }: 
         <TopBarTabs activeTab={activeTab} onTabPress={onTabPress} />
       </View>
       <View style={styles.pill}>
-        <CoinsUserPill coins={coins} userName={userName} onPress={onUserPress} />
+        <CoinsUserPill
+          coins={coins}
+          userName={name}
+          avatar={avatar.image}
+          onPress={onUserPress ?? openProfile}
+        />
       </View>
     </View>
   );

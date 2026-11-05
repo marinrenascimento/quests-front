@@ -18,7 +18,6 @@ import {
   SUBMIT_EXAM_CONFIRM_CONTENT,
 } from '@/constants/exams';
 import { BACK_LABEL } from '@/constants/helpContent';
-import { TEMP_COINS, TEMP_USER_NAME } from '@/constants/mockUser';
 import { useExams } from '@/hooks/useExams';
 import { useExamSession } from '@/hooks/useExamSession';
 import { useSubjectNames } from '@/hooks/useSubjects';
@@ -64,8 +63,8 @@ export default function ExamSessionScreen() {
   const [confirmVisible, setConfirmVisible] = useState(false);
   // Guardado ao fechar, para o texto do modal não trocar durante o fade
   const [confirmKind, setConfirmKind] = useState<ConfirmKind>('exit');
-  // Aba do TopBar tocada durante a prova: o destino, se o usuário confirmar a saída
-  const [pendingTab, setPendingTab] = useState<TopBarTabKey | null>(null);
+  // Aba ou pílula do TopBar tocada durante a prova: o destino, se o usuário confirmar a saída
+  const [pendingTab, setPendingTab] = useState<TopBarTabKey | 'perfil' | null>(null);
   // Algo seria perdido ao sair: alguma questão respondida ou alguma marcação feita
   const hasProgress =
     session.answeredCount > 0 || Object.keys(session.highlights).length > 0;
@@ -97,12 +96,23 @@ export default function ExamSessionScreen() {
   // Sem resposta nem marcação, não há nada a perder: sai direto
   const requestExit = () => (hasProgress ? openConfirm('exit') : leave());
 
-  const handleTopBarTab = (tab: TopBarTabKey) => {
+  // O Perfil abre por cima da prova: de lá, uma aba descartaria as respostas sem perguntar. Por
+  // isso a pílula também pergunta antes de sair e, com a saída confirmada, fecha a prova
+  const goToTopBarDestination = (destination: TopBarTabKey | 'perfil') => {
+    if (destination === 'perfil') {
+      leave();
+      router.push('/perfil');
+    } else {
+      handleTabPress(destination);
+    }
+  };
+
+  const handleTopBarPress = (destination: TopBarTabKey | 'perfil') => {
     if (!hasProgress) {
-      handleTabPress(tab);
+      goToTopBarDestination(destination);
       return;
     }
-    setPendingTab(tab);
+    setPendingTab(destination);
     openConfirm('exit');
   };
 
@@ -115,7 +125,7 @@ export default function ExamSessionScreen() {
       // TODO: abrir a tela de resultado/correção quando o mockup existir (RN-152).
       leave();
     } else if (tab) {
-      handleTabPress(tab);
+      goToTopBarDestination(tab);
     } else {
       leave();
     }
@@ -165,8 +175,6 @@ export default function ExamSessionScreen() {
         onQuestionPress={noop}
         onBack={leave}
         backLabel={BACK_LABEL}
-        coins={TEMP_COINS}
-        userName={TEMP_USER_NAME}
       />
     );
   }
@@ -195,9 +203,8 @@ export default function ExamSessionScreen() {
         onSelectQuestion={handleSelectQuestion}
         onExit={requestExit}
         onSubmit={() => openConfirm('submit')}
-        onTabPress={handleTopBarTab}
-        coins={TEMP_COINS}
-        userName={TEMP_USER_NAME}
+        onTabPress={handleTopBarPress}
+        onUserPress={() => handleTopBarPress('perfil')}
       />
       <ConfirmModal
         visible={confirmVisible}

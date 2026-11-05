@@ -19,6 +19,8 @@ type Props = {
   fitTitle?: boolean;
   /** Botões lado a lado, com a mesma largura, abaixo do título (opcional) */
   actions?: HeaderAction[];
+  /** Botão com a largura do texto, à direita do título (opcional) */
+  titleAction?: HeaderAction;
 };
 
 // Medidas do mockup de Meus Decks convertidas para a escala da Help, em px
@@ -27,15 +29,29 @@ const BUTTONS_TOP = 12;
 const BOTTOM = 14;
 
 /**
- * Topo das telas de grade (Meus Decks, cards de um deck): voltar + título e, embaixo, os
- * botões de ação lado a lado, com o mesmo vão das colunas da grade.
+ * Topo das telas de grade (Meus Decks, Minhas Provas, cards de um deck): voltar + título, um botão
+ * opcional ao lado do título e, embaixo, os botões de ação lado a lado, com o mesmo vão das colunas
+ * da grade.
  */
-export function ListPageHeader({ title, onBack, backLabel, fitTitle, actions = [] }: Props) {
+export function ListPageHeader({
+  title,
+  onBack,
+  backLabel,
+  fitTitle,
+  actions = [],
+  titleAction,
+}: Props) {
   const { scale } = useMockupScale(HELP_MOCKUP_WIDTH);
 
   return (
     <View style={{ marginBottom: scale(BOTTOM) }}>
-      <ReportHeader title={title} onBack={onBack} backLabel={backLabel} fitTitle={fitTitle} />
+      <ReportHeader
+        title={title}
+        onBack={onBack}
+        backLabel={backLabel}
+        fitTitle={fitTitle}
+        textAction={titleAction}
+      />
       {actions.length > 0 ? (
         <View style={[styles.buttons, { gap: scale(GRID_GAP), marginTop: scale(BUTTONS_TOP) }]}>
           {actions.map((action) => (

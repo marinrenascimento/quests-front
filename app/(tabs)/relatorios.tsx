@@ -4,7 +4,6 @@ import { useCallback, useState } from 'react';
 import { ReportsTemplate } from '@/components/templates/ReportsTemplate';
 import { BACK_LABEL } from '@/constants/helpContent';
 import { MOCK_MONTHLY_REPORT, MOCK_WEEKLY_REPORT } from '@/constants/mockReports';
-import { TEMP_COINS, TEMP_USER_NAME } from '@/constants/mockUser';
 import { REPORT_FILTER_ICON, REPORT_TOGGLE_LABELS, ReportPeriod } from '@/constants/reports';
 
 export default function RelatoriosScreen() {
@@ -28,8 +27,6 @@ export default function RelatoriosScreen() {
       key={visit}
       // TODO: substituir pelos dados do back.
       report={period === 'semanal' ? MOCK_WEEKLY_REPORT : MOCK_MONTHLY_REPORT}
-      coins={TEMP_COINS}
-      userName={TEMP_USER_NAME}
       backLabel={BACK_LABEL}
       filterIcon={REPORT_FILTER_ICON}
       filterLabel={REPORT_TOGGLE_LABELS[period]}

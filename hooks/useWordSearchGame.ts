@@ -101,7 +101,7 @@ export function wordSearchReducer(state: WordSearchState, action: Action): WordS
 }
 
 /**
- * Estado e regras de uma partida do Caça-Palavras. Não há vidas nem tempo: ela só termina quando o
+ * Estado e regras de uma partida do Mago da Ciência. Não há vidas nem tempo: ela só termina quando o
  * jogador sai. Ao achar as 3 respostas, vem o próximo caça-palavras sozinho. Nada é salvo: a partida
  * existe só enquanto a tela está aberta (RN-308).
  */

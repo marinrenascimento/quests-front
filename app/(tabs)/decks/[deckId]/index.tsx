@@ -15,7 +15,6 @@ import {
   subjectLabel,
 } from '@/constants/decks';
 import { BACK_LABEL } from '@/constants/helpContent';
-import { TEMP_COINS, TEMP_USER_NAME } from '@/constants/mockUser';
 import { useDecks } from '@/hooks/useDecks';
 import { useSubjectNames } from '@/hooks/useSubjects';
 
@@ -152,8 +151,6 @@ export default function DeckCardsScreen() {
           onHide: hideCardAddedToast,
         }}
         backLabel={BACK_LABEL}
-        coins={TEMP_COINS}
-        userName={TEMP_USER_NAME}
       />
       <ConfirmModal
         visible={deleteVisible}

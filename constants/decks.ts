@@ -63,6 +63,12 @@ export function linkedCardLabel(card: LinkedCard): string {
   return subjectLabel(card.discipline.name, card.content.name);
 }
 
+/**
+ * Opção "todos os conteúdos" do estudo por disciplina (decks e provas): o conteúdo é opcional, e
+ * ela desfaz a escolha de um conteúdo
+ */
+export const ALL_CONTENTS_ID = 'todos';
+
 /** Textos da tela Meus Decks (o título é exibido em caixa alta pelo componente) */
 export const DECKS_CONTENT = {
   title: 'Meus Decks',
@@ -149,8 +155,8 @@ export const EDIT_FLASHCARD_CONTENT = {
 };
 
 /**
- * Textos da tela Visualizar Card (somente leitura): os mesmos rótulos do formulário, o título
- * Card "nome do card" e a mensagem de card inexistente do Editar Flashcard
+ * Textos da tela Visualizar Card: os mesmos rótulos do formulário, o título Card "nome do card", os
+ * botões Editar e Excluir e a mensagem de card inexistente do Editar Flashcard
  */
 export const VIEW_FLASHCARD_CONTENT = {
   title: (name: string) => `Card "${name}"`,
@@ -158,6 +164,8 @@ export const VIEW_FLASHCARD_CONTENT = {
   contentLabel: FLASHCARD_FORM_CONTENT.contentLabel,
   frontLabel: FLASHCARD_FORM_CONTENT.frontLabel,
   backSideLabel: FLASHCARD_FORM_CONTENT.backSideLabel,
+  editLabel: 'Editar',
+  deleteLabel: 'Excluir',
   notFoundMessage: EDIT_FLASHCARD_CONTENT.notFoundMessage,
   /** Ícone decorativo do canto do cabeçalho, que indica que a tela é só de visualização */
   viewIcon: 'eye-outline' as IconName,
@@ -182,7 +190,10 @@ export const DISCARD_CARD_EDIT_CONFIRM_CONTENT = {
   cancelLabel: 'Não',
 };
 
-/** Modal de confirmação ao tocar na lixeira de um card (o destaque é a frente do card) */
+/**
+ * Modal de confirmação ao tocar na lixeira de um card ou no "Excluir" do Visualizar Card (o
+ * destaque é a frente do card)
+ */
 export const DELETE_CARD_CONFIRM_CONTENT = {
   title: 'Tem Certeza que Deseja Excluir o Card:',
   confirmLabel: 'Sim',

@@ -34,9 +34,6 @@ type Props = {
   /** Seta de voltar: pergunta só se alguma escolha foi feita; senão, sai direto */
   onBack: () => void;
   backLabel: string;
-  /** Moedas e nome do usuário mostrados no TopBar */
-  coins: number;
-  userName: string;
 };
 
 /** O título é longo: quebra em até 2 linhas e, se ainda não couber, a fonte diminui */
@@ -58,8 +55,6 @@ export function DisciplineStudyTemplate({
   onCancel,
   onBack,
   backLabel,
-  coins,
-  userName,
 }: Props) {
   const handleTabPress = useTopBarNavigation();
   const hasDiscipline = form.disciplineId !== undefined;
@@ -67,7 +62,7 @@ export function DisciplineStudyTemplate({
   return (
     <HelpLayout
       keyboardAware
-      topBar={<TopBar onTabPress={handleTabPress} coins={coins} userName={userName} />}>
+      topBar={<TopBar onTabPress={handleTabPress} />}>
       <ReportHeader
         title={content.title}
         titleLines={TITLE_LINES}

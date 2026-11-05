@@ -104,6 +104,7 @@ export const DISCIPLINE_STUDY_CONTENT = {
   contentLabel: 'Conteúdo',
   /** O conteúdo é opcional: sem ele, entram os cards de todos os conteúdos da disciplina */
   contentPlaceholder: 'Todos os Conteúdos (Opcional)',
+  allContentsLabel: 'Todos os Conteúdos',
   /** Placeholder do conteúdo enquanto nenhuma disciplina foi escolhida */
   contentDisabledPlaceholder: 'Escolha uma Disciplina Primeiro',
   contentNoResults: 'Nenhum Conteúdo Encontrado',

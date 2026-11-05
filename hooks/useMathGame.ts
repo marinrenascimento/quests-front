@@ -1,6 +1,7 @@
 import { useCallback, useReducer } from 'react';
 
 import { MATH_GAME_CONFIG, type GameDifficulty } from '@/constants/games';
+import { useGameMatches } from '@/hooks/useGameMatches';
 import { generateEquation, type MathEquation } from '@/utils/mathEquation';
 
 /**
@@ -79,15 +80,16 @@ export function mathGameReducer(state: MathGameState, action: Action): MathGameS
 }
 
 /**
- * Estado e regras de uma partida do Elfo Matemático. A caminhada do monstro fica na tela
- * (useMonsterWalk), que avisa aqui quando ele alcançou o elfo e quando terminou de sumir. Nada é
- * salvo: a partida existe só enquanto a tela está aberta (RN-286).
+ * Estado e regras do jogo Elfo Matemático. A caminhada do monstro fica na tela (useMonsterWalk), que
+ * avisa aqui quando ele alcançou o elfo e quando terminou de sumir. Só os pontos das partidas
+ * completas ficam com o usuário (RN-313); o resto existe enquanto a tela está aberta (RN-286).
  */
 export function useMathGame(difficulty: GameDifficulty) {
   const [state, dispatch] = useReducer(mathGameReducer, difficulty, (level) =>
     initialMathGameState(generateEquation(level)),
   );
   const currentText = state.equation.text;
+  const matches = useGameMatches(state.score);
 
   const selectAnswer = useCallback((value: number) => dispatch({ type: 'answer', value }), []);
   const monsterReached = useCallback(() => dispatch({ type: 'monsterReached' }), []);
@@ -103,6 +105,7 @@ export function useMathGame(difficulty: GameDifficulty) {
 
   return {
     ...state,
+    ...matches,
     /** Algo seria perdido ao sair: monstro derrotado ou vida perdida (RN-285) */
     hasProgress: state.score > 0 || state.lives < MATH_GAME_CONFIG.lives,
     selectAnswer,

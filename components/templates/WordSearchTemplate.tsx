@@ -27,7 +27,7 @@ const MAGE_BOTTOM = 8;
 const noop = () => {};
 
 /**
- * Template da partida do Caça-Palavras: tela cheia, sem TopBar, com o cenário atrás, o mago no canto
+ * Template da partida do Mago da Ciência: tela cheia, sem TopBar, com o cenário atrás, o mago no canto
  * inferior esquerdo e o painel por cima. Em telas baixas, a grade passa por cima do mago. A barra de
  * status fica clara porque o fundo é escuro.
  */

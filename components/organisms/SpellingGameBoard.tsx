@@ -9,14 +9,15 @@ import type { SpellingGameContent } from '@/constants/games';
 import { Palette } from '@/constants/theme';
 import { useLayoutPadding } from '@/hooks/useLayoutPadding';
 import { HELP_MOCKUP_WIDTH, useMockupScale } from '@/hooks/useMockupScale';
-import { formatCount } from '@/utils/formatCount';
 
 type Props = {
   content: SpellingGameContent;
   lives: number;
   totalLives: number;
-  /** Palavras corrigidas */
-  score: number;
+  /** Partida em andamento e palavras corrigidas nela */
+  match: number;
+  matchProgress: number;
+  itemsPerMatch: number;
   /** A versão errada, no meio da tela */
   shownWord: string;
   /** As 3 opções, acima dela */
@@ -42,15 +43,17 @@ const WORD_PADDING_VERTICAL = 10;
 const PROMPT_GAP = 3;
 
 /**
- * Painel da partida do Goblin Ortográfico: no topo, "Sair", vidas, contagem e as 3 opções, uma
- * embaixo da outra (as palavras são longas para ficarem lado a lado); no meio da tela, a palavra
- * errada. Fica por cima do cenário e respeita a barra de status do aparelho.
+ * Painel do jogo Goblin Ortográfico: no topo, "Sair", vidas, o número da partida, a contagem e as 3
+ * opções, uma embaixo da outra (as palavras são longas para ficarem lado a lado); no meio da tela, a
+ * palavra errada. Fica por cima do cenário e respeita a barra de status do aparelho.
  */
 export function SpellingGameBoard({
   content,
   lives,
   totalLives,
-  score,
+  match,
+  matchProgress,
+  itemsPerMatch,
   shownWord,
   options,
   wrongOptions,
@@ -98,8 +101,13 @@ export function SpellingGameBoard({
             lifeLostIcon: content.lifeLostIcon,
             label: content.livesLabel(lives, totalLives),
           }}
-          scoreText={formatCount(score, content.scoreLabels)}
-          scoreAccessibilityLabel={content.scoreAccessibilityLabel(score)}
+          match={{
+            label: content.matchLabel,
+            number: match,
+            accessibilityLabel: content.matchAccessibilityLabel(match),
+          }}
+          scoreText={content.progressLabel(matchProgress, itemsPerMatch)}
+          scoreAccessibilityLabel={content.progressAccessibilityLabel(matchProgress, itemsPerMatch)}
         />
         <View style={{ gap: scale(OPTION_GAP), marginTop: scale(SECTION_GAP) }}>
           {/* Sempre 3 opções: um .map simples basta */}

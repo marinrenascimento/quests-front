@@ -9,7 +9,6 @@ import {
   LINKED_CARD_TOAST,
 } from '@/constants/decks';
 import { BACK_LABEL } from '@/constants/helpContent';
-import { TEMP_COINS, TEMP_USER_NAME } from '@/constants/mockUser';
 import { useDeckCreation } from '@/hooks/useDeckCreation';
 import { useDeckForm } from '@/hooks/useDeckForm';
 import { useDecks } from '@/hooks/useDecks';
@@ -66,8 +65,6 @@ export default function NewDeckScreen() {
         }}
         onCancel={openConfirm}
         backLabel={BACK_LABEL}
-        coins={TEMP_COINS}
-        userName={TEMP_USER_NAME}
       />
       <ConfirmModal
         visible={confirmVisible}

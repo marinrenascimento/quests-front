@@ -13,9 +13,6 @@ type Props = {
   emptyMessage: string;
   countLabels: { one: string; other: string };
   backLabel: string;
-  /** Moedas e nome do usuário mostrados no TopBar */
-  coins: number;
-  userName: string;
   onCreatePress: () => void;
   onStudyPress: () => void;
   onDeckPress: (deck: Deck) => void;
@@ -34,8 +31,6 @@ export function DecksTemplate({
   emptyMessage,
   countLabels,
   backLabel,
-  coins,
-  userName,
   onCreatePress,
   onStudyPress,
   onDeckPress,
@@ -45,7 +40,7 @@ export function DecksTemplate({
   return (
     <HelpLayout
       scrollable={false}
-      topBar={<TopBar onTabPress={handleTabPress} coins={coins} userName={userName} />}>
+      topBar={<TopBar onTabPress={handleTabPress} />}>
       <DeckGrid
         items={decks}
         emptyMessage={emptyMessage}

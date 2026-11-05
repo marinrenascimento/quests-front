@@ -18,14 +18,13 @@ type Props<T extends ExamGridItem> = {
   title: string;
   /** Botões lado a lado abaixo do título, com a mesma largura (sem botões: lista vazia) */
   actions: HeaderAction[];
+  /** Botão à direita do título (opcional) */
+  titleAction?: HeaderAction;
   emptyMessage: string;
   /** Palavra da quantidade de questões no singular e no plural */
   countLabels: { one: string; other: string };
   onBack: () => void;
   backLabel: string;
-  /** Moedas e nome do usuário mostrados no TopBar */
-  coins: number;
-  userName: string;
   onExamPress: (exam: T) => void;
 };
 
@@ -42,12 +41,11 @@ export function ExamsTemplate<T extends ExamGridItem>({
   exams,
   title,
   actions,
+  titleAction,
   emptyMessage,
   countLabels,
   onBack,
   backLabel,
-  coins,
-  userName,
   onExamPress,
 }: Props<T>) {
   const handleTabPress = useTopBarNavigation();
@@ -55,7 +53,7 @@ export function ExamsTemplate<T extends ExamGridItem>({
   return (
     <HelpLayout
       scrollable={false}
-      topBar={<TopBar onTabPress={handleTabPress} coins={coins} userName={userName} />}>
+      topBar={<TopBar onTabPress={handleTabPress} />}>
       <DeckGrid
         items={exams}
         emptyMessage={emptyMessage}
@@ -66,7 +64,13 @@ export function ExamsTemplate<T extends ExamGridItem>({
         countAlign="right"
         countInAccessibilityLabel
         header={
-          <ListPageHeader title={title} onBack={onBack} backLabel={backLabel} actions={actions} />
+          <ListPageHeader
+            title={title}
+            onBack={onBack}
+            backLabel={backLabel}
+            actions={actions}
+            titleAction={titleAction}
+          />
         }
       />
     </HelpLayout>

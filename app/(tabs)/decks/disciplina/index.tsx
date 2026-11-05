@@ -4,7 +4,6 @@ import { useCallback, useState } from 'react';
 import { ConfirmModal } from '@/components/organisms/ConfirmModal';
 import { DisciplineStudyTemplate } from '@/components/templates/DisciplineStudyTemplate';
 import { BACK_LABEL } from '@/constants/helpContent';
-import { TEMP_COINS, TEMP_USER_NAME } from '@/constants/mockUser';
 import {
   CANCEL_DISCIPLINE_STUDY_CONFIRM_CONTENT,
   DISCIPLINE_STUDY_CONTENT,
@@ -22,6 +21,7 @@ export default function DisciplineStudyConfigScreen() {
       discipline: DISCIPLINE_STUDY_CONTENT.disciplineRequired,
       quantity: DISCIPLINE_STUDY_CONTENT.quantityRequired,
     },
+    allContentsLabel: DISCIPLINE_STUDY_CONTENT.allContentsLabel,
   });
   const [confirmVisible, setConfirmVisible] = useState(false);
   const openConfirm = useCallback(() => setConfirmVisible(true), []);
@@ -55,8 +55,6 @@ export default function DisciplineStudyConfigScreen() {
         // Sem nenhuma escolha, não há nada a perder: sai direto
         onBack={form.hasChoices ? openConfirm : handleLeave}
         backLabel={BACK_LABEL}
-        coins={TEMP_COINS}
-        userName={TEMP_USER_NAME}
       />
       <ConfirmModal
         visible={confirmVisible}

@@ -354,6 +354,7 @@ export const EXAM_DISCIPLINE_STUDY_CONTENT = {
   disciplineEmpty: 'Nenhuma Disciplina com Questões',
   contentLabel: 'Conteúdo',
   contentPlaceholder: 'Todos os Conteúdos (Opcional)',
+  allContentsLabel: 'Todos os Conteúdos',
   contentDisabledPlaceholder: 'Escolha uma Disciplina Primeiro',
   contentNoResults: 'Nenhum Conteúdo Encontrado',
   contentEmpty: 'Nenhum Conteúdo com Questões',

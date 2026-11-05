@@ -25,9 +25,6 @@ type Props = {
   onPlay: () => void;
   onBack: () => void;
   backLabel: string;
-  /** Moedas e nome do usuário mostrados no TopBar */
-  coins: number;
-  userName: string;
 };
 
 // Medidas em px do mockup da Help
@@ -47,15 +44,13 @@ export function GameSetupTemplate({
   onPlay,
   onBack,
   backLabel,
-  coins,
-  userName,
 }: Props) {
   const { scale } = useMockupScale(HELP_MOCKUP_WIDTH);
   const handleTabPress = useTopBarNavigation();
   const hint = difficultyOptions.find((option) => option.value === difficulty)?.hint ?? '';
 
   return (
-    <HelpLayout topBar={<TopBar onTabPress={handleTabPress} coins={coins} userName={userName} />}>
+    <HelpLayout topBar={<TopBar onTabPress={handleTabPress} />}>
       <ReportHeader title={content.title} onBack={onBack} backLabel={backLabel} fitTitle />
       <InfoCard title={content.howToTitle}>
         <View style={[styles.paragraphs, { gap: scale(PARAGRAPH_GAP) }]}>

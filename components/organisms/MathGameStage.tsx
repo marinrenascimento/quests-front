@@ -42,8 +42,13 @@ const ELF_LEFT = 0.03;
 const MONSTER_START_VISIBLE = 0.75;
 /** O monstro "alcança" quando as garras chegam nesta fração da largura do elfo (ponta da flecha) */
 const REACH_POINT = 0.9;
-/** A equação ocupa esta fração da largura do monstro e termina onde a parte visível termina */
+/**
+ * A equação ocupa pelo menos esta fração da largura do monstro e termina onde a parte visível
+ * termina. As contas longas do Médio crescem para a esquerda, para caber numa linha.
+ */
 const EQUATION_WIDTH = 0.95;
+/** Largura máxima da equação: no fim da caminhada, ela não sai da tela pela esquerda */
+const EQUATION_MAX_WIDTH = 0.56;
 
 /** Distância do chão até a base da tela, com o fundo cortado como no resizeMode "cover" */
 function groundBottom(size: Size, scene: GameScene): number {
@@ -96,7 +101,16 @@ export function MathGameStage({
     const elfWidth = unit * ELF_WIDTH;
     const monsterWidth = unit * MONSTER_WIDTH;
     const monsterHeight = monsterWidth * (scene.monster.content.height / scene.monster.content.width);
-    const equationWidth = monsterWidth * EQUATION_WIDTH;
+    // A fonte pixel é monoespaçada: cada caractere ocupa a largura do tamanho da fonte. As contas
+    // mais longas diminuem a fonte para não passar da largura máxima
+    const equationSize = Math.min(
+      EQUATION_SIZE,
+      (EQUATION_MAX_WIDTH - EQUATION_PADDING_HORIZONTAL * 2) / equationText.length,
+    );
+    const equationWidth = Math.max(
+      monsterWidth * EQUATION_WIDTH,
+      unit * (equationSize * equationText.length + EQUATION_PADDING_HORIZONTAL * 2),
+    );
 
     return (
       <>
@@ -148,7 +162,7 @@ export function MathGameStage({
                   },
                 ]}>
                 <PixelText
-                  size={unit * EQUATION_SIZE}
+                  size={unit * equationSize}
                   color={Palette.white}
                   adjustsFontSizeToFit
                   style={styles.equationText}>

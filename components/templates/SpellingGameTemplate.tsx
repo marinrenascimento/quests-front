@@ -4,7 +4,12 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { TrimmedImage } from '@/components/atoms/TrimmedImage';
 import { SpellingGameBoard } from '@/components/organisms/SpellingGameBoard';
-import { GOBLIN_GAME_SCENE, SPELLING_GAME_CONFIG, SpellingGameContent } from '@/constants/games';
+import {
+  GAME_MATCH_CONFIG,
+  GOBLIN_GAME_SCENE,
+  SPELLING_GAME_CONFIG,
+  SpellingGameContent,
+} from '@/constants/games';
 import { Palette } from '@/constants/theme';
 import { HELP_MOCKUP_WIDTH, useMockupScale } from '@/hooks/useMockupScale';
 import type { useSpellingGame } from '@/hooks/useSpellingGame';
@@ -52,7 +57,9 @@ export function SpellingGameTemplate({ scene, content, game, onExit }: Props) {
         content={content}
         lives={game.lives}
         totalLives={SPELLING_GAME_CONFIG.lives}
-        score={game.score}
+        match={game.match}
+        matchProgress={game.matchProgress}
+        itemsPerMatch={GAME_MATCH_CONFIG.itemsPerMatch}
         shownWord={game.round.shown}
         options={game.round.options}
         wrongOptions={game.wrongOptions}

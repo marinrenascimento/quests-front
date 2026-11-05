@@ -5,7 +5,6 @@ import { ConfirmModal } from '@/components/organisms/ConfirmModal';
 import { QuestionFormTemplate } from '@/components/templates/QuestionFormTemplate';
 import { CANCEL_QUESTION_CONFIRM_CONTENT, QUESTION_FORM_CONTENT } from '@/constants/exams';
 import { BACK_LABEL } from '@/constants/helpContent';
-import { TEMP_COINS, TEMP_USER_NAME } from '@/constants/mockUser';
 import { useExamCreation } from '@/hooks/useExamCreation';
 import { useLeaveConfirm } from '@/hooks/useLeaveConfirm';
 import { useQuestionForm } from '@/hooks/useQuestionForm';
@@ -57,8 +56,6 @@ export default function NewExamQuestionScreen() {
         // Sem nada escrito, não há nada a perder: sai direto
         onBack={form.hasChanges ? openConfirm : handleLeave}
         backLabel={BACK_LABEL}
-        coins={TEMP_COINS}
-        userName={TEMP_USER_NAME}
       />
       <ConfirmModal
         visible={confirmVisible}

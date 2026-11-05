@@ -45,9 +45,8 @@ type Props = {
   onSubmit: () => void;
   /** Abas do TopBar (quem usa decide se pede confirmação antes de sair) */
   onTabPress: (tab: TopBarTabKey) => void;
-  /** Moedas e nome do usuário mostrados no TopBar */
-  coins: number;
-  userName: string;
+  /** Pílula do usuário: também sai da prova, então quem usa decide se pede confirmação */
+  onUserPress: () => void;
 };
 
 /**
@@ -71,15 +70,14 @@ export function ExamSessionTemplate({
   onExit,
   onSubmit,
   onTabPress,
-  coins,
-  userName,
+  onUserPress,
 }: Props) {
   const hasQuestions = questions.length > 0;
 
   return (
     <HelpLayout
       scrollable={false}
-      topBar={<TopBar onTabPress={onTabPress} coins={coins} userName={userName} />}>
+      topBar={<TopBar onTabPress={onTabPress} onUserPress={onUserPress} />}>
       <ExamHeader
         exitLabel={content.exitLabel}
         exitIcon={content.exitIcon}

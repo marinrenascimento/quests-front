@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useReducer } from 'react';
 
 import { SPELLING_GAME_CONFIG, type SpellingWord } from '@/constants/games';
+import { useGameMatches } from '@/hooks/useGameMatches';
 import { buildRounds, type SpellingRound } from '@/utils/spellingRounds';
 
 /**
@@ -74,14 +75,16 @@ export function spellingGameReducer(state: SpellingGameState, action: Action): S
 }
 
 /**
- * Estado e regras de uma partida do Goblin Ortográfico. Não há tempo correndo: a partida só anda
- * quando o jogador toca. Nada é salvo: ela existe só enquanto a tela está aberta (RN-296).
+ * Estado e regras do jogo Goblin Ortográfico. Não há tempo correndo: o jogo só anda quando o jogador
+ * toca. Só os pontos das partidas completas ficam com o usuário (RN-313); o resto existe enquanto a
+ * tela está aberta (RN-296).
  */
 export function useSpellingGame(words: SpellingWord[]) {
   const [state, dispatch] = useReducer(spellingGameReducer, words, (list) =>
     initialSpellingState(buildRounds(list)),
   );
   const currentWord = state.round.correct;
+  const matches = useGameMatches(state.score);
 
   const selectOption = useCallback((value: string) => dispatch({ type: 'answer', value }), []);
   const restart = useCallback(
@@ -103,6 +106,7 @@ export function useSpellingGame(words: SpellingWord[]) {
 
   return {
     ...state,
+    ...matches,
     /** Algo seria perdido ao sair: palavra corrigida ou vida perdida (RN-295) */
     hasProgress: state.score > 0 || state.lives < SPELLING_GAME_CONFIG.lives,
     selectOption,

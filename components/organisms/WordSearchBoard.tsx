@@ -27,7 +27,7 @@ const QUESTIONS_PADDING_HORIZONTAL = 8;
 const QUESTIONS_PADDING_VERTICAL = 7;
 
 /**
- * Painel da partida do Caça-Palavras: no topo, "Sair" e a contagem (o jogo não tem vidas); depois as
+ * Painel da partida do Mago da Ciência: no topo, "Sair" e a contagem (o jogo não tem vidas); depois as
  * 3 perguntas e a grade. Fica por cima do cenário e respeita a barra de status do aparelho. A grade
  * usa toda a largura útil, com casas de tamanho inteiro.
  */

@@ -4,10 +4,13 @@ import { Avatar } from '@/components/atoms/Avatar';
 import { TrimmedImage } from '@/components/atoms/TrimmedImage';
 import { FontFamily, Palette } from '@/constants/theme';
 import { formatThousands } from '@/utils/formatNumber';
+import type { TrimmedImageSpec } from '@/utils/trimmedImage';
 
 type Props = {
   coins: number;
   userName: string;
+  /** Avatar escolhido pelo usuário */
+  avatar: TrimmedImageSpec;
   onPress?: () => void;
 };
 
@@ -15,7 +18,7 @@ type Props = {
 const BAG_IMAGE_SIZE = { width: 1024, height: 1024 };
 const BAG_CONTENT = { x: 195, y: 219, width: 607, height: 624 };
 
-export function CoinsUserPill({ coins, userName, onPress }: Props) {
+export function CoinsUserPill({ coins, userName, avatar, onPress }: Props) {
   const formattedCoins = formatThousands(coins);
 
   return (
@@ -38,7 +41,7 @@ export function CoinsUserPill({ coins, userName, onPress }: Props) {
             {userName}
           </Text>
         </View>
-        <Avatar />
+        <Avatar character={avatar} />
       </View>
       {/* A sacola fica por cima da borda esquerda da pílula e sai um pouco para fora */}
       <TrimmedImage

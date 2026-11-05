@@ -15,9 +15,6 @@ import { useTopBarNavigation } from '@/hooks/useTopBarNavigation';
 type Props = {
   /** Relatório do período escolhido (semanal ou mensal) */
   report: Report;
-  /** Moedas e nome do usuário mostrados no TopBar */
-  coins: number;
-  userName: string;
   backLabel: string;
   /** Botão de filtro: ícone, rótulo de acessibilidade e ação de trocar o período */
   filterIcon: IconName;
@@ -35,8 +32,6 @@ const CARD_GAP = 10;
  */
 export function ReportsTemplate({
   report,
-  coins,
-  userName,
   backLabel,
   filterIcon,
   filterLabel,
@@ -47,7 +42,7 @@ export function ReportsTemplate({
 
   return (
     <HelpLayout
-      topBar={<TopBar onTabPress={handleTabPress} coins={coins} userName={userName} />}>
+      topBar={<TopBar onTabPress={handleTabPress} />}>
       <ReportHeader
         title={report.title}
         onBack={() => handleTabPress('home')}

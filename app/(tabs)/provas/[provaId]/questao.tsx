@@ -10,7 +10,6 @@ import {
   QUESTION_FORM_CONTENT,
 } from '@/constants/exams';
 import { BACK_LABEL } from '@/constants/helpContent';
-import { TEMP_COINS, TEMP_USER_NAME } from '@/constants/mockUser';
 import { useExams } from '@/hooks/useExams';
 import { useLeaveConfirm } from '@/hooks/useLeaveConfirm';
 import { useQuestionForm } from '@/hooks/useQuestionForm';
@@ -73,8 +72,6 @@ export default function AddExamQuestionScreen() {
         onBack={form.hasChanges ? openConfirm : handleLeave}
         notFoundMessage={notFoundMessage}
         backLabel={BACK_LABEL}
-        coins={TEMP_COINS}
-        userName={TEMP_USER_NAME}
       />
       <ConfirmModal
         visible={confirmVisible}

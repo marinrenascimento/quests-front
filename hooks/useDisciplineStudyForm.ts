@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { subjectLabel } from '@/constants/decks';
+import { ALL_CONTENTS_ID, subjectLabel } from '@/constants/decks';
 import { STUDY_QUANTITY_OPTIONS } from '@/constants/study';
 import { DisciplineStudy, useDecks } from '@/hooks/useDecks';
 import { useSubjects } from '@/hooks/useSubjects';
@@ -13,6 +13,8 @@ type Errors = Partial<Record<Field, string>>;
 type Options = {
   /** Mensagem de obrigatório de cada campo, mostrada abaixo dele ao tocar em "Estudar Agora" */
   requiredMessages: Record<Field, string>;
+  /** Nome da opção "todos os conteúdos" */
+  allContentsLabel: string;
 };
 
 const byName = (a: { name: string }, b: { name: string }) => a.name.localeCompare(b.name, 'pt-BR');
@@ -27,7 +29,7 @@ const pairKey = (disciplineId: string, contentId: string) => `${disciplineId}|${
  * aparecem disciplinas e conteúdos com pelo menos 1 card, e o conteúdo depende da disciplina
  * (lista só os dela e é limpo quando ela muda). Não há criação de disciplina nem de conteúdo.
  */
-export function useDisciplineStudyForm({ requiredMessages }: Options) {
+export function useDisciplineStudyForm({ requiredMessages, allContentsLabel }: Options) {
   const { decks, getDeckCards } = useDecks();
   const { disciplines, contents } = useSubjects();
   const [disciplineId, setDisciplineId] = useState<string | undefined>(undefined);
@@ -52,15 +54,18 @@ export function useDisciplineStudyForm({ requiredMessages }: Options) {
       .filter((item) => disciplinesWithCards.has(item.id))
       .sort(byName)
       .map((item) => ({ id: item.id, label: item.name })),
-    /** Vazio enquanto nenhuma disciplina foi escolhida */
-    contentOptions: contents
-      .filter(
-        (item) =>
-          item.disciplineId === disciplineId &&
-          pairsWithCards.has(pairKey(item.disciplineId, item.id)),
-      )
-      .sort(byName)
-      .map((item) => ({ id: item.id, label: item.name })),
+    /** "Todos os conteúdos" (o conteúdo é opcional) e os conteúdos da disciplina que têm cards */
+    contentOptions: [
+      { id: ALL_CONTENTS_ID, label: allContentsLabel },
+      ...contents
+        .filter(
+          (item) =>
+            item.disciplineId === disciplineId &&
+            pairsWithCards.has(pairKey(item.disciplineId, item.id)),
+        )
+        .sort(byName)
+        .map((item) => ({ id: item.id, label: item.name })),
+    ],
     quantityOptions: STUDY_QUANTITY_OPTIONS.map((value) => ({
       id: String(value),
       label: String(value),
@@ -79,7 +84,7 @@ export function useDisciplineStudyForm({ requiredMessages }: Options) {
       setDisciplineId(id);
       clearError('discipline');
     },
-    selectContent: (id: string) => setContentId(id),
+    selectContent: (id: string) => setContentId(id === ALL_CONTENTS_ID ? undefined : id),
     selectQuantity: (id: string) => {
       setQuantity(Number(id));
       clearError('quantity');

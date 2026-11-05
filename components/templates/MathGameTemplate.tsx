@@ -3,7 +3,12 @@ import { StyleSheet, View } from 'react-native';
 
 import { MathGameHud } from '@/components/organisms/MathGameHud';
 import { MathGameStage } from '@/components/organisms/MathGameStage';
-import { GameScene, MATH_GAME_CONFIG, MathGameContent } from '@/constants/games';
+import {
+  GAME_MATCH_CONFIG,
+  GameScene,
+  MATH_GAME_CONFIG,
+  MathGameContent,
+} from '@/constants/games';
 import type { useMathGame } from '@/hooks/useMathGame';
 import { Palette } from '@/constants/theme';
 
@@ -42,7 +47,9 @@ export function MathGameTemplate({ scene, content, game, paused, onExit }: Props
         content={content}
         lives={game.lives}
         totalLives={MATH_GAME_CONFIG.lives}
-        score={game.score}
+        match={game.match}
+        matchProgress={game.matchProgress}
+        itemsPerMatch={GAME_MATCH_CONFIG.itemsPerMatch}
         options={game.equation.options}
         wrongOptions={game.wrongOptions}
         answersEnabled={game.phase === 'walking'}

@@ -7,6 +7,7 @@ import { PrimaryButton } from '@/components/atoms/PrimaryButton';
 import { SecondaryButton } from '@/components/atoms/SecondaryButton';
 import { Title } from '@/components/atoms/Title';
 import { FormField } from '@/components/molecules/FormField';
+import { isValidEmail } from '@/utils/validation';
 
 export type RegisterValues = {
   name: string;
@@ -27,8 +28,6 @@ type Props = {
   onForgotPasswordPress: () => void;
 };
 
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
 export function RegisterForm({ onSubmit, onLoginPress, onForgotPasswordPress }: Props) {
   const [name, setName] = useState('');
   const [username, setUsername] = useState('');
@@ -47,7 +46,7 @@ export function RegisterForm({ onSubmit, onLoginPress, onForgotPasswordPress }: 
     if (!name.trim()) nextErrors.name = 'Informe o Seu Nome.';
     if (!username.trim()) nextErrors.username = 'Informe o Seu Usuário.';
     if (!email.trim()) nextErrors.email = 'Informe o Seu E-mail.';
-    else if (!EMAIL_REGEX.test(email.trim())) nextErrors.email = 'Digite um E-mail Válido.';
+    else if (!isValidEmail(email.trim())) nextErrors.email = 'Digite um E-mail Válido.';
     if (!password) nextErrors.password = 'Informe a Sua Senha.';
     if (!confirmPassword) nextErrors.confirmPassword = 'Repita a Sua Senha.';
     else if (password !== confirmPassword) nextErrors.confirmPassword = 'As Senhas Não Coincidem.';

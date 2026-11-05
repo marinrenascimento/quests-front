@@ -8,12 +8,14 @@ import type { TrimmedImageSpec } from '@/utils/trimmedImage';
 
 /** Um jogo da tela Jogos */
 export type GameInfo = {
-  id: 'elfo-matematico' | 'goblin-ortografico' | 'mago-caca-palavras';
+  id: 'elfo-matematico' | 'goblin-ortografico' | 'mago-da-ciencia';
   name: string;
   /** Uma frase sobre o jogo, mostrada no cartão */
   description: string;
-  /** Imagem do cartão, sem a margem transparente do arquivo */
+  /** Personagem da vitrine e do ícone, sem a margem transparente do arquivo */
   image: TrimmedImageSpec;
+  /** Cenário atrás do personagem, na vitrine e no ícone */
+  background: ImageSourcePropType;
 };
 
 /** Elfo do jogo Elfo Matemático (elfoJogo.png): olha e aponta o arco para a direita */
@@ -37,7 +39,7 @@ const GOBLIN_IMAGE: TrimmedImageSpec = {
   content: { x: 234, y: 46, width: 1091, height: 1007 },
 };
 
-/** Mago do Caça-Palavras (magoJogo.png): olha para a direita, lendo um livro */
+/** Mago do jogo Mago da Ciência (magoJogo.png): olha para a direita, lendo um livro */
 const MAGE_IMAGE: TrimmedImageSpec = {
   source: require('@/assets/images/jogos/magoJogo.png'),
   imageSize: { width: 1086, height: 1448 },
@@ -51,29 +53,56 @@ export const GAMES: GameInfo[] = [
     name: 'Elfo Matemático',
     description: 'Resolva as equações para impedir que os monstros alcancem o elfo.',
     image: ELF_IMAGE,
+    background: require('@/assets/images/cenarios/cenarioElfo.png'),
   },
   {
     id: 'goblin-ortografico',
     name: 'Goblin Ortográfico',
     description: 'Ache a escrita certa de cada palavra antes que as vidas acabem.',
     image: GOBLIN_IMAGE,
+    background: require('@/assets/images/cenarios/cenarioGoblin.png'),
   },
   {
-    id: 'mago-caca-palavras',
-    name: 'Caça-Palavras',
-    description: 'Responda às perguntas de biologia e química achando as respostas na grade.',
+    id: 'mago-da-ciencia',
+    name: 'Mago da Ciência',
+    description:
+      'Responda às perguntas de ciências da natureza, biologia e química, achando as respostas na grade.',
     image: MAGE_IMAGE,
+    background: require('@/assets/images/cenarios/cenarioMago.png'),
   },
 ];
 
 /** Textos da tela Jogos (o título é exibido em caixa alta pelo componente) */
 export const GAMES_CONTENT = {
   title: 'Jogos',
+  /** Ícone de baixo: mostra o jogo no quadrado grande */
+  showGameLabel: (name: string) => `Mostrar ${name}`,
+  /** Lido pelo leitor de tela no quadrado grande */
+  playHint: (description: string) => `${description} Toque para abrir o jogo.`,
+};
+
+/**
+ * Partidas do Elfo Matemático e do Goblin Ortográfico (RN-313): a cada 6 acertos o jogador completa
+ * uma partida, que dá 1 ponto. A partida é o nível dentro do jogo, sem relação com o nível do app.
+ */
+export const GAME_MATCH_CONFIG = {
+  /** Monstros derrotados ou palavras corrigidas em cada partida */
+  itemsPerMatch: 6,
+  pointsPerMatch: 1,
+};
+
+/** Textos iguais nos jogos com partidas */
+const GAME_MATCH_CONTENT = {
+  matchLabel: 'Partida',
+  /** Lido pelo leitor de tela no número da partida */
+  matchAccessibilityLabel: (match: number) => `Partida ${match}`,
+  /** Frase do modal de fim de jogo */
+  pointsEarnedLabels: { one: 'Ponto Ganho', other: 'Pontos Ganhos' },
 };
 
 /**
  * Nível de dificuldade de um jogo. Muda só o desafio: o tipo de equação no Elfo Matemático
- * (RN-278), as palavras no Goblin Ortográfico (RN-301) e as perguntas e a grade no Caça-Palavras
+ * (RN-278), as palavras no Goblin Ortográfico (RN-301) e as perguntas e a grade no Mago da Ciência
  * (RN-305).
  */
 export type GameDifficulty = 'facil' | 'medio' | 'dificil';
@@ -123,9 +152,10 @@ function difficultyOptions(hints: Record<GameDifficulty, string>): GameDifficult
 
 /** Níveis do Elfo Matemático */
 export const MATH_DIFFICULTY_OPTIONS = difficultyOptions({
-  facil: 'Somas e subtrações até 20. Ex.: 7 + 5 = ?',
-  medio: 'Multiplicações, divisões e contas até 99. Ex.: 6 × 7 = ?',
-  dificil: 'Equações em que é preciso achar o x. Ex.: 3x + 4 = 19',
+  facil: 'Contas de mais, menos e vezes. Ex.: 7 + 5 = ? e 3 × 4 = ?',
+  medio:
+    'Contas com até 4 números, sem variáveis, raízes ou potências. Faça × e ÷ primeiro. Ex.: 3 + 4 × 2 - 1 = ?',
+  dificil: 'Equações com x, potências e raízes. Ex.: 3x + 4 = 19, 5² = ?, √49 = ? e ³√27 = ?',
 });
 
 /** Níveis do Goblin Ortográfico */
@@ -135,7 +165,7 @@ export const SPELLING_DIFFICULTY_OPTIONS = difficultyOptions({
   dificil: 'Palavras longas ou pouco comuns. Ex.: ascensão',
 });
 
-/** Níveis do Caça-Palavras */
+/** Níveis do Mago da Ciência */
 export const WORD_SEARCH_DIFFICULTY_OPTIONS = difficultyOptions({
   facil: 'Perguntas básicas e grade 8 x 8, com as respostas na horizontal e na vertical.',
   medio: 'Perguntas médias e grade 10 x 10, com as respostas também na diagonal.',
@@ -206,16 +236,19 @@ export type GameSetupContent = typeof GAME_SETUP_CONTENT & {
 export const MATH_GAME_CONTENT = {
   ...GAME_STATUS_CONTENT,
   ...GAME_SETUP_CONTENT,
+  ...GAME_MATCH_CONTENT,
   title: 'Elfo Matemático',
   howTo: [
     'Um monstro por vez caminha na direção do elfo, com uma equação em cima da cabeça.',
     'Toque na resposta certa, no topo da tela, para o monstro desaparecer.',
+    'A cada 6 monstros derrotados, você completa uma partida e ganha 1 ponto.',
     'Se o monstro alcançar o elfo, você perde 1 das 3 vidas. Sem vidas, o jogo acaba.',
   ],
-  /** Contagem durante a partida (exibida em caixa alta) */
-  scoreLabels: { one: 'Monstro', other: 'Monstros' },
+  /** Progresso na partida (exibido em caixa alta): "3/6 Monstros" */
+  progressLabel: (done: number, total: number) => `${done}/${total} Monstros`,
   /** Lido pelo leitor de tela: a contagem na tela não diz o que os monstros têm */
-  scoreAccessibilityLabel: (score: number) => `Monstros derrotados: ${score}`,
+  progressAccessibilityLabel: (done: number, total: number) =>
+    `Monstros derrotados nesta partida: ${done} de ${total}`,
   answerLabel: (value: number) => `Resposta ${value}`,
   equationLabel: (text: string) => `Equação: ${text}`,
 };
@@ -253,17 +286,20 @@ export const GOBLIN_GAME_SCENE = {
 export const SPELLING_GAME_CONTENT = {
   ...GAME_STATUS_CONTENT,
   ...GAME_SETUP_CONTENT,
+  ...GAME_MATCH_CONTENT,
   title: 'Goblin Ortográfico',
   howTo: [
     'No meio da tela aparece uma palavra escrita errado.',
     'Acima dela há 3 opções, e só uma está escrita da forma certa. Toque nela para ir para a próxima palavra.',
+    'A cada 6 palavras certas, você completa uma partida e ganha 1 ponto.',
     'Cada opção errada tira 1 das 3 vidas. Sem vidas, o jogo acaba.',
   ],
   /** Acima da palavra errada */
   prompt: 'Qual é a Escrita Certa?',
-  /** Contagem durante a partida (exibida em caixa alta) */
-  scoreLabels: { one: 'Palavra', other: 'Palavras' },
-  scoreAccessibilityLabel: (score: number) => `Palavras corrigidas: ${score}`,
+  /** Progresso na partida (exibido em caixa alta): "3/6 Palavras" */
+  progressLabel: (done: number, total: number) => `${done}/${total} Palavras`,
+  progressAccessibilityLabel: (done: number, total: number) =>
+    `Palavras corrigidas nesta partida: ${done} de ${total}`,
   optionLabel: (word: string) => `Opção ${word}`,
   shownLabel: (word: string) => `Palavra errada: ${word}`,
   /** Destaque do modal de fim de jogo */
@@ -272,7 +308,7 @@ export const SPELLING_GAME_CONTENT = {
 
 export type SpellingGameContent = typeof SPELLING_GAME_CONTENT;
 
-/** Uma pergunta do Caça-Palavras: a resposta é uma palavra só, escondida na grade */
+/** Uma pergunta do Mago da Ciência: a resposta é uma palavra só, escondida na grade */
 export type WordSearchQuestion = {
   subject: 'biologia' | 'quimica';
   question: string;
@@ -307,7 +343,7 @@ export const WORD_SEARCH_LEVELS: Record<GameDifficulty, WordSearchLevel> = {
   },
 };
 
-/** Valores do Caça-Palavras */
+/** Valores do Mago da Ciência */
 export const WORD_SEARCH_CONFIG = {
   /** Perguntas em cada caça-palavras */
   questionsPerPuzzle: 3,
@@ -317,19 +353,19 @@ export const WORD_SEARCH_CONFIG = {
   missFlashMs: 400,
 };
 
-/** Cenário do Caça-Palavras: o fundo e o mago, no canto inferior */
+/** Cenário do Mago da Ciência: o fundo e o mago, no canto inferior */
 export const MAGE_GAME_SCENE = {
   background: require('@/assets/images/jogos/cenarioJogoMago.png') as ImageSourcePropType,
   mage: MAGE_IMAGE,
 };
 
-/** Textos do Caça-Palavras: preparação e partida */
+/** Textos do Mago da Ciência: preparação e partida */
 export const WORD_SEARCH_CONTENT = {
   ...GAME_STATUS_CONTENT,
   ...GAME_SETUP_CONTENT,
-  title: 'Caça-Palavras',
+  title: 'Mago da Ciência',
   howTo: [
-    'Cada caça-palavras tem 3 perguntas de biologia ou química, e as respostas estão escondidas na grade.',
+    'Cada caça-palavras tem 3 perguntas de ciências da natureza, de biologia ou química, e as respostas estão escondidas na grade.',
     'Arraste da primeira até a última letra da resposta, ou toque nas duas.',
     'Não há vidas nem tempo. Ao achar as 3 respostas, vem o próximo caça-palavras.',
   ],

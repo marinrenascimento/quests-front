@@ -9,7 +9,6 @@ import {
   EXAM_DISCIPLINE_STUDY_CONTENT,
 } from '@/constants/exams';
 import { BACK_LABEL } from '@/constants/helpContent';
-import { TEMP_COINS, TEMP_USER_NAME } from '@/constants/mockUser';
 import { useExamDisciplineStudyForm } from '@/hooks/useExamDisciplineStudyForm';
 import { useExams } from '@/hooks/useExams';
 import { useLeaveConfirm } from '@/hooks/useLeaveConfirm';
@@ -24,6 +23,7 @@ export default function ExamDisciplineStudyConfigScreen() {
       quantity: EXAM_DISCIPLINE_STUDY_CONTENT.quantityRequired,
       noQuestions: EXAM_DISCIPLINE_STUDY_CONTENT.noQuestions,
     },
+    allContentsLabel: EXAM_DISCIPLINE_STUDY_CONTENT.allContentsLabel,
     allDifficultiesLabel: EXAM_DISCIPLINE_STUDY_CONTENT.allDifficultiesLabel,
   });
   const [confirmVisible, setConfirmVisible] = useState(false);
@@ -70,8 +70,6 @@ export default function ExamDisciplineStudyConfigScreen() {
         // Sem nenhuma escolha, não há nada a perder: sai direto
         onBack={form.hasChoices ? openConfirm : handleLeave}
         backLabel={BACK_LABEL}
-        coins={TEMP_COINS}
-        userName={TEMP_USER_NAME}
       />
       <ConfirmModal
         visible={confirmVisible}

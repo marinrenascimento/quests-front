@@ -2,14 +2,14 @@
 
 Guia para quem vai mexer na tela Jogos ou acrescentar um jogo. O que cada tela **deve fazer** está em `REGRAS_DE_NEGOCIO.md`, seções 13 e 14 (RN-270 em diante). Este arquivo explica **como o código faz**.
 
-Os jogos são só do front: não há rota no back e nada é salvo. O que o back precisaria, se isso mudar, está em `quests-back/docs/RASCUNHO_BACKEND.md`, seção 7.8.
+Os jogos são só do front: não há rota no back. Só os pontos das partidas ficam com o usuário, em memória. O que o back vai precisar está em `quests-back/docs/RASCUNHO_BACKEND.md`, seção 7.8.
 
 ## Telas
 
 ```
 Home  ──"Jogos"──>  /jogos  ──Elfo Matemático─────>  /jogos/elfo    ──"Jogar"──>  /jogos/elfo/jogar?dificuldade=medio
                     lista   ──Goblin Ortográfico──>  /jogos/goblin  ──"Jogar"──>  /jogos/goblin/jogar?dificuldade=medio
-                            ──Caça-Palavras───────>  /jogos/mago    ──"Jogar"──>  /jogos/mago/jogar?dificuldade=medio
+                            ──Mago da Ciência─────>  /jogos/mago    ──"Jogar"──>  /jogos/mago/jogar?dificuldade=medio
                                                      preparação                   partida (tela cheia, sem TopBar)
 ```
 
@@ -31,13 +31,26 @@ A pilha fica em `app/(tabs)/jogos/_layout.tsx`, e a aba é registrada em `app/(t
 
 | Arquivo | O que faz |
 |---------|-----------|
-| `constants/games.ts` | Lista dos jogos, textos, níveis (`GameDifficulty`), valores de cada jogo e imagens. |
+| `constants/games.ts` | Lista dos jogos, textos, níveis (`GameDifficulty`), valores de cada jogo, das partidas (`GAME_MATCH_CONFIG`) e imagens. |
 | `components/templates/GameSetupTemplate.tsx` | A preparação de um jogo: como jogar, a escolha do nível e "Jogar". Recebe os textos e os níveis por props. |
-| `components/molecules/GameCard.tsx` | Um cartão da tela Jogos. |
-| `components/molecules/GameStatusBar.tsx` | A barra do topo da partida: "Sair", vidas (opcional) e contagem. |
+| `components/organisms/GameShowcase.tsx` | A vitrine da tela Jogos: o quadrado grande, que arrasta para o lado (`FlatList` horizontal com `pagingEnabled`), e os ícones. |
+| `components/molecules/GameShowcaseCard.tsx` | O quadrado grande: cenário, personagem, título e descrição. O toque abre o jogo. |
+| `components/molecules/GameIconButton.tsx` | Um ícone: o toque leva o quadrado grande até o jogo. |
+| `components/atoms/GameSceneImage.tsx` | Um quadrado com o cenário e o personagem por cima. Usa o `expo-image`, porque os cenários são PNGs grandes. |
+| `hooks/useGameMatches.ts` | Partidas: calcula a partida atual a partir dos acertos e soma os pontos às moedas do usuário. |
+| `components/molecules/GameStatusBar.tsx` | A barra do topo do jogo: "Sair", vidas (opcional), número da partida (opcional) e contagem. |
 | `components/molecules/GameAnswerButton.tsx` | Um botão de resposta. `textVariant` escolhe a fonte: `pixel` para números e `word` para palavras. |
 | `components/atoms/LivesIndicator.tsx` | Os corações. |
 | `components/atoms/GameWordText.tsx` | Uma palavra com acentos, na fonte Lilita One. |
+
+## Partidas e pontos
+
+Vale para o Elfo Matemático e o Goblin Ortográfico (RN-313). O Mago da Ciência não tem partidas.
+
+- O reducer de cada jogo só conta os acertos em `score`. Quem transforma isso em partida é o `useGameMatches(score)`: `match` é a partida atual, começando em 1; `matchProgress` são os acertos nela; e `pointsEarned`, os pontos ganhos desde o começo do jogo.
+- Ao completar uma partida, o hook chama `addCoins` do `useUser`. Uma ref guarda as partidas já pagas, para os pontos não serem dados duas vezes.
+- "Jogar" no fim de jogo zera `score` e, com ele, as partidas. Os pontos já ganhos ficam.
+- Para mudar a quantidade de acertos ou de pontos por partida, use `GAME_MATCH_CONFIG` em `constants/games.ts`.
 
 ## Elfo Matemático
 
@@ -84,14 +97,16 @@ A **animação é quem decide** que o monstro chegou: não existe um segundo cro
 | Quero mudar | Onde |
 |-------------|------|
 | Vidas e tempo do monstro | `MATH_GAME_CONFIG` em `constants/games.ts` |
-| Tipos de equação de um nível | `easy`, `medium` e `hard` em `utils/mathEquation.ts`, e o `hint` do nível em `MATH_DIFFICULTY_OPTIONS` |
+| Tipos de equação de um nível | `easy`, `medium` e `hard` em `utils/mathEquation.ts` (o `medium` monta a conta com `mediumTerm`, e o `hard` sorteia entre `firstDegree`, `power` e `root`), e o `hint` do nível em `MATH_DIFFICULTY_OPTIONS` |
+| Bases das potências e das raízes | `power` e `root` em `utils/mathEquation.ts` |
 | Distância das respostas erradas | `MAX_WRONG_DISTANCE` em `utils/mathEquation.ts` |
-| Tamanho e posição dos personagens | Constantes no topo de `MathGameStage.tsx` |
+| Tamanho e posição dos personagens e da equação | Constantes no topo de `MathGameStage.tsx` |
 | Altura do chão | `groundRatio` em `ELF_GAME_SCENE`, de 0 (topo do arquivo) a 1 (base) |
 
 ### Cuidados
 
-- **Fonte pixel:** a Press Start 2P tem `×` e `÷`, mas não tem o sinal de menos `−` (U+2212). Por isso a subtração usa o hífen.
+- **Fonte pixel:** a Press Start 2P tem `×`, `÷`, `²`, `³` e `√`, mas não tem o sinal de menos `−` (U+2212) nem a raiz cúbica `∛` (U+221B). Por isso a subtração usa o hífen e a raiz cúbica é escrita `³√`.
+- **Equações longas:** a largura da caixa sai da quantidade de caracteres, porque a fonte pixel é monoespaçada. Acima de `EQUATION_MAX_WIDTH`, a fonte diminui, para a caixa não sair da tela quando o monstro chega perto do elfo.
 - **Imagens:** `elfoJogo.png` e `monstro.png` têm margem transparente. O recorte visível está em `constants/games.ts` (`content`); se o arquivo mudar, é preciso medir de novo.
 - **Direção:** o elfo olha para a direita e o monstro para a esquerda, nos próprios arquivos. Nada é espelhado no código.
 - **Chão:** o fundo é cortado como `cover`. A posição do chão é calculada em `groundBottom` (`MathGameStage.tsx`), para os personagens pisarem na grama em qualquer proporção de tela.
@@ -152,7 +167,9 @@ Basta acrescentar uma linha na lista do nível, em `constants/mockSpellingWords.
 - **Opções empilhadas:** a linha em volta de cada botão (`optionRow`) dá a largura ao `flex: 1` do `GameAnswerButton`. Sem ela, o botão perderia a altura numa coluna.
 - **Leitor de tela:** ele lê a palavra errada e as opções como estão escritas, então a pronúncia pode não mostrar a diferença entre elas.
 
-## Caça-Palavras
+## Mago da Ciência
+
+O jogo é um caça-palavras com perguntas de ciências da natureza (biologia e química). No código, ele continua com os nomes do formato: `WORD_SEARCH_*`, `useWordSearchGame` e `WordSearchBoard`. A rota é `/jogos/mago`, e o id na lista é `mago-da-ciencia`.
 
 ### Onde está cada coisa
 
@@ -234,13 +251,20 @@ Com `npx expo start`, abra o app e confira.
 
 **Tela Jogos**
 
-- [ ] Home > Jogos abre a lista, com os 3 jogos.
+- [ ] Home > Jogos abre a vitrine, com o Elfo no quadrado grande e o ícone dele em destaque.
+- [ ] Arrastar para o lado mostra outro jogo, e o destaque do ícone acompanha.
+- [ ] Tocar num ícone leva o quadrado grande até o jogo, sem abrir.
+- [ ] Tocar no quadrado grande abre a preparação do jogo em exibição.
 
 **Elfo Matemático**
 
 - [ ] Na preparação, cada nível muda o texto do que cai.
+- [ ] No Fácil aparecem contas de mais, menos e vezes, como `3 × 4 = ?`.
+- [ ] No Médio aparecem contas com até 4 números, como `3 + 4 × 2 - 1 = ?`, inteiras em cima do monstro.
+- [ ] No Difícil aparecem também potências e raízes, como `5² = ?`, `2³ = ?`, `√49 = ?` e `³√27 = ?`.
 - [ ] Resposta errada fica vermelha e não tira vida.
-- [ ] Resposta certa faz o monstro sumir, soma 1 e traz outra equação.
+- [ ] Resposta certa faz o monstro sumir, soma 1 em "x/6 MONSTROS" e traz outra equação.
+- [ ] O 6º monstro troca o número da partida, volta a contagem para 0/6 e soma 1 ponto às moedas do TopBar, que aparecem ao sair do jogo.
 - [ ] Sem responder, o monstro alcança o elfo em cerca de 12 s e tira 1 vida.
 - [ ] Sem vidas, aparece "Fim de Jogo!"; "Jogar" recomeça no mesmo nível e "Sair" volta para a preparação.
 - [ ] "Sair" sem progresso sai direto; com progresso, pergunta, e o monstro para enquanto o aviso está aberto.
@@ -251,11 +275,12 @@ Com `npx expo start`, abra o app e confira.
 - [ ] Na preparação, cada nível muda o texto do que cai, e a partida só traz palavras daquele nível.
 - [ ] As palavras aparecem com os acentos visíveis, como em "exibição".
 - [ ] Opção errada fica vermelha, tira 1 vida e a palavra continua; tocar nela de novo não tira outra vida.
-- [ ] Opção certa fica verde, soma 1 e vem outra palavra.
+- [ ] Opção certa fica verde, soma 1 em "x/6 PALAVRAS" e vem outra palavra.
+- [ ] A 6ª palavra troca o número da partida, volta a contagem para 0/6 e soma 1 ponto às moedas do TopBar.
 - [ ] Sem vidas, aparece "Fim de Jogo!"; "Jogar" recomeça no mesmo nível e "Sair" volta para a preparação.
 - [ ] "Sair" sem progresso sai direto; com progresso, pergunta.
 
-**Caça-Palavras**
+**Mago da Ciência**
 
 - [ ] Na preparação, cada nível muda o texto, e a grade tem 8, 10 ou 12 casas por lado.
 - [ ] Arrastar da primeira à última letra acha a resposta, também de trás para a frente e rápido, sem perder a última letra.

@@ -3,7 +3,6 @@ import { useRouter } from 'expo-router';
 import { GamesTemplate } from '@/components/templates/GamesTemplate';
 import { GameInfo, GAMES, GAMES_CONTENT } from '@/constants/games';
 import { BACK_LABEL } from '@/constants/helpContent';
-import { TEMP_COINS, TEMP_USER_NAME } from '@/constants/mockUser';
 
 /** Jogos, aberta pelo botão "Jogos" do menu da Home */
 export default function GamesScreen() {
@@ -18,7 +17,7 @@ export default function GamesScreen() {
       case 'goblin-ortografico':
         router.push('/(tabs)/jogos/goblin');
         break;
-      case 'mago-caca-palavras':
+      case 'mago-da-ciencia':
         router.push('/(tabs)/jogos/mago');
         break;
     }
@@ -29,9 +28,9 @@ export default function GamesScreen() {
       title={GAMES_CONTENT.title}
       games={GAMES}
       onGamePress={handleGamePress}
+      iconLabel={GAMES_CONTENT.showGameLabel}
+      playHint={GAMES_CONTENT.playHint}
       backLabel={BACK_LABEL}
-      coins={TEMP_COINS}
-      userName={TEMP_USER_NAME}
     />
   );
 }

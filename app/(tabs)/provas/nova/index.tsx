@@ -10,7 +10,6 @@ import {
   QUESTION_ADDED_TOAST,
 } from '@/constants/exams';
 import { BACK_LABEL } from '@/constants/helpContent';
-import { TEMP_COINS, TEMP_USER_NAME } from '@/constants/mockUser';
 import { useExamCreation } from '@/hooks/useExamCreation';
 import { useExamForm } from '@/hooks/useExamForm';
 import { useExams } from '@/hooks/useExams';
@@ -79,8 +78,6 @@ export default function NewExamScreen() {
         }}
         onCancel={openConfirm}
         backLabel={BACK_LABEL}
-        coins={TEMP_COINS}
-        userName={TEMP_USER_NAME}
       />
       <ConfirmModal
         visible={confirmVisible}

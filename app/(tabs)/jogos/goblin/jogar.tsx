@@ -68,6 +68,7 @@ export default function SpellingGameScreen() {
         visible={over && !closing}
         title={GAME_OVER_CONTENT.title}
         highlight={formatCount(game.score, SPELLING_GAME_CONTENT.gameOverLabels)}
+        description={formatCount(game.pointsEarned, SPELLING_GAME_CONTENT.pointsEarnedLabels)}
         confirmLabel={GAME_OVER_CONTENT.playAgainLabel}
         cancelLabel={GAME_OVER_CONTENT.exitLabel}
         onConfirm={() => {

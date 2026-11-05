@@ -24,9 +24,6 @@ type Props = {
    */
   notFoundMessage?: string;
   backLabel: string;
-  /** Moedas e nome do usuário mostrados no TopBar */
-  coins: number;
-  userName: string;
 };
 
 /** Espaço acima da mensagem de questão inexistente: o mesmo do Editar Flashcard, em px do mockup */
@@ -45,8 +42,6 @@ export function QuestionFormTemplate({
   onBack,
   notFoundMessage,
   backLabel,
-  coins,
-  userName,
 }: Props) {
   const { scale } = useMockupScale(HELP_MOCKUP_WIDTH);
   const handleTabPress = useTopBarNavigation();
@@ -55,7 +50,7 @@ export function QuestionFormTemplate({
   return (
     <HelpLayout
       keyboardAware
-      topBar={<TopBar onTabPress={handleTabPress} coins={coins} userName={userName} />}>
+      topBar={<TopBar onTabPress={handleTabPress} />}>
       <ReportHeader title={content.title} onBack={onBack} backLabel={backLabel} />
       {notFoundMessage ? (
         <BodyText align="center" style={{ marginTop: scale(NOT_FOUND_TOP) }}>

@@ -6,14 +6,15 @@ import { GameStatusBar } from '@/components/molecules/GameStatusBar';
 import type { MathGameContent } from '@/constants/games';
 import { useLayoutPadding } from '@/hooks/useLayoutPadding';
 import { HELP_MOCKUP_WIDTH, useMockupScale } from '@/hooks/useMockupScale';
-import { formatCount } from '@/utils/formatCount';
 
 type Props = {
   content: MathGameContent;
   lives: number;
   totalLives: number;
-  /** Monstros derrotados */
-  score: number;
+  /** Partida em andamento e monstros derrotados nela */
+  match: number;
+  matchProgress: number;
+  itemsPerMatch: number;
   /** Opções de resposta da equação atual */
   options: number[];
   /** Opções erradas já tocadas */
@@ -30,14 +31,16 @@ const ROW_GAP = 10;
 const ANSWERS_GAP = 7;
 
 /**
- * Painel no topo da partida: "Sair", vidas e monstros derrotados e, logo abaixo, as respostas lado
- * a lado. Fica por cima do cenário e respeita a barra de status do aparelho.
+ * Painel no topo do jogo: "Sair", vidas, o número da partida e os monstros derrotados nela e, logo
+ * abaixo, as respostas lado a lado. Fica por cima do cenário e respeita a barra de status do aparelho.
  */
 export function MathGameHud({
   content,
   lives,
   totalLives,
-  score,
+  match,
+  matchProgress,
+  itemsPerMatch,
   options,
   wrongOptions,
   answersEnabled,
@@ -65,8 +68,13 @@ export function MathGameHud({
           lifeLostIcon: content.lifeLostIcon,
           label: content.livesLabel(lives, totalLives),
         }}
-        scoreText={formatCount(score, content.scoreLabels)}
-        scoreAccessibilityLabel={content.scoreAccessibilityLabel(score)}
+        match={{
+          label: content.matchLabel,
+          number: match,
+          accessibilityLabel: content.matchAccessibilityLabel(match),
+        }}
+        scoreText={content.progressLabel(matchProgress, itemsPerMatch)}
+        scoreAccessibilityLabel={content.progressAccessibilityLabel(matchProgress, itemsPerMatch)}
       />
       <View style={[styles.answers, { gap: scale(ANSWERS_GAP), marginTop: scale(ROW_GAP) }]}>
         {/* Sempre 3 opções: um .map simples basta */}

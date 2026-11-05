@@ -5,7 +5,6 @@ import { ConfirmModal } from '@/components/organisms/ConfirmModal';
 import { FlashcardFormTemplate } from '@/components/templates/FlashcardFormTemplate';
 import { CANCEL_CARD_CONFIRM_CONTENT, FLASHCARD_FORM_CONTENT } from '@/constants/decks';
 import { BACK_LABEL } from '@/constants/helpContent';
-import { TEMP_COINS, TEMP_USER_NAME } from '@/constants/mockUser';
 import { useDeckCreation } from '@/hooks/useDeckCreation';
 import { useFlashcardForm } from '@/hooks/useFlashcardForm';
 import { useLeaveConfirm } from '@/hooks/useLeaveConfirm';
@@ -54,8 +53,6 @@ export default function NewFlashcardScreen() {
         // Sem texto na frente nem no verso, não há nada a perder: sai direto
         onBack={form.hasChanges ? openConfirm : handleLeave}
         backLabel={BACK_LABEL}
-        coins={TEMP_COINS}
-        userName={TEMP_USER_NAME}
       />
       <ConfirmModal
         visible={confirmVisible}

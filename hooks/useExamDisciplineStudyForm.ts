@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 
-import { subjectLabel } from '@/constants/decks';
+import { ALL_CONTENTS_ID, subjectLabel } from '@/constants/decks';
 import {
   ALL_DIFFICULTIES_ID,
   QUESTION_DIFFICULTIES,
@@ -22,6 +22,8 @@ type Options = {
    * mostradas ao tocar em "Estudar Agora"
    */
   messages: { discipline: string; quantity: string; noQuestions: string };
+  /** Nome da opção "todos os conteúdos" */
+  allContentsLabel: string;
   /** Nome da opção "todas as dificuldades" */
   allDifficultiesLabel: string;
 };
@@ -38,7 +40,11 @@ const pairKey = (disciplineId: string, contentId: string) => `${disciplineId}|${
  * conteúdo e dificuldade são opcionais (sem escolha, entram todos). O sorteio não repete questão
  * e, com menos questões do que a quantidade, entram todas.
  */
-export function useExamDisciplineStudyForm({ messages, allDifficultiesLabel }: Options) {
+export function useExamDisciplineStudyForm({
+  messages,
+  allContentsLabel,
+  allDifficultiesLabel,
+}: Options) {
   const { allQuestions } = useExams();
   const { disciplines, contents } = useSubjects();
   const [disciplineId, setDisciplineId] = useState<string | undefined>(undefined);
@@ -69,15 +75,18 @@ export function useExamDisciplineStudyForm({ messages, allDifficultiesLabel }: O
       .filter((item) => disciplinesWithQuestions.has(item.id))
       .sort(byName)
       .map((item) => ({ id: item.id, label: item.name })),
-    /** Vazio enquanto nenhuma disciplina foi escolhida */
-    contentOptions: contents
-      .filter(
-        (item) =>
-          item.disciplineId === disciplineId &&
-          pairsWithQuestions.has(pairKey(item.disciplineId, item.id)),
-      )
-      .sort(byName)
-      .map((item) => ({ id: item.id, label: item.name })),
+    /** "Todos os conteúdos" (o conteúdo é opcional) e os conteúdos da disciplina que têm questões */
+    contentOptions: [
+      { id: ALL_CONTENTS_ID, label: allContentsLabel },
+      ...contents
+        .filter(
+          (item) =>
+            item.disciplineId === disciplineId &&
+            pairsWithQuestions.has(pairKey(item.disciplineId, item.id)),
+        )
+        .sort(byName)
+        .map((item) => ({ id: item.id, label: item.name })),
+    ],
     /** "Todas as dificuldades" e as 3 dificuldades, da mais fácil para a mais difícil */
     difficultyOptions: [
       { id: ALL_DIFFICULTIES_ID, label: allDifficultiesLabel },
@@ -111,7 +120,7 @@ export function useExamDisciplineStudyForm({ messages, allDifficultiesLabel }: O
       clearError('difficulty');
     },
     selectContent: (id: string) => {
-      setContentId(id);
+      setContentId(id === ALL_CONTENTS_ID ? undefined : id);
       clearError('difficulty');
     },
     selectDifficulty: (id: string) => {

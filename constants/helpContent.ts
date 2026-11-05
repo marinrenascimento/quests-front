@@ -110,7 +110,7 @@ export const STUDY_TOPIC: HelpTopic = {
     {
       id: 'jogos',
       title: 'Jogos educativos',
-      text: 'Os jogos como Caça-Palavras e Quiz Relâmpago reforçam o aprendizado de forma divertida. Novos jogos são adicionados regularmente!',
+      text: 'Os jogos reforçam o aprendizado de forma divertida. Temos o Elfo Matemático (equações matemáticas), o Goblin Ortográfico (ortografia) e o Mago da Ciência (perguntas de ciências da natureza, biologia e química).',
     },
   ],
 };
@@ -124,17 +124,17 @@ export const ACCOUNT_TOPIC: HelpTopic = {
     {
       id: 'perfil',
       title: 'Editando seu perfil',
-      text: 'Acesse seu perfil clicando no ícone do avatar no canto superior direito. Lá você pode alterar seu nome de exibição, e-mail e informações pessoais.',
+      text: 'Acesse seu perfil tocando no seu avatar, no canto superior direito. Lá você vê seus pontos e seu nível, pode alterar seu nome de exibição e seu e-mail (a troca do e-mail pede a sua senha) e sair da conta.',
     },
     {
       id: 'avatar',
-      title: 'Escolhendo seu avatar',
-      text: 'Escolha entre os avatares disponíveis. Cada um possui visual único e novos avatares são desbloqueados conforme você sobe de nível!',
+      title: 'Escolhendo seu avatar e seu fundo',
+      text: 'No seu perfil, escolha entre os avatares e fundos disponíveis. Cada um possui visual único e novos avatares e fundos são desbloqueados conforme você sobe de nível!',
     },
     {
       id: 'senha',
       title: 'Alterando senha',
-      text: 'Para alterar sua senha, vá em Configurações > Segurança > Alterar Senha. Digite a senha atual e a nova senha duas vezes para confirmar. Use pelo menos 8 caracteres com letras e números.',
+      text: 'Para alterar sua senha, vá em Perfil > Alterar Senha. Digite a senha atual e a nova senha duas vezes para confirmar. Use pelo menos 8 caracteres com letras e números.',
     },
   ],
 };
@@ -157,12 +157,12 @@ export const PRIVACY_TOPIC: HelpTopic = {
     {
       id: 'exportar-excluir',
       title: 'Exportar ou excluir seus dados',
-      text: 'Você tem direito a solicitar a exportação de todos os seus dados em formato legível ou a exclusão completa da sua conta. Acesse Configurações > Privacidade > Gerenciar Dados.',
+      text: 'Você tem direito a solicitar a exportação de todos os seus dados em formato legível ou a exclusão completa da sua conta, que pede a sua senha. Acesse Perfil > Privacidade e Segurança.',
     },
     {
       id: '2fa',
       title: 'Autenticação em duas etapas',
-      text: 'Recomendamos ativar a autenticação em duas etapas (2FA) para aumentar a segurança da sua conta. Vá em Configurações > Segurança > Ativar 2FA e siga as instruções.',
+      text: 'Recomendamos ativar a autenticação em duas etapas (2FA) para aumentar a segurança da sua conta. Vá em Perfil > Privacidade e Segurança e marque a opção.',
     },
   ],
 };
@@ -200,7 +200,7 @@ export const SUPPORT_CONTENT: SupportContent = {
     title: 'Fale com o Suporte',
     email: SUPPORT_EMAIL,
     description:
-      'Para trocar a sua senha ou tirar dúvidas, envie um e-mail para o suporte pelo endereço acima.',
+      'Para recuperar a sua senha ou tirar dúvidas, envie um e-mail para o suporte pelo endereço acima.',
     closeLabel: 'Entendi',
   },
 };

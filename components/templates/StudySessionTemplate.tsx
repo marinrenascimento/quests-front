@@ -14,6 +14,7 @@ import { DifficultyConfig, SizedImage, StudyContent } from '@/constants/study';
 import type { StudySession } from '@/hooks/useStudySession';
 import { useLayoutPadding } from '@/hooks/useLayoutPadding';
 import { HELP_MOCKUP_WIDTH, useMockupScale } from '@/hooks/useMockupScale';
+import { useOpenProfile } from '@/hooks/useOpenProfile';
 import { useTopBarNavigation } from '@/hooks/useTopBarNavigation';
 
 type Props = {
@@ -30,9 +31,6 @@ type Props = {
   completedImage: SizedImage;
   /** Botão do cabeçalho ("Encerrar Revisão" ou, no fim, "Voltar para o Início") */
   onEnd: () => void;
-  /** Moedas e nome do usuário mostrados no TopBar */
-  coins: number;
-  userName: string;
 };
 
 // Medidas do mockup da revisão de um deck convertidas para a escala da Help, em px
@@ -59,12 +57,11 @@ export function StudySessionTemplate({
   session,
   completedImage,
   onEnd,
-  coins,
-  userName,
 }: Props) {
   const { scale } = useMockupScale(HELP_MOCKUP_WIDTH);
   const { layoutWidth, paddingHorizontal, paddingTop, paddingBottom } = useLayoutPadding();
   const handleTabPress = useTopBarNavigation();
+  const openProfile = useOpenProfile();
   // Largura útil entre as margens laterais (a dos cards da revisão)
   const cardWidth = layoutWidth - paddingHorizontal * 2;
   // Passou do último card de um deck existente
@@ -93,8 +90,11 @@ export function StudySessionTemplate({
             session.saveMark();
             handleTabPress(tab);
           }}
-          coins={coins}
-          userName={userName}
+          // De lá o usuário pode trocar de aba, então a marcação também é salva aqui
+          onUserPress={() => {
+            session.saveMark();
+            openProfile?.();
+          }}
         />
       }>
       <View

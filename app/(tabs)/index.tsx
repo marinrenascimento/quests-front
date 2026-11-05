@@ -5,7 +5,6 @@ import { HomeBanner } from '@/components/organisms/HomeBanner';
 import { HomeLayout } from '@/components/organisms/HomeLayout';
 import { HomeMenu, HomeMenuKey } from '@/components/organisms/HomeMenu';
 import { TopBar } from '@/components/organisms/TopBar';
-import { TEMP_COINS, TEMP_USER_NAME } from '@/constants/mockUser';
 import { useTopBarNavigation } from '@/hooks/useTopBarNavigation';
 
 export default function HomeScreen() {
@@ -31,14 +30,7 @@ export default function HomeScreen() {
 
   return (
     <HomeLayout
-      topBar={
-        <TopBar
-          activeTab="home"
-          onTabPress={handleTabPress}
-          coins={TEMP_COINS}
-          userName={TEMP_USER_NAME}
-        />
-      }
+      topBar={<TopBar activeTab="home" onTabPress={handleTabPress} />}
       banner={<HomeBanner />}
       // TODO: integrar com o back (os 2 últimos decks ou provas estudados, com o nome, e o toque
       // abrindo o item). Por enquanto, os 2 quadrados ficam vazios.

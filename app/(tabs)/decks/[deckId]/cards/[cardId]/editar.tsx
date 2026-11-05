@@ -5,12 +5,11 @@ import { ConfirmModal } from '@/components/organisms/ConfirmModal';
 import { FlashcardFormTemplate } from '@/components/templates/FlashcardFormTemplate';
 import { DISCARD_CARD_EDIT_CONFIRM_CONTENT, EDIT_FLASHCARD_CONTENT } from '@/constants/decks';
 import { BACK_LABEL } from '@/constants/helpContent';
-import { TEMP_COINS, TEMP_USER_NAME } from '@/constants/mockUser';
 import { useDecks } from '@/hooks/useDecks';
 import { useFlashcardForm } from '@/hooks/useFlashcardForm';
 import { useLeaveConfirm } from '@/hooks/useLeaveConfirm';
 
-/** Editar Flashcard, aberto pela caneta de um card em Cards do Deck */
+/** Editar Flashcard, aberto pela caneta em Cards do Deck ou pelo "Editar" do Visualizar Card */
 export default function EditDeckCardScreen() {
   const router = useRouter();
   const { deckId, cardId } = useLocalSearchParams<{ deckId: string; cardId: string }>();
@@ -41,8 +40,8 @@ export default function EditDeckCardScreen() {
   useLeaveConfirm({ enabled: form.hasChanges, onRequestLeave: openConfirm });
 
   const handleLeave = () => {
-    // Volta para os cards do deck (que ficam por baixo na pilha); aberta sem histórico
-    // (ex.: link direto), vai para eles
+    // Volta para a tela de baixo (Cards do Deck ou Visualizar Card); aberta sem histórico
+    // (ex.: link direto), vai para os cards do deck
     if (router.canDismiss()) {
       router.back();
     } else {
@@ -71,8 +70,6 @@ export default function EditDeckCardScreen() {
         onBack={requestLeave}
         notFoundMessage={card ? undefined : EDIT_FLASHCARD_CONTENT.notFoundMessage}
         backLabel={BACK_LABEL}
-        coins={TEMP_COINS}
-        userName={TEMP_USER_NAME}
       />
       <ConfirmModal
         visible={confirmVisible}

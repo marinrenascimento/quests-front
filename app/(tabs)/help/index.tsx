@@ -13,7 +13,6 @@ import {
   HelpMenuKey,
   SUPPORT_CONTENT,
 } from '@/constants/helpContent';
-import { TEMP_COINS, TEMP_USER_NAME } from '@/constants/mockUser';
 import { useSupportModal } from '@/hooks/useSupportModal';
 import { useTopBarNavigation } from '@/hooks/useTopBarNavigation';
 
@@ -41,14 +40,7 @@ export default function HelpScreen() {
 
   return (
     <HelpLayout
-      topBar={
-        <TopBar
-          activeTab="help"
-          onTabPress={handleTabPress}
-          coins={TEMP_COINS}
-          userName={TEMP_USER_NAME}
-        />
-      }
+      topBar={<TopBar activeTab="help" onTabPress={handleTabPress} />}
       footer={
         <SupportBlock
           prompt={SUPPORT_CONTENT.prompt}

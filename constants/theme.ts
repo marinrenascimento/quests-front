@@ -137,6 +137,8 @@ export const Palette = {
   /** Resposta certa, no Goblin Ortográfico (o mesmo verde do botão Jogos da Home) */
   gameAnswerRight: '#218045',
   gameEquationBackground: 'rgba(11, 26, 23, 0.85)',
+  /** Degradê atrás do título e da descrição na vitrine da tela Jogos: do transparente ao escuro */
+  gameShowcaseFade: ['rgba(11, 26, 23, 0)', 'rgba(11, 26, 23, 0.9)'] as const,
 };
 
 /**

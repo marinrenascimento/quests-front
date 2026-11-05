@@ -15,7 +15,7 @@ import { MOCK_WORD_SEARCH_QUESTIONS } from '@/constants/mockWordSearchQuestions'
 import { useLeaveConfirm } from '@/hooks/useLeaveConfirm';
 import { useWordSearchGame } from '@/hooks/useWordSearchGame';
 
-/** Partida do Caça-Palavras, aberta pelo "Jogar" da preparação (regras: RN-303 a RN-308) */
+/** Partida do Mago da Ciência, aberta pelo "Jogar" da preparação (regras: RN-303 a RN-308) */
 export default function WordSearchScreen() {
   const router = useRouter();
   const { dificuldade } = useLocalSearchParams<{ dificuldade?: string }>();

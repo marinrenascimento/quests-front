@@ -9,7 +9,6 @@ import {
   SPELLING_GAME_CONTENT,
 } from '@/constants/games';
 import { BACK_LABEL } from '@/constants/helpContent';
-import { TEMP_COINS, TEMP_USER_NAME } from '@/constants/mockUser';
 
 /** Preparação do Goblin Ortográfico: como jogar e a escolha do nível (RN-300) */
 export default function SpellingGameSetupScreen() {
@@ -37,8 +36,6 @@ export default function SpellingGameSetupScreen() {
       }
       onBack={handleBack}
       backLabel={BACK_LABEL}
-      coins={TEMP_COINS}
-      userName={TEMP_USER_NAME}
     />
   );
 }

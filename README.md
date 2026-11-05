@@ -11,7 +11,7 @@
 
 O front é a interface do jogo/app: telas, avatares, cenários, níveis etc. (veja as imagens em `assets/images/`). Ele não guarda regras de negócio nem dados permanentes, que ficam a cargo do back.
 
-> **Estado atual:** o front ainda contém o código de exemplo do `create-expo-app` (telas "Home" e "Explore", componentes `themed-*`, `parallax-scroll-view` etc.). A organização em Atomic Design e o fluxo de login descritos abaixo são o **padrão a seguir** e ainda não foram implementados.
+> **Estado atual:** as telas funcionam com dados fictícios e em memória (`constants/mock*`), sem chamar o back: tudo some ao fechar o app. O que cada tela faz está em `docs/REGRAS_DE_NEGOCIO.md`, e os jogos, em `docs/JOGOS.md`. Ainda sobram arquivos de exemplo do `create-expo-app`, como `app/(tabs)/explore.tsx`, `app/modal.tsx`, os componentes `themed-*` e o `parallax-scroll-view`.
 
 ## Stack e versões
 
@@ -122,11 +122,20 @@ npx expo start --clear      # iniciar limpando o cache do Metro
 ```
 front/
 ├── app/                      # Rotas (Expo Router): cada arquivo é uma tela
-│   ├── _layout.tsx           # Layout raiz: Stack + tema claro/escuro + StatusBar
+│   ├── _layout.tsx           # Layout raiz: Stack, tema, StatusBar e UserProvider
+│   ├── index.tsx             # Redireciona para o login
+│   ├── perfil.tsx            # Perfil: abre por cima das abas, pela pílula do TopBar
 │   ├── modal.tsx             # Tela modal de exemplo
-│   └── (tabs)/               # Grupo de rotas com navegação por abas
-│       ├── _layout.tsx       # Define as abas (Tabs)
-│       ├── index.tsx         # Aba "Home" (exemplo do template)
+│   ├── (auth)/               # Login e cadastro
+│   └── (tabs)/               # Telas com TopBar (a barra de abas nativa fica escondida)
+│       ├── _layout.tsx       # Define as abas (Tabs) e o SubjectsProvider
+│       ├── index.tsx         # Home
+│       ├── rank.tsx          # Rank
+│       ├── relatorios.tsx    # Relatórios
+│       ├── help/             # Ajuda e tópicos
+│       ├── decks/            # Meus Decks, cards, revisão e estudo por disciplina
+│       ├── provas/           # Minhas Provas, questões, realização e Vestibulares
+│       ├── jogos/            # Elfo Matemático, Goblin Ortográfico e Mago da Ciência
 │       └── explore.tsx       # Aba "Explore" (exemplo do template)
 ├── assets/
 │   └── images/               # Imagens do app
@@ -138,11 +147,16 @@ front/
 │       ├── numeros/          # Números ilustrados (0–9)
 │       ├── outros/           # Itens diversos (baú, espada, pergaminho...)
 │       └── *.png             # Ícone, splash, favicon e imagens do template
-├── components/               # Componentes reutilizáveis (hoje: componentes do template)
+├── components/               # Componentes reutilizáveis
+│   ├── atoms/                # Peças básicas e indivisíveis
+│   ├── molecules/            # Combinações de atoms
+│   ├── organisms/            # Blocos maiores da tela
+│   ├── templates/            # Esqueleto de cada tela
 │   └── ui/                   # collapsible, icon-symbol (do template)
-├── constants/
-│   └── theme.ts              # Cores (claro/escuro) e fontes
-├── hooks/                    # Hooks: use-color-scheme, use-theme-color
+├── constants/                # Tema, textos das telas e dados fictícios (mock*)
+├── docs/                     # REGRAS_DE_NEGOCIO.md e JOGOS.md
+├── hooks/                    # Lógica reutilizável e fontes de dados em memória (useUser, useDecks...)
+├── utils/                    # Funções sem React (mathEquation, validation...)
 ├── scripts/
 │   └── reset-project.js      # Script do template (ver aviso acima)
 ├── .vscode/                  # Configurações recomendadas do VS Code
@@ -154,18 +168,9 @@ front/
 └── tsconfig.json             # TypeScript (strict + atalho @/)
 ```
 
-### Estrutura alvo (Atomic Design)
+### Atomic Design
 
-Novos componentes devem ir para:
-
-```
-components/
-├── atoms/        # Peças básicas e indivisíveis
-├── molecules/    # Combinações de atoms
-└── organisms/    # Blocos maiores da tela
-```
-
-Os componentes atuais do template (`themed-text.tsx`, `parallax-scroll-view.tsx` etc.) ainda não foram reorganizados.
+Novos componentes vão para `components/atoms`, `molecules`, `organisms` ou `templates`. Os componentes do template (`themed-text.tsx`, `parallax-scroll-view.tsx` etc.) ainda não foram reorganizados.
 
 ## Padrões e regras
 
@@ -176,21 +181,23 @@ Os componentes atuais do template (`themed-text.tsx`, `parallax-scroll-view.tsx`
 | **atoms** | Menor unidade visual, sem depender de outros componentes do projeto | `Button`, `Title`, `Avatar`, `Input`, `Icon` | Só React Native/Expo (`View`, `Text`, `Image`, `Pressable`...), `constants/` e `hooks/`. **Nunca outros componentes de UI do projeto.** |
 | **molecules** | Combinação de atoms com uma função simples | `InputWithLabel`, `LevelBadge` (ícone + texto), `QuestCard` | atoms |
 | **organisms** | Seção completa e mais complexa da interface | `Header`, `QuestList`, `LoginForm`, `ProfileSummary` | molecules e atoms |
-| **screens** (`app/`) | Telas/rotas | `app/(tabs)/index.tsx` | organisms, molecules e atoms. **Só montam componentes**, sem UI complexa criada direto na tela. |
+| **templates** | Esqueleto de uma tela inteira | `ProfileTemplate`, `ExamsTemplate` | organisms, molecules e atoms |
+| **screens** (`app/`) | Telas/rotas | `app/(tabs)/index.tsx` | templates, organisms, molecules e atoms. **Só montam componentes**, sem UI complexa criada direto na tela. |
 
-As importações seguem uma direção só: **atoms ← molecules ← organisms ← screens**. Um nível nunca importa um nível acima dele.
+As importações seguem uma direção só: **atoms ← molecules ← organisms ← templates ← screens**. Um nível nunca importa um nível acima dele.
 
 ### 2. Expo Router (navegação)
 
 - **Cada arquivo dentro de `app/` é uma rota.** Por isso, não coloque componentes, hooks ou utilitários dentro de `app/`.
   > O `AGENTS.md` cita `src/app/`, mas **neste projeto as rotas ficam em `app/`** (na raiz do front).
 - **Grupos** usam parênteses e não aparecem na URL:
-  - `(tabs)`: telas com barra de abas (já existe).
-  - `(auth)`: telas de autenticação, como o login (**planejado, ainda não existe**).
+  - `(tabs)`: telas com o TopBar.
+  - `(auth)`: login e cadastro.
 - **`_layout.tsx`** define o layout/navegador do grupo (Stack, Tabs...). O `app/_layout.tsx` é o layout raiz.
 - Importe `Link`, `router` e `useLocalSearchParams` de `expo-router`.
-- **Fluxo planejado:** o usuário abre o app → tela de login em `(auth)` → após o login, `router.replace('/(tabs)')`.
+- **Fluxo do login:** o usuário abre o app → tela de login em `(auth)` → após o login, `router.replace('/(tabs)')`.
   Use `replace`, e não `push`, para o usuário não conseguir "voltar" para o login.
+- **Perfil:** fica em `app/perfil.tsx`, na pilha raiz, e não numa aba. As abas usam `popToTopOnBlur`, então abrir o Perfil como aba descartaria a tela de origem.
 
 ### 3. Componentes
 
@@ -276,6 +283,7 @@ As importações seguem uma direção só: **atoms ← molecules ← organisms �
 
 - Lógica reutilizável (buscar dados, controlar formulário, tema...) vai para **`hooks/`**.
 - O nome **sempre começa com `use`**: `useQuests`, `useAuth`.
+- O usuário logado (nome, moedas, avatar e fundo) vem do `useUser`. O `TopBar` já lê dele: não passe esses dados por props.
   > Os hooks atuais do template usam kebab-case no nome do arquivo (`use-color-scheme.ts`). O nome da função exportada já segue o padrão (`useColorScheme`).
 
 ## Fluxo de Git

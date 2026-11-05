@@ -22,9 +22,6 @@ type Props = {
   /** Toast no topo do conteúdo (ex.: depois de adicionar um card). Opcional. */
   toast?: { message: string; visible: boolean; onHide: () => void };
   backLabel: string;
-  /** Moedas e nome do usuário mostrados no TopBar */
-  coins: number;
-  userName: string;
 };
 
 /**
@@ -42,8 +39,6 @@ export function DeckCardsTemplate({
   onCardAction,
   toast,
   backLabel,
-  coins,
-  userName,
 }: Props) {
   const router = useRouter();
   const handleTabPress = useTopBarNavigation();
@@ -60,7 +55,7 @@ export function DeckCardsTemplate({
   return (
     <HelpLayout
       scrollable={false}
-      topBar={<TopBar onTabPress={handleTabPress} coins={coins} userName={userName} />}
+      topBar={<TopBar onTabPress={handleTabPress} />}
       overlay={
         toast ? (
           <Toast message={toast.message} visible={toast.visible} onHide={toast.onHide} />

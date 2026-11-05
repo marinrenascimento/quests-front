@@ -9,9 +9,8 @@ import {
   WORD_SEARCH_DIFFICULTY_OPTIONS,
 } from '@/constants/games';
 import { BACK_LABEL } from '@/constants/helpContent';
-import { TEMP_COINS, TEMP_USER_NAME } from '@/constants/mockUser';
 
-/** Preparação do Caça-Palavras: como jogar e a escolha do nível (RN-303) */
+/** Preparação do Mago da Ciência: como jogar e a escolha do nível (RN-303) */
 export default function WordSearchSetupScreen() {
   const router = useRouter();
   const [difficulty, setDifficulty] = useState<GameDifficulty>(DEFAULT_GAME_DIFFICULTY);
@@ -37,8 +36,6 @@ export default function WordSearchSetupScreen() {
       }
       onBack={handleBack}
       backLabel={BACK_LABEL}
-      coins={TEMP_COINS}
-      userName={TEMP_USER_NAME}
     />
   );
 }

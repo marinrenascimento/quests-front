@@ -1,6 +1,7 @@
 import { Image, ImageSourcePropType, StyleSheet, View } from 'react-native';
 
 import { Palette } from '@/constants/theme';
+import { TrimmedImageSpec, trimmedImageLayout } from '@/utils/trimmedImage';
 
 type Props = {
   /** Diâmetro em dp (padrão: 26, o tamanho usado no TopBar) */
@@ -11,17 +12,23 @@ type Props = {
   showSilhouette?: boolean;
   /** Imagem do jogador; quando existir, preenche o círculo no lugar da silhueta */
   source?: ImageSourcePropType;
+  /**
+   * Personagem (PNG com margem transparente): ocupa a largura do círculo, alinhado pelo topo, para
+   * o rosto ficar à mostra. Tem prioridade sobre `source`.
+   */
+  character?: TrimmedImageSpec;
 };
 
 /**
  * Círculo de avatar. Sem props: círculo branco com silhueta de usuário (cabeça + tronco)
- * em verde escuro, como no TopBar. Também serve de placeholder liso (showSilhouette={false}).
+ * em verde escuro. Também serve de placeholder liso (showSilhouette={false}).
  */
 export function Avatar({
   size = SIZE,
   color = Palette.white,
   showSilhouette = true,
   source,
+  character,
 }: Props) {
   // Medidas da silhueta foram tiradas para 26dp; em outros tamanhos, tudo escala junto
   const k = size / SIZE;
@@ -32,7 +39,19 @@ export function Avatar({
         styles.circle,
         { width: size, height: size, borderRadius: size / 2, backgroundColor: color },
       ]}>
-      {source ? (
+      {character ? (
+        <Image
+          source={character.source}
+          resizeMode="contain"
+          style={
+            trimmedImageLayout(
+              character.imageSize,
+              character.content,
+              size * (character.content.height / character.content.width),
+            ).image
+          }
+        />
+      ) : source ? (
         <Image
           source={source}
           resizeMode="cover"
@@ -72,6 +91,7 @@ const BODY_SCALE_Y = 0.6;
 const styles = StyleSheet.create({
   circle: {
     alignItems: 'center',
+    overflow: 'hidden',
   },
   head: {
     position: 'absolute',

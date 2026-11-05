@@ -23,9 +23,6 @@ type Props = {
   toast?: { message: string; visible: boolean; onHide: () => void };
   onBack: () => void;
   backLabel: string;
-  /** Moedas e nome do usuário mostrados no TopBar */
-  coins: number;
-  userName: string;
 };
 
 /**
@@ -44,15 +41,13 @@ export function ExamQuestionsTemplate({
   toast,
   onBack,
   backLabel,
-  coins,
-  userName,
 }: Props) {
   const handleTabPress = useTopBarNavigation();
 
   return (
     <HelpLayout
       scrollable={false}
-      topBar={<TopBar onTabPress={handleTabPress} coins={coins} userName={userName} />}
+      topBar={<TopBar onTabPress={handleTabPress} />}
       overlay={
         toast ? (
           <Toast message={toast.message} visible={toast.visible} onHide={toast.onHide} />

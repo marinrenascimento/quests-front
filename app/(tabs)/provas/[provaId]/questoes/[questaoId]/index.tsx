@@ -14,7 +14,6 @@ import {
   VIEW_QUESTION_CONTENT,
 } from '@/constants/exams';
 import { BACK_LABEL } from '@/constants/helpContent';
-import { TEMP_COINS, TEMP_USER_NAME } from '@/constants/mockUser';
 import { useExams } from '@/hooks/useExams';
 import { useSubjectNames } from '@/hooks/useSubjects';
 import { shortName } from '@/utils/cardName';
@@ -130,8 +129,6 @@ export default function ViewExamQuestionScreen() {
         }}
         onBack={handleBack}
         backLabel={BACK_LABEL}
-        coins={TEMP_COINS}
-        userName={TEMP_USER_NAME}
       />
       <ConfirmModal
         visible={deleteVisible}
